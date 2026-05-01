@@ -33,8 +33,8 @@
             <form method="POST" action="#">
                 @csrf
                 <div class="mb-3">
-                    <label for="email" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@dentalpro.com" required autofocus>
+                    <label for="username" class="form-label">Usuario</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese su usuario" required autofocus>
                 </div>
                 
                 <div class="mb-3">
