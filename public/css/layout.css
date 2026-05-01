@@ -48,7 +48,7 @@
 
 /* ICONO DEL SIDEBAR */
 .brand-icon {
-    color: #60a5fa; 
+    color: #60a5fa;
     width: 20px;
     height: 20px;
     margin-right: 6px;
@@ -66,9 +66,9 @@
 /* PARA APP.BLADE */
 
 :root {
-    --sidebar-bg: #1e293b; 
+    --sidebar-bg: #1e293b;
     --sidebar-hover: #334155;
-    --primary-medical: #0ea5e9; 
+    --primary-medical: #0ea5e9;
     --bg-main: #f1f5f9;
 }
 
@@ -84,11 +84,11 @@ body {
     min-height: 100vh;
 }
 
-#sidebar-container { 
-    min-height: 100vh; 
-    width: 260px; 
-    background: var(--sidebar-bg); 
-    transition: all 0.3s; 
+#sidebar-container {
+    min-height: 100vh;
+    width: 260px;
+    background: var(--sidebar-bg);
+    transition: all 0.3s;
     z-index: 1000;
 }
 
@@ -96,7 +96,7 @@ body {
     width: 80px;
 }
 
-#sidebar-container.collapsed .link-text, 
+#sidebar-container.collapsed .link-text,
 #sidebar-container.collapsed .sidebar-header h5,
 #sidebar-container.collapsed .dropdown-toggle::after {
     display: none;
@@ -234,7 +234,7 @@ body {
 }
 
 .topbar .nav-link:hover {
-    background: #f1f5f9;  
+    background: #f1f5f9;
     color: inherit;
 }
 
@@ -247,4 +247,20 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.pagination .page-link {
+    color: #0ea5e9 !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0ea5e9 !important;
+    border-color: #0ea5e9 !important;
+    color: #fff !important;
+}
+
+.pagination .page-link:hover {
+    color: #0ea5e9 !important;
+    background-color: #EFF6FF !important;
+    border-color: #BFDBFE !important;
 }
