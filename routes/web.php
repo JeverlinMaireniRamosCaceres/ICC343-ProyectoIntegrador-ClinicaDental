@@ -10,4 +10,10 @@ Route::get('/', function () {
 })->name('dashboard');
 
 Route::resource('procedimientos', ProcedimientoController::class);
+
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
 Route::resource('compras', ComprasController::class);
+
