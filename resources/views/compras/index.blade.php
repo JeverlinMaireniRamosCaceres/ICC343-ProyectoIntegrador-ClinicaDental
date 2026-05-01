@@ -10,8 +10,6 @@
 
             <div class="d-flex align-items-center gap-2">
 
-                <!-- Buscador (visual por ahora) -->
-
                 <form>
                     <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent"
                         style="width: 280px; transition: border-color 0.2s;"
@@ -57,8 +55,6 @@
                     </thead>
 
                     <tbody>
-
-                        <!-- Datos fijos -->
 
                         <tr>
                             <td class="px-4 text-muted">1</td>
@@ -174,8 +170,6 @@
                 </table>
 
             </div>
-
-            <!-- Footer visual -->
 
             <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
 

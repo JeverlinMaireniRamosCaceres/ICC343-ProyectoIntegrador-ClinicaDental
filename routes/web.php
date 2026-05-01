@@ -3,7 +3,7 @@
 use App\Http\Controllers\ComprasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProcedimientoController;
-
+use App\Http\Controllers\ProveedorController;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -16,4 +16,6 @@ Route::get('/login', function () {
 });
 
 Route::resource('compras', ComprasController::class);
+
+Route::resource('proveedores', ProveedorController::class);
 
