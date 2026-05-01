@@ -36,10 +36,11 @@
 
         <!-- INVENTARIO -->
         <li>
-            <a class="nav-link dropdown-toggle" href="#invSubmenu" data-bs-toggle="collapse">
+            <a class="nav-link dropdown-toggle {{ request()->routeIs('compras.*') ? 'active' : '' }} {{ request()->routeIs('compras.*') ? '' : 'collapsed' }}"
+                href="#invSubmenu" data-bs-toggle="collapse">
                 <i class="bi bi-boxes"></i> <span class="link-text">Inventario</span>
             </a>
-            <ul class="collapse submenu" id="invSubmenu">
+            <ul class="collapse submenu {{ request()->routeIs('compras.*') ? 'show' : '' }}" id="invSubmenu">
                 <li>
                     <a class="nav-link" href="#">
                         <i class="bi bi-box-seam"></i>
@@ -47,7 +48,8 @@
                     </a>
                 </li>
                 <li>
-                    <a class="nav-link" href="#">
+                    <a href="{{ route('compras.index') }}"
+                        class="nav-link {{ request()->routeIs('compras.*') ? 'active' : '' }}">
                         <i class="bi bi-cart-check"></i>
                         <span class="link-text">Compras</span>
                     </a>
@@ -94,9 +96,7 @@
                 <span class="link-text">Configuración</span>
 
             </a>
-            <i class="bi bi-gear"></i>
-            <span class="link-text">Configuración</span>
-            </a>
+
             <ul class="collapse submenu {{ request()->routeIs('procedimientos.*') ? 'show' : '' }}" id="configSubmenu">
                 <li>
                     <a class="nav-link" href="#">
