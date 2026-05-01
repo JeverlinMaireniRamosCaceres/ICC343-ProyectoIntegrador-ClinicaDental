@@ -25,8 +25,15 @@
                 <span class="link-text">Dashboard</span>
             </a>
         </li>
-        <li><a href="#" class="nav-link"><i class="bi bi-people"></i> <span class="link-text">Pacientes</span></a>
+        
+        <!-- PACIENTES -->
+        <li>
+            <a href="{{ route('pacientes.index') }}" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span class="link-text">Pacientes</span>
+            </a>
         </li>
+
         <li><a href="#" class="nav-link"><i class="bi bi-calendar-check"></i> <span
                     class="link-text">Citas</span></a></li>
         <li><a href="#" class="nav-link"><i class="bi bi-journal-medical"></i> <span
