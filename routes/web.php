@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComprasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProcedimientoController;
 
@@ -13,3 +14,6 @@ Route::resource('procedimientos', ProcedimientoController::class);
 Route::get('/login', function () {
     return view('auth.login');
 });
+
+Route::resource('compras', ComprasController::class);
+

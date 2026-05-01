@@ -264,3 +264,14 @@ body {
     background-color: #EFF6FF !important;
     border-color: #BFDBFE !important;
 }
+
+.btn-outline-primary {
+    color: #0ea5e9;
+    border-color: #0ea5e9;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+}
