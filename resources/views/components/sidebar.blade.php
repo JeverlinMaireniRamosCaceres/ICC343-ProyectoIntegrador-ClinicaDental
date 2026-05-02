@@ -110,9 +110,11 @@
 
             <ul class="collapse submenu {{ request()->routeIs('procedimientos.*') ? 'show' : '' }}" id="configSubmenu">
                 <li>
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-person-gear"></i>
-                        <span class="link-text">Usuarios</span>
+                    <a href="{{ route('usuarios.index') }}"
+                    class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
+                        
+                        <i class="bi bi-people"></i>
+                        Usuarios
                     </a>
                 </li>
                 <li>
