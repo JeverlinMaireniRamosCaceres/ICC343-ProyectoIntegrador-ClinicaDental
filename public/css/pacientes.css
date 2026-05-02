@@ -1,0 +1,48 @@
+.paciente-card {
+    transition: 0.2s ease;
+}
+
+.paciente-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.patient-info {
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+.patient-info i {
+    width: 18px;
+}
+
+.patient-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0ea5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+}
+
+.patient-tabs .nav-link {
+    color: #64748b;
+    font-weight: 600;
+    border: none;
+    padding: 16px 28px;
+    background: transparent;
+}
+
+.patient-tabs .nav-link:hover {
+    background: #f1f5f9;
+    color: #0ea5e9;
+}
+
+.patient-tabs .nav-link.active {
+    color: #0ea5e9;
+    background: transparent;
+    border-bottom: 2px solid #0ea5e9;
+}

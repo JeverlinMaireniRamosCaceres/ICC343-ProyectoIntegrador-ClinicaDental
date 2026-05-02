@@ -3,24 +3,44 @@
 @section('title', 'Detalle Paciente')
 
 @section('content')
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 px-5">
+
+<div class="d-flex align-items-center mb-4">
+    <a href="{{ route('pacientes.index') }}" class="btn btn-light btn-sm rounded-pill me-3">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+
+    <h2 class="fw-bold text-dark mb-0">Detalle del paciente</h2>
+</div>
+
     <!-- Perfil Encabezado -->
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
             <div class="d-flex align-items-center">
-                <div class="bg-info rounded-circle me-4 d-flex align-items-center justify-content-center text-white" style="width: 80px; height: 80px; font-size: 2rem;">
-                    JM
+
+                <div class="patient-icon me-4">
+                    <i class="bi bi-person-vcard"></i>
                 </div>
+
                 <div class="flex-grow-1">
                     <h2 class="fw-bold text-dark mb-1">Juan Martínez</h2>
+
                     <div class="d-flex flex-wrap gap-3">
-                        <span class="badge bg-light text-muted fw-normal"><i class="bi bi-card-text me-1 text-info"></i> 402-0000000-1</span>
-                        <span class="badge bg-light text-muted fw-normal"><i class="bi bi-telephone me-1 text-info"></i> 809-555-0123</span>
-                        <span class="badge bg-light text-muted fw-normal"><i class="bi bi-envelope me-1 text-info"></i> juan.m@email.com</span>
-                        <span class="badge bg-light text-muted fw-normal"><i class="bi bi-calendar-event me-1 text-info"></i> 28 años</span>
+                        <span class="badge bg-light text-muted fw-normal">
+                            <i class="bi bi-card-text me-1 text-primary"></i> 402-0000000-1
+                        </span>
+                        <span class="badge bg-light text-muted fw-normal">
+                            <i class="bi bi-telephone me-1 text-primary"></i> 809-555-0123
+                        </span>
+                        <span class="badge bg-light text-muted fw-normal">
+                            <i class="bi bi-envelope me-1 text-primary"></i> juan.m@email.com
+                        </span>
+                        <span class="badge bg-light text-muted fw-normal">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i> 28 años
+                        </span>
                     </div>
                 </div>
-                <button class="btn btn-outline-info rounded-pill px-4">Editar Perfil</button>
+
             </div>
         </div>
     </div>
@@ -28,42 +48,91 @@
     <!-- Pestañas de Información -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-header bg-white border-0 p-0">
-            <ul class="nav nav-tabs nav-tabs-custom px-4" id="pacienteTab" role="tablist">
+            <ul class="nav patient-tabs px-4" id="pacienteTab" role="tablist">
                 <li class="nav-item">
-                    <button class="nav-link active border-0 py-3 fw-bold" data-bs-toggle="tab" data-bs-target="#info">Información General</button>
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
+                        Información General
+                    </button>
                 </li>
+
                 <li class="nav-item">
-                    <button class="nav-link border-0 py-3 fw-bold" data-bs-toggle="tab" data-bs-target="#historia">Alergias y Antecedentes</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historia">
+                        Alergias y Antecedentes
+                    </button>
                 </li>
+
                 <li class="nav-item">
-                    <button class="nav-link border-0 py-3 fw-bold" data-bs-toggle="tab" data-bs-target="#citas">Citas</button>
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fichaClinica">
+                        Ficha Clínica
+                    </button>
                 </li>
             </ul>
         </div>
+
         <div class="tab-content p-4">
-            <!-- Pestaña Info General -->
+            <!-- Información General -->
             <div class="tab-pane fade show active" id="info">
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <label class="text-muted small fw-bold">Nombre Completo</label>
-                        <p class="fw-semibold">Juan Martínez Espinal</p>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Nombre completo</span>
+                        <p class="fw-semibold mb-0">Juan Martínez Espinal</p>
                     </div>
-                    <!-- Más detalles aquí... -->
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Cédula</span>
+                        <p class="fw-semibold mb-0">402-0000000-1</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Teléfono</span>
+                        <p class="fw-semibold mb-0">809-555-0123</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Correo</span>
+                        <p class="fw-semibold mb-0">juan.m@email.com</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Fecha de nacimiento</span>
+                        <p class="fw-semibold mb-0">01/05/1998</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-bold">Edad</span>
+                        <p class="fw-semibold mb-0">28 años</p>
+                    </div>
                 </div>
             </div>
-            <!-- Pestaña Alergias -->
+
+            <!-- Alergias y Antecedentes -->
             <div class="tab-pane fade" id="historia">
-                <div class="p-3 bg-danger bg-opacity-10 rounded-3 mb-3 border-start border-danger border-4">
-                    <h6 class="text-danger fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Alergias</h6>
-                    <p class="mb-0">Alergia severa a la Penicilina.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-4">
+                            <h6 class="text-danger fw-bold">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Alergias
+                            </h6>
+                            <p class="mb-0">Penicilina, Látex.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <h6 class="fw-bold text-dark">
+                                <i class="bi bi-clipboard2-pulse me-2 text-primary"></i>Antecedentes médicos
+                            </h6>
+                            <p class="mb-0 text-muted">Diabetes, Hipertensión.</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Ficha clinica -->
+            <div class="tab-pane fade" id="fichaClinica">
+                <p class="text-muted mb-0">No hay ficha clínica registrada para este paciente.</p>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .nav-tabs-custom .nav-link { color: #64748b; border-bottom: 3px solid transparent !important; }
-    .nav-tabs-custom .nav-link.active { color: #0ea5e9; border-bottom: 3px solid #0ea5e9 !important; }
-</style>
 @endsection

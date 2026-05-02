@@ -12,6 +12,10 @@
     <!-- iconos bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <!-- estilos especificos para pacientes -->
+    <link rel="stylesheet" href="{{ asset('css/pacientes.css') }}">
+    <!-- estilos para el calendario, flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
 <body>
@@ -35,6 +39,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- JavaScript para colapsar -->
      <script src="{{ asset('js/layout.js') }}"></script>
+    <!-- flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
      @yield('scripts')
 
