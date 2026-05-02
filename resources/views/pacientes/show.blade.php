@@ -13,7 +13,7 @@
     <h2 class="fw-bold text-dark mb-0">Detalle del paciente</h2>
 </div>
 
-    <!-- Perfil Encabezado -->
+    <!-- perfil -->
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
             <div class="d-flex align-items-center">
@@ -45,32 +45,32 @@
         </div>
     </div>
 
-    <!-- Pestañas de Información -->
+    <!-- pestañas -->
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-header bg-white border-0 p-0">
             <ul class="nav patient-tabs px-4" id="pacienteTab" role="tablist">
                 <li class="nav-item">
                     <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
-                        Información General
+                        Información general
                     </button>
                 </li>
 
                 <li class="nav-item">
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historia">
-                        Alergias y Antecedentes
+                        Alergias y antecedentes
                     </button>
                 </li>
 
                 <li class="nav-item">
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fichaClinica">
-                        Ficha Clínica
+                        Ficha clínica
                     </button>
                 </li>
             </ul>
         </div>
 
         <div class="tab-content p-4">
-            <!-- Información General -->
+            <!-- informacion general -->
             <div class="tab-pane fade show active" id="info">
                 <div class="row g-4">
                     <div class="col-md-4">
@@ -105,26 +105,26 @@
                 </div>
             </div>
 
-            <!-- Alergias y Antecedentes -->
+            <!-- Alergias y antecedentes -->
             <div class="tab-pane fade" id="historia">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-4">
-                            <h6 class="text-danger fw-bold">
-                                <i class="bi bi-exclamation-triangle me-2"></i>Alergias
-                            </h6>
-                            <p class="mb-0">Penicilina, Látex.</p>
-                        </div>
+                <div class="d-flex flex-column gap-3">
+
+                    <!-- Alergias -->
+                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-4">
+                        <h6 class="text-danger fw-bold mb-2">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Alergias
+                        </h6>
+                        <p class="mb-0">Penicilina, Látex.</p>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="p-3 bg-light rounded-3 border">
-                            <h6 class="fw-bold text-dark">
-                                <i class="bi bi-clipboard2-pulse me-2 text-primary"></i>Antecedentes médicos
-                            </h6>
-                            <p class="mb-0 text-muted">Diabetes, Hipertensión.</p>
-                        </div>
+                    <!-- Antecedentes médicos -->
+                    <div class="p-3 bg-light rounded-3 border">
+                        <h6 class="fw-bold mb-2">
+                            <i class="bi bi-file-medical me-2 text-primary"></i>Antecedentes médicos
+                        </h6>
+                        <p class="mb-0 text-muted">Diabetes, Hipertensión.</p>
                     </div>
+
                 </div>
             </div>
 

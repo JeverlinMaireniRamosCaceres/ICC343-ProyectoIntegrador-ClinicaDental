@@ -26,15 +26,9 @@
         <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm rounded-4 h-100 paciente-card">
                 <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <h5 class="fw-bold mb-1">Juan Martínez</h5>
-                            <p class="text-muted small mb-0">Paciente #1</p>
-                        </div>
-
-                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3">
-                            28 años
-                        </span>
+                    
+                    <div class="mb-3">
+                        <h5 class="fw-bold mb-1">Juan Martínez</h5>
                     </div>
 
                     <div class="patient-info mb-4">
@@ -46,9 +40,13 @@
                             <i class="bi bi-telephone me-2 text-muted"></i>
                             <span>809-555-0123</span>
                         </p>
-                        <p class="mb-0">
+                        <p class="mb-2">
                             <i class="bi bi-envelope me-2 text-muted"></i>
                             <span>juan@email.com</span>
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-calendar-event me-2 text-muted"></i>
+                            <span>28 años</span>
                         </p>
                     </div>
 
@@ -61,13 +59,16 @@
                             <i class="bi bi-pencil-fill"></i>
                         </a>
 
-                        <form action="{{ route('pacientes.destroy', 1) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
-                        </form>
+                        <button type="button"
+                                class="btn btn-sm btn-danger rounded-pill px-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalEliminarPaciente"
+                                data-id="1"
+                                data-nombre="Juan Martínez">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+
+
                     </div>
                 </div>
             </div>
@@ -93,4 +94,49 @@
     </div>
 
 </div>
+
+<div class="modal fade" id="modalEliminarPaciente" tabindex="-1" aria-labelledby="modalEliminarPacienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-3">
+
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center"
+                         style="width: 40px; height: 40px;">
+                        <i class="bi bi-trash3-fill text-danger" style="font-size: 16px;"></i>
+                    </div>
+
+                    <h5 class="modal-title fw-semibold mb-0" id="modalEliminarPacienteLabel">
+                        Eliminar paciente
+                    </h5>
+                </div>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                <p class="text-muted mb-0">
+                    ¿Estás seguro de que deseas eliminar <strong id="modalNombrePaciente">este paciente</strong>?
+                </p>
+            </div>
+
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <form id="formEliminarPaciente" method="POST" action="{{ route('pacientes.destroy', 1) }}">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">
+                        <i class="bi bi-trash3-fill me-1"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @endsection
