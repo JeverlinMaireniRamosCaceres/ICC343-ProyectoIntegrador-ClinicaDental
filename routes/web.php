@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\PacientesController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\UsuariosController;
 
 // dashboard
 Route::get('/', function () {
@@ -25,6 +26,10 @@ Route::resource('compras', ComprasController::class);
 // pacientes
 Route::resource('pacientes', PacientesController::class);
 
+// proveedores
 Route::resource('proveedores', ProveedorController::class);
+
+// usuarios
+Route::resource('usuarios', UsuariosController::class);
 
 
