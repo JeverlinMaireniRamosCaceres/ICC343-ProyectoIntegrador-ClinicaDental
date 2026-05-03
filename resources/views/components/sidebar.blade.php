@@ -116,9 +116,8 @@
                 <li>
                     <a href="{{ route('usuarios.index') }}"
                     class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
-
                         <i class="bi bi-people"></i>
-                        Usuarios
+                        <span class="link-text">Usuarios</span>
                     </a>
                 </li>
                 <li>
