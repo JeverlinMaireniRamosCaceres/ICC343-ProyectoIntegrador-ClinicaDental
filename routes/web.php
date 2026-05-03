@@ -7,6 +7,7 @@ use App\Http\Controllers\PacientesController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\OdontologoController;
 
 // dashboard
 Route::get('/', function () {
@@ -35,5 +36,8 @@ Route::resource('usuarios', UsuariosController::class);
 
 // productos
 Route::resource('productos', ProductoController::class);
+
+// odontologos
+Route::resource('odontologos', OdontologoController::class);
 
 
