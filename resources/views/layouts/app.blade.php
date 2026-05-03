@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{{ asset('css/pacientes.css') }}">
     <!-- estilos para el calendario, flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- estilos para citas -->
+    <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
 
 </head>
 <body>
@@ -41,6 +43,8 @@
      <script src="{{ asset('js/layout.js') }}"></script>
     <!-- flatpickr -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- javascript para citas -->
+    <script src="{{ asset('js/citas.js') }}"></script>
 
      @yield('scripts')
 

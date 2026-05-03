@@ -34,13 +34,16 @@
             </a>
         </li>
 
-        <li><a href="#" class="nav-link"><i class="bi bi-calendar-check"></i> <span
-                    class="link-text">Citas</span></a></li>
+        <a href="{{ route('citas.index') }}"
+        class="nav-link {{ request()->routeIs('citas.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar-check"></i>
+            <span class="link-text">Citas</span>
+        </a>
+
         <li><a href="#" class="nav-link"><i class="bi bi-journal-medical"></i> <span
                     class="link-text">Consultas</span></a></li>
         <a href="{{ route('odontologos.index') }}"
         class="nav-link {{ request()->routeIs('odontologos.*') ? 'active' : '' }}">
-
             <i class="bi bi-person-badge"></i>
             <span class="link-text">Odontólogos</span>
         </a>
