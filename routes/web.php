@@ -4,6 +4,7 @@ use App\Http\Controllers\ComprasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProcedimientoController;
 use App\Http\Controllers\PacientesController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\UsuariosController;
 
@@ -31,5 +32,8 @@ Route::resource('proveedores', ProveedorController::class);
 
 // usuarios
 Route::resource('usuarios', UsuariosController::class);
+
+// productos
+Route::resource('productos', ProductoController::class);
 
 

@@ -25,10 +25,10 @@
                 <span class="link-text">Dashboard</span>
             </a>
         </li>
-        
+
         <!-- PACIENTES -->
         <li>
-            <a href="{{ route('pacientes.index') }}" class="nav-link">
+            <a href="{{ route('pacientes.index') }}" class="nav-link {{ request()->routeIs('pacientes.*') ? 'active' : '' }}">
                 <i class="bi bi-people"></i>
                 <span class="link-text">Pacientes</span>
             </a>
@@ -44,15 +44,16 @@
         <!-- INVENTARIO -->
         <li>
             <a class="nav-link dropdown-toggle
-                {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') ? 'active' : '' }}
-                {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') ? '' : 'collapsed' }}"
+                {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') || request()->routeIs('productos.*') ? 'active' : '' }}
+                {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') || request()->routeIs('productos.*') ? '' : 'collapsed' }}"
                 href="#invSubmenu" data-bs-toggle="collapse">
                 <i class="bi bi-boxes"></i> <span class="link-text">Inventario</span>
             </a>
-            <ul class="collapse submenu {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') ? 'show' : '' }}"
+            <ul class="collapse submenu {{ request()->routeIs('compras.*') || request()->routeIs('proveedores.*') || request()->routeIs('productos.*') ? 'show' : '' }}"
                 id="invSubmenu">
                 <li>
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->routeIs('productos.*') ? 'active' : '' }}"
+                        href="{{ route('productos.index') }}">
                         <i class="bi bi-box-seam"></i>
                         <span class="link-text">Productos</span>
                     </a>
@@ -100,7 +101,9 @@
 
         <!-- CONFIGURACION -->
         <li>
-            <a class="nav-link dropdown-toggle {{ request()->routeIs('procedimientos.*') ? 'active' : '' }} {{ request()->routeIs('procedimientos.*') ? '' : 'collapsed' }}"
+            <a class="nav-link dropdown-toggle
+                {{ request()->routeIs('procedimientos.*') || request()->routeIs('usuarios.*') ? 'active' : '' }}
+                {{ request()->routeIs('procedimientos.*') || request()->routeIs('usuarios.*') ? '' : 'collapsed' }}"
                 href="#configSubmenu" data-bs-toggle="collapse">
 
                 <i class="bi bi-gear"></i>
@@ -108,11 +111,12 @@
 
             </a>
 
-            <ul class="collapse submenu {{ request()->routeIs('procedimientos.*') ? 'show' : '' }}" id="configSubmenu">
+            <ul class="collapse submenu {{ request()->routeIs('usuarios.*') || request()->routeIs('procedimientos.*') ? 'show' : '' }}"
+                id="configSubmenu">
                 <li>
                     <a href="{{ route('usuarios.index') }}"
                     class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
-                        
+
                         <i class="bi bi-people"></i>
                         Usuarios
                     </a>
