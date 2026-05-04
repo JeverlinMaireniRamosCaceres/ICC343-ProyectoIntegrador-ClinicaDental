@@ -11,14 +11,11 @@
             <h2 class="fw-bold text-dark mb-1">Citas</h2>
         </div>
 
-        <a href="#" class="btn btn-light rounded-pill px-4 shadow-sm">
-            Ver citas del día
-        </a>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm rounded-4 card-hover">
+            <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body">
                     <small class="text-muted">Citas de hoy</small>
                     <h4 class="fw-bold mb-0 text-primary">6</h4>
@@ -80,7 +77,10 @@
 
                     <hr>
 
-                    <h6 class="fw-bold mb-3">Disponibilidad</h6>
+                    <h6 class="fw-bold mb-1">Disponibilidad</h6>
+                    <small class="text-muted d-block mb-3">
+                        Seleccione un horario disponible para registrar la cita.
+                    </small>
 
                     <div id="availabilityList" class="d-flex flex-column gap-2">
 
@@ -95,7 +95,6 @@
                                 <small class="text-muted">Dr. Juan Pérez</small>
                             </div>
 
-                            <span class="availability-status">Disponible</span>
                         </button>
 
                         <button type="button"
@@ -109,18 +108,6 @@
                                 <small class="text-muted">Dra. Laura Gómez</small>
                             </div>
 
-                            <span class="availability-status">Disponible</span>
-                        </button>
-
-                        <button type="button"
-                                class="availability-row occupied"
-                                disabled>
-                            <div>
-                                <span class="fw-bold d-block">09:00 AM</span>
-                                <small class="text-muted">Dr. Juan Pérez</small>
-                            </div>
-
-                            <span class="availability-status occupied-text">Ocupado</span>
                         </button>
 
                         <button type="button"
@@ -134,7 +121,6 @@
                                 <small class="text-muted">Dr. Carlos Ramírez</small>
                             </div>
 
-                            <span class="availability-status">Disponible</span>
                         </button>
 
                         <button type="button"
@@ -147,14 +133,9 @@
                                 <span class="fw-bold d-block">10:00 AM</span>
                                 <small class="text-muted">Dra. Laura Gómez</small>
                             </div>
-
-                            <span class="availability-status">Disponible</span>
+                            
                         </button>
 
-                    </div>
-
-                    <div class="alert alert-light border rounded-4 mt-4 mb-0 small text-muted">
-                        Selecciona un horario disponible para registrar la cita.
                     </div>
 
                 </div>

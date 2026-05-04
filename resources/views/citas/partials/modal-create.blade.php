@@ -5,7 +5,6 @@
             <div class="modal-header border-0 pb-0">
                 <div>
                     <h5 class="fw-bold mb-0">Registrar cita</h5>
-                    <small class="text-muted">Completa los datos de la persona</small>
                 </div>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -51,7 +50,7 @@
 
                     </div>
 
-                    <!-- Datos del paciente/persona -->
+                    <!-- Datos de la persona -->
                     <div class="row g-3">
 
                         <div class="col-12">
@@ -88,7 +87,7 @@
                     </button>
 
                     <button type="submit" class="btn btn-primary rounded-pill px-4">
-                        Guardar cita
+                        Guardar
                     </button>
                 </div>
 
