@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\ComprasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProcedimientoController;
@@ -44,3 +45,5 @@ Route::resource('odontologos', OdontologoController::class);
 // citas
 Route::resource('citas', CitaController::class);
 
+//caja chica
+Route::resource('caja-chica', CajaChicaController::class);

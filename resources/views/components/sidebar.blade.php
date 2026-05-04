@@ -103,7 +103,11 @@
             </ul>
         </li>
 
-        <li><a href="#" class="nav-link"><i class="bi bi-safe"></i> <span class="link-text">Caja chica</span></a>
+        <!-- CAJA CHICA -->
+        <li>
+            <a href="{{ route('caja-chica.index') }}"
+                class="nav-link {{ request()->routeIs('caja-chica.*') ? 'active' : '' }}"><i class="bi bi-safe"></i> <span
+                class="link-text">Caja chica</span></a>
         </li>
 
         <!-- CONFIGURACION -->
