@@ -3,11 +3,10 @@
 
         <div class="brand">
 
-            <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="24" height="24">
-                <path fill="currentColor"
-                    d="M32 4C22 4 14 10 14 20c0 6 3 10 4 14 1 4 2 18 6 18s4-8 8-8 4 8 8 8 5-14 6-18c1-4 4-8 4-14C50 10 42 4 32 4z" />
-            </svg>
-            <span class="link-text">Clinica Dental</span>
+        <img src="{{ asset('favicon.ico') }}" 
+            alt="Logo Clínica" 
+            class="brand-icon">
+            <span class="link-text mr-4">Clínica Dental</span>
         </div>
 
         <!-- boton para colapsar -->
