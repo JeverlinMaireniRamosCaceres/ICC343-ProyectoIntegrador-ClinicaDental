@@ -10,6 +10,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\OdontologoController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\FacturacionController;
 
 // dashboard
 Route::get('/', function () {
@@ -47,3 +48,6 @@ Route::resource('citas', CitaController::class);
 
 //caja chica
 Route::resource('caja-chica', CajaChicaController::class);
+
+//Facturacion
+Route::resource('facturacion', FacturacionController::class);
