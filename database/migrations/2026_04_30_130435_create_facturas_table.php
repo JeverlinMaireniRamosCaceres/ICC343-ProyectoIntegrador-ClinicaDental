@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('idConsulta');
 
             $table->decimal('total', 10, 2);
-            $table->date('fechaVencimiento')->nullable();
 
             $table->integer('cantidadCuotas')->default(1);
 

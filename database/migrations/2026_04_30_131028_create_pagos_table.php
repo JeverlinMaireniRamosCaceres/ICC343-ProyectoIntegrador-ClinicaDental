@@ -16,10 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('idFactura');
             $table->unsignedBigInteger('idMetodoPago');
 
-            $table->date('fecha');
+            $table->date('fechaCorte');
             $table->decimal('monto', 10, 2);
 
             $table->integer('numeroCuota')->nullable();
+
+            $table->date('fechaRealizacion')->nullable();
+            $table->integer('referenciaPago')->nullable();
 
             $table->string('estado', 50);
 
