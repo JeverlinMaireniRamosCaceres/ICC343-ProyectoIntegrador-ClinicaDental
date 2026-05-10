@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- estilos para citas -->
     <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
+    <!-- estilos para consultas -->
+    <link rel="stylesheet" href="{{ asset('css/consultas.css') }}">
 
 </head>
 <body>
