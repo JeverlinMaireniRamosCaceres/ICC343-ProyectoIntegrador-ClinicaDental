@@ -11,6 +11,7 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\OdontologoController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\FacturacionController;
+use App\Http\Controllers\ConsultaController;
 
 // dashboard
 Route::get('/', function () {
@@ -51,3 +52,6 @@ Route::resource('caja-chica', CajaChicaController::class);
 
 //Facturacion
 Route::resource('facturacion', FacturacionController::class);
+
+//Consultas
+Route::resource('consultas', ConsultaController::class);
