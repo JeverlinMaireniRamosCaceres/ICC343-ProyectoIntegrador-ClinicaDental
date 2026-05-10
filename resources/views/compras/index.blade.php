@@ -84,7 +84,7 @@
 
                                     <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" title="Eliminar">
 
-                                        <i class="bi bi-trash3-fill"></i>
+                                        <i class="bi bi-x-octagon"></i>
 
                                     </button>
 
@@ -120,7 +120,7 @@
 
                                     <button type="button" class="btn btn-sm btn-danger rounded-pill px-3">
 
-                                        <i class="bi bi-trash3-fill"></i>
+                                        <i class="bi bi-x-octagon"></i>
 
                                     </button>
 
@@ -156,7 +156,7 @@
 
                                     <button type="button" class="btn btn-sm btn-danger rounded-pill px-3">
 
-                                        <i class="bi bi-trash3-fill"></i>
+                                        <i class="bi bi-x-octagon"></i>
 
                                     </button>
 

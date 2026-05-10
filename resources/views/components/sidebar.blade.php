@@ -3,8 +3,8 @@
 
         <div class="brand">
 
-        <img src="{{ asset('favicon.ico') }}" 
-            alt="Logo Clínica" 
+        <img src="{{ asset('favicon.ico') }}"
+            alt="Logo Clínica"
             class="brand-icon">
             <span class="link-text mr-4">Clínica Dental</span>
         </div>
@@ -83,12 +83,15 @@
 
         <!-- FACTURACION -->
         <li>
-            <a class="nav-link dropdown-toggle" href="#facSubmenu" data-bs-toggle="collapse">
+            <a class="nav-link dropdown-toggle
+                {{ request()->routeIs('facturacion.*') ? 'active' : '' }}
+                {{ request()->routeIs('facturacion.*') ? '' : 'collapsed' }}"
+                href="#facSubmenu" data-bs-toggle="collapse">
                 <i class="bi bi-receipt"></i> <span class="link-text">Facturación</span>
             </a>
-            <ul class="collapse submenu" id="facSubmenu">
+            <ul class="collapse submenu {{ request()->routeIs('facturacion.*') ? 'show' : '' }}" id="facSubmenu">
                 <li>
-                    <a class="nav-link" href="#">
+                    <a class="nav-link {{ request()->routeIs('facturacion.*') ? 'active' : '' }}" href="{{route('facturacion.create')}}">
                         <i class="bi bi-receipt-cutoff"></i>
                         <span class="link-text">Facturas</span>
                     </a>

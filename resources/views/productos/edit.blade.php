@@ -58,22 +58,6 @@
 
                 </div>
 
-                <!-- STOCK ACTUAL -->
-
-                <div class="mb-3">
-
-                    <label class="form-label text-muted fw-semibold small">
-                        Stock Actual
-                    </label>
-
-                    <input type="number"
-                           name="stockActual"
-                           class="form-control"
-                           value="150"
-                           min="0">
-
-                </div>
-
                 <!-- STOCK MINIMO -->
 
                 <div class="mb-3">

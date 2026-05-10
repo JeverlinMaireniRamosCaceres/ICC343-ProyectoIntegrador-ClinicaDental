@@ -48,6 +48,7 @@
                         <th class="px-4 py-3 text-muted fw-semibold small">Nombre</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Teléfono</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Correo</th>
+                        <th class="px-4 py-3 text-muted fw-semibold small">Estado</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Acciones</th>
                     </tr>
 
@@ -60,6 +61,7 @@
                         <td class="px-4 fw-medium">Dental Depot</td>
                         <td class="px-4 text-muted">809-555-1234</td>
                         <td class="px-4 text-muted">dentaldepot@email.com</td>
+                        <td class="px-4" style="color: red;">Desactivado</td>
 
                         <td class="px-4">
 
@@ -75,10 +77,10 @@
                                 </a>
 
                                 <button type="button"
-                                        class="btn btn-sm btn-danger rounded-pill px-3"
-                                        title="Eliminar">
+                                        class="btn btn-sm btn-success rounded-pill px-3"
+                                        title="Activar">
 
-                                    <i class="bi bi-trash3-fill"></i>
+                                    <i class="bi bi-patch-check"></i>
 
                                 </button>
 
@@ -93,6 +95,7 @@
                         <td class="px-4 fw-medium">Odonto Supply</td>
                         <td class="px-4 text-muted">829-555-5678</td>
                         <td class="px-4 text-muted">odontosupply@email.com</td>
+                        <td class="px-4" style="color: green;">Activado</td>
 
                         <td class="px-4">
 
@@ -100,16 +103,16 @@
 
                                 <a href="{{ route('proveedores.edit', 2) }}"
                                    class="btn btn-sm btn-warning rounded-pill px-3"
-                                   style="color:white;">
+                                   style="color:white;" title="Editar">
 
                                     <i class="bi bi-pencil-fill"></i>
 
                                 </a>
 
                                 <button type="button"
-                                        class="btn btn-sm btn-danger rounded-pill px-3">
+                                        class="btn btn-sm btn-danger rounded-pill px-3" title="Desactivar">
 
-                                    <i class="bi bi-trash3-fill"></i>
+                                    <i class="bi bi-x-octagon"></i>
 
                                 </button>
 
@@ -123,6 +126,7 @@
                         <td class="px-4 fw-medium">Medident SRL</td>
                         <td class="px-4 text-muted">849-555-9012</td>
                         <td class="px-4 text-muted">medident@email.com</td>
+                        <td class="px-4" style="color: green;">Activado</td>
 
                         <td class="px-4">
 
@@ -130,16 +134,16 @@
 
                                 <a href="{{ route('proveedores.edit', 3) }}"
                                    class="btn btn-sm btn-warning rounded-pill px-3"
-                                   style="color:white;">
+                                   style="color:white;" title="Editar">
 
                                     <i class="bi bi-pencil-fill"></i>
 
                                 </a>
 
                                 <button type="button"
-                                        class="btn btn-sm btn-danger rounded-pill px-3">
+                                        class="btn btn-sm btn-danger rounded-pill px-3" title="Desactivar">
 
-                                    <i class="bi bi-trash3-fill"></i>
+                                    <i class="bi bi-x-octagon"></i>
 
                                 </button>
 

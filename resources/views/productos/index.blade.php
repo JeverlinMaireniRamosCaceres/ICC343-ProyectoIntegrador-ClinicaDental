@@ -58,7 +58,6 @@
                         <th class="px-4 py-3 text-muted fw-semibold small">ID</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Nombre</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Descripción</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Stock</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Stock Mínimo</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Unidad</th>
                         <th class="px-4 py-3 text-muted fw-semibold small">Acciones</th>
@@ -81,10 +80,6 @@
 
                         <td class="px-4 text-muted">
                             Caja de guantes desechables
-                        </td>
-
-                        <td class="px-4 fw-semibold">
-                            150
                         </td>
 
                         <td class="px-4 text-muted">
@@ -136,10 +131,6 @@
                             Mascarillas quirúrgicas
                         </td>
 
-                        <td class="px-4 fw-semibold text-danger">
-                            20
-                        </td>
-
                         <td class="px-4 text-muted">
                             50
                         </td>
@@ -185,10 +176,6 @@
 
                         <td class="px-4 text-muted">
                             Anestesia local dental
-                        </td>
-
-                        <td class="px-4 fw-semibold">
-                            75
                         </td>
 
                         <td class="px-4 text-muted">

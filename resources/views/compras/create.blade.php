@@ -114,7 +114,7 @@
                                 RD$
                             </span>
                             <input type="number" name="monto" class="form-control border-start-0" placeholder="0.00"
-                                step="0.01" min="0">
+                                step="0.01" min="0" readonly>
                         </div>
                     </div>
 
@@ -151,64 +151,56 @@
                     </button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body p-4">
 
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Buscar producto...">
+                    <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent mb-3"
+                        style="transition: border-color 0.2s;"
+                        onfocusin="this.style.background='#fff'; this.style.borderColor='#2563EB';"
+                        onfocusout="this.style.background=''; this.style.borderColor='transparent';">
+                        <i class="bi bi-search text-secondary" style="font-size: 14px;"></i>
+                        <input type="text" class="border-0 bg-transparent p-0 w-100"
+                            style="outline: none; font-size: 14px;" placeholder="Buscar producto...">
                     </div>
 
                     <div class="table-responsive">
-
-                        <table class="table table-hover align-middle">
-
+                        <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th></th>
+                                    <th class="px-3 py-3 text-muted fw-semibold small">ID</th>
+                                    <th class="px-3 py-3 text-muted fw-semibold small">Producto</th>
+                                    <th class="px-3 py-3"></th>
                                 </tr>
                             </thead>
-
                             <tbody>
-
                                 <tr>
-                                    <td>1</td>
-                                    <td>Guantes Latex</td>
-                                    <td>RD$ 500.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
+                                    <td class="px-3 text-muted">1</td>
+                                    <td class="px-3 fw-medium">Guantes Latex</td>
+                                    <td class="px-3 text-end">
+                                        <button class="btn btn-sm btn-primary rounded-pill px-3">
+                                            <i class="bi bi-check2 me-1"></i> Seleccionar
                                         </button>
                                     </td>
                                 </tr>
-
                                 <tr>
-                                    <td>2</td>
-                                    <td>Mascarillas</td>
-                                    <td>RD$ 300.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
+                                    <td class="px-3 text-muted">2</td>
+                                    <td class="px-3 fw-medium">Mascarillas</td>
+                                    <td class="px-3 text-end">
+                                        <button class="btn btn-sm btn-primary rounded-pill px-3">
+                                            <i class="bi bi-check2 me-1"></i> Seleccionar
                                         </button>
                                     </td>
                                 </tr>
-
                                 <tr>
-                                    <td>3</td>
-                                    <td>Anestesia</td>
-                                    <td>RD$ 1200.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
+                                    <td class="px-3 text-muted">3</td>
+                                    <td class="px-3 fw-medium">Anestesia</td>
+                                    <td class="px-3 text-end">
+                                        <button class="btn btn-sm btn-primary rounded-pill px-3">
+                                            <i class="bi bi-check2 me-1"></i> Seleccionar
                                         </button>
                                     </td>
                                 </tr>
-
                             </tbody>
-
                         </table>
-
                     </div>
 
                 </div>
@@ -232,50 +224,50 @@
         btnAgregarFila.addEventListener('click', () => {
 
             let fila = `
-<tr>
+                <tr>
 
-<td>
-<input type="text"
-class="form-control form-control-sm producto-input"
-placeholder="Buscar producto..."
-readonly
-data-bs-toggle="modal"
-data-bs-target="#modalProductos">
-</td>
+                    <td>
+                        <input type="text"
+                        class="form-control form-control-sm producto-input"
+                        placeholder="Buscar producto..."
+                        readonly
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalProductos">
+                    </td>
 
-<td>
-<input type="number"
-class="form-control form-control-sm"
-value="1">
-</td>
+                <td>
+                    <input type="number"
+                    class="form-control form-control-sm"
+                    value="1">
+                </td>
 
-<td>
-<input type="number"
-class="form-control form-control-sm"
-value="0">
-</td>
+                <td>
+                    <input type="number"
+                    class="form-control form-control-sm"
+                    value="0">
+                </td>
 
-<td>
-<input type="number"
-class="form-control form-control-sm"
-value="0"
-readonly>
-</td>
+                <td>
+                    <input type="number"
+                    class="form-control form-control-sm"
+                    value="0"
+                    readonly>
+                </td>
 
-<td>
-<input type="date"
-class="form-control form-control-sm">
-</td>
+                <td>
+                    <input type="date"
+                    class="form-control form-control-sm">
+                </td>
 
-<td class="text-center">
-<button type="button"
-class="btn btn-sm btn-danger btnEliminarFila">
-<i class="bi bi-trash"></i>
-</button>
-</td>
+                <td class="text-center">
+                    <button type="button"
+                    class="btn btn-sm btn-danger btnEliminarFila">
+                    <i class="bi bi-trash"></i>
+                    </button>
+                </td>
 
-</tr>
-`;
+                </tr>
+            `;
 
             detalleBody.insertAdjacentHTML('beforeend', fila);
 
