@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nombre',100);
             $table->string('apellido',100);
             $table->date('fechaNacimiento')->nullable();
+            $table->string('sexo',10)->nullable();
             $table->string('telefono',12)->nullable();
             $table->string('correo',100)->unique()->nullable();
             $table->timestamps();
