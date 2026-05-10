@@ -18,12 +18,13 @@ return new class extends Migration
 
             $table->date('fecha');
             $table->time('horaApertura');
-            $table->decimal('montoInicial', 10, 2);
-            $table->decimal('saldoActual', 10, 2);
+            $table->decimal('monto', 10, 2);
+            $table->decimal('saldoInicial', 10, 2);
 
             $table->string('estado', 50);
             $table->time('horaCierre')->nullable();
-
+            $table->decimal('diferencia', 10, 2);
+            
             $table->timestamps();
 
             $table->foreign('idUsuarioApertura')
