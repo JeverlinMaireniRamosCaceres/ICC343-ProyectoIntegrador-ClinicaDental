@@ -7,15 +7,11 @@
     box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .08) !important;
 }
 
-.sticky-panel {
-    position: sticky;
-    top: 90px;
-}
 
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
+    gap: 12px;
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
@@ -28,26 +24,34 @@
     gap: 10px;
 }
 
+.calendar-grid-full .calendar-day {
+    min-height: 88px;
+}
+
 .calendar-day {
-    min-height: 76px;
     border: 1px solid #e5e7eb;
     background-color: #fff;
     border-radius: 16px;
     padding: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-align: left;
 }
 
 .calendar-day:hover {
     background-color: #f8fafc;
     transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .06);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .05);
 }
 
 .calendar-day.active {
-    background-color: #0d6efd;
+    background-color: #eef4ff;
     border-color: #0d6efd;
-    color: #fff;
+    color: #0d6efd;
+}
+
+.calendar-day.active .calendar-day-info {
+    color: #495057;
 }
 
 .calendar-day.other-month {
@@ -60,21 +64,17 @@
 
 .calendar-day-number {
     font-weight: 700;
-    display: block;
+    font-size: 1rem;
     line-height: 1;
 }
 
 .calendar-day-info {
-    margin-top: 14px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #6c757d;
-}
-
-.calendar-day.active .calendar-day-info {
-    color: rgba(255, 255, 255, .9);
 }
 
 .calendar-dot {
@@ -86,77 +86,43 @@
 }
 
 .calendar-day.active .calendar-dot {
-    background-color: #fff;
+    background-color: #0d6efd;
 }
 
-/* Disponibilidad */
-.availability-row {
-    width: 100%;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    border-radius: 16px;
-    padding: 14px 16px;
+.calendar-add-btn {
+    border: 0;
+    background-color: #eef4ff;
+    color: #0d6efd;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    text-align: left;
+    justify-content: center;
     transition: all .2s ease;
 }
 
-.availability-row:hover {
-    background: #f8fafc;
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .06);
-}
-
-.availability-row.active {
-    background: #0d6efd;
-    border-color: #0d6efd;
+.calendar-add-btn:hover {
+    background-color: #0d6efd;
     color: #fff;
 }
 
-.availability-row.active small,
-.availability-row.active .availability-status {
-    color: #fff !important;
-}
-
-.availability-row.occupied {
-    background: #f8f9fa;
-    color: #adb5bd;
-    cursor: not-allowed;
-}
-
-.availability-status {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #198754;
-    background-color: #d1e7dd;
-    padding: 5px 10px;
-    border-radius: 50rem;
-}
-
-.occupied-text {
-    color: #dc3545;
-    background-color: #f8d7da;
-}
-
-.appointment-summary {
-    background-color: #f8fafc;
-    border: 1px solid #e5e7eb;
-}
-
 @media (max-width: 768px) {
+    .calendar-grid,
+    .calendar-weekdays {
+        gap: 8px;
+    }
+
     .calendar-day {
-        min-height: 64px;
+        min-height: 85px;
         padding: 10px;
     }
 
     .calendar-day-info {
         font-size: 0.75rem;
-    }
-
-    .sticky-panel {
-        position: static;
+        margin-top: 12px;
     }
 }
 
@@ -174,6 +140,22 @@
 .calendar-view-btn:hover {
     background-color: #0d6efd;
     color: #fff;
+}
+
+.calendar-day.active .calendar-add-btn,
+.calendar-day.active .calendar-view-btn {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.calendar-day.active .calendar-add-btn:hover {
+    background-color: #0b5ed7;
+    color: #fff;
+}
+
+.appointment-summary {
+    background-color: #f8fafc;
+    border: 1px solid #e5e7eb;
 }
 
 .calendar-day.active .calendar-view-btn {
@@ -196,4 +178,58 @@
 
 .backdrop-eliminar-cita {
     z-index: 1060 !important;
+}
+
+.appointment-modal-card {
+    border: 1px solid #dbeafe;
+    background-color: #fbfdff;
+    border-radius: 18px;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all .2s ease;
+}
+
+.appointment-modal-card:hover {
+    background-color: #f8fbff;
+    box-shadow: 0 .5rem 1rem rgba(13, 110, 253, .08);
+    transform: translateY(-1px);
+}
+
+.appointment-time-pill {
+    background-color: #eef4ff;
+    color: #0d6efd;
+    font-weight: 700;
+    border-radius: 50rem;
+    padding: 8px 12px;
+    min-width: 92px;
+    text-align: center;
+    font-size: .88rem;
+}
+
+.appointment-status {
+    border-radius: 50rem;
+    padding: 6px 12px;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.appointment-status-pending {
+    background-color: #fff8db;
+    color: #b7791f;
+}
+
+.appointment-status-confirmed {
+    background-color: #dff6ea;
+    color: #087f5b;
+}
+
+#modalCitasDia .modal-header {
+    padding: 1.25rem 1.25rem 0;
+}
+
+#modalCitasDia .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
 }

@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalNuevaCita" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow rounded-4">
 
             <div class="modal-header border-0 pb-0">
@@ -15,43 +15,44 @@
 
                 <div class="modal-body pt-4">
 
-                    <!-- Resumen precargado -->
                     <div class="appointment-summary rounded-4 p-3 mb-4">
-
                         <div class="row g-3">
 
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Fecha</small>
+                                <small class="text-muted d-block">Fecha seleccionada</small>
                                 <span class="fw-semibold" id="modalFechaTexto">-</span>
                                 <input type="hidden" name="fecha" id="modalFechaInput">
                             </div>
 
                             <div class="col-md-6">
-                                <small class="text-muted d-block">Hora</small>
-                                <span class="fw-semibold" id="modalHoraTexto">-</span>
-                                <input type="hidden" name="hora" id="modalHoraInput">
-                            </div>
-
-                            <div class="col-md-8">
-                                <small class="text-muted d-block">Odontólogo</small>
-                                <span class="fw-semibold" id="modalOdontologoTexto">-</span>
-                                <input type="hidden" name="idOdontologo" id="modalOdontologoInput">
-                            </div>
-
-                            <div class="col-md-4">
                                 <small class="text-muted d-block">Estado</small>
-                                <span class="badge bg-warning-subtle text-warning rounded-pill">
+                                <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-2">
                                     Pendiente
                                 </span>
                                 <input type="hidden" name="estado" value="Pendiente">
                             </div>
 
                         </div>
-
                     </div>
 
-                    <!-- Datos de la persona -->
                     <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Hora</label>
+                            <input type="time"
+                                   name="hora"
+                                   class="form-control border-secondary-subtle bg-white">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Odontólogo</label>
+                            <select name="idOdontologo" class="form-select border-secondary-subtle bg-white">
+                                <option selected disabled>Seleccionar odontólogo</option>
+                                <option value="1">Dr. Juan Pérez</option>
+                                <option value="2">Dra. Laura Gómez</option>
+                                <option value="3">Dr. Carlos Ramírez</option>
+                            </select>
+                        </div>
 
                         <div class="col-12">
                             <label class="form-label">Nombre de la persona</label>
@@ -87,7 +88,7 @@
                     </button>
 
                     <button type="submit" class="btn btn-primary rounded-pill px-4">
-                        Guardar
+                        Guardar cita
                     </button>
                 </div>
 

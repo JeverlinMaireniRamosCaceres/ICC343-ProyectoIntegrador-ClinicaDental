@@ -1,16 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     const calendarGrid = document.getElementById('calendarGrid');
     const calendarTitle = document.getElementById('calendarTitle');
-    const selectedDateTitle = document.getElementById('selectedDateTitle');
-
     const modalFechaTexto = document.getElementById('modalFechaTexto');
     const modalFechaInput = document.getElementById('modalFechaInput');
-    const modalHoraTexto = document.getElementById('modalHoraTexto');
-    const modalHoraInput = document.getElementById('modalHoraInput');
-    const modalOdontologoTexto = document.getElementById('modalOdontologoTexto');
-    const modalOdontologoInput = document.getElementById('modalOdontologoInput');
 
-    if (!calendarGrid || !calendarTitle || !selectedDateTitle) return;
+    if (!calendarGrid || !calendarTitle) return;
 
     let currentDate = new Date(2026, 4, 1);
     let selectedDate = new Date(2026, 4, 2);
@@ -63,6 +57,30 @@ document.addEventListener('DOMContentLoaded', function () {
         return new Date(year, month, 1 - daysBack);
     }
 
+    function openCreateModal(date) {
+        selectedDate = date;
+
+        const dateKey = formatDateKey(date);
+        const readableDate = formatSelectedDate(date);
+
+        if (modalFechaTexto) modalFechaTexto.textContent = readableDate;
+        if (modalFechaInput) modalFechaInput.value = dateKey;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalNuevaCita'));
+        modal.show();
+    }
+
+    function openDayAppointmentsModal(date) {
+        const modalFecha = document.getElementById('modalCitasDiaFecha');
+
+        if (modalFecha) {
+            modalFecha.textContent = formatSelectedDate(date);
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('modalCitasDia'));
+        modal.show();
+    }
+
     function renderCalendar() {
         calendarGrid.innerHTML = '';
 
@@ -83,9 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isToday = dateKey === formatDateKey(today);
                 const appointmentCount = fakeAppointments[dateKey] || 0;
 
-                const dayButton = document.createElement('button');
-                dayButton.type = 'button';
-                dayButton.className = 'calendar-day text-start';
+                const dayButton = document.createElement('div');
+                dayButton.className = 'calendar-day';
 
                 if (!isCurrentMonth) dayButton.classList.add('other-month');
                 if (isSelected) dayButton.classList.add('active');
@@ -95,11 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="d-flex justify-content-between align-items-start">
                         <span class="calendar-day-number">${date.getDate()}</span>
 
-                        ${
-                            appointmentCount > 0
-                                ? `<button type="button" class="calendar-view-btn">Ver</button>`
-                                : ''
-                        }
+                        <button type="button" class="calendar-add-btn" title="Registrar cita">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
                     </div>
 
                     <div class="calendar-day-info">
@@ -109,14 +124,29 @@ document.addEventListener('DOMContentLoaded', function () {
                                 : `<span>Sin citas</span>`
                         }
                     </div>
+
+                    ${
+                        appointmentCount > 0
+                            ? `<div class="mt-3">
+                                   <button type="button" class="calendar-view-btn">
+                                       Ver citas
+                                   </button>
+                               </div>`
+                            : ''
+                    }
                 `;
 
                 const clickedDate = new Date(date);
 
                 dayButton.addEventListener('click', function () {
                     selectedDate = clickedDate;
-                    selectedDateTitle.textContent = formatSelectedDate(selectedDate);
                     renderCalendar();
+                });
+
+                const addButton = dayButton.querySelector('.calendar-add-btn');
+                addButton.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    openCreateModal(clickedDate);
                 });
 
                 const viewButton = dayButton.querySelector('.calendar-view-btn');
@@ -124,15 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (viewButton) {
                     viewButton.addEventListener('click', function (event) {
                         event.stopPropagation();
-
-                        const modalFecha = document.getElementById('modalCitasDiaFecha');
-
-                        if (modalFecha) {
-                            modalFecha.textContent = formatSelectedDate(clickedDate);
-                        }
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalCitasDia'));
-                        modal.show();
+                        openDayAppointmentsModal(clickedDate);
                     });
                 }
 
@@ -160,38 +182,12 @@ document.addEventListener('DOMContentLoaded', function () {
         currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
         selectedDate = today;
 
-        selectedDateTitle.textContent = formatSelectedDate(selectedDate);
         renderCalendar();
     });
 
-    document.querySelectorAll('.availability-row:not(.occupied)').forEach(function (slot) {
-        slot.addEventListener('click', function () {
-            document.querySelectorAll('.availability-row').forEach(function (item) {
-                item.classList.remove('active');
-            });
-
-            slot.classList.add('active');
-
-            const selectedDateKey = formatDateKey(selectedDate);
-            const time = slot.dataset.time;
-            const timeLabel = slot.dataset.timeLabel;
-            const doctorId = slot.dataset.doctorId;
-            const doctorName = slot.dataset.doctorName;
-
-            modalFechaTexto.textContent = formatSelectedDate(selectedDate);
-            modalFechaInput.value = selectedDateKey;
-
-            modalHoraTexto.textContent = timeLabel;
-            modalHoraInput.value = time;
-
-            modalOdontologoTexto.textContent = doctorName;
-            modalOdontologoInput.value = doctorId;
-
-            const modal = new bootstrap.Modal(document.getElementById('modalNuevaCita'));
-            modal.show();
-        });
+    document.getElementById('btnNuevaCitaGeneral')?.addEventListener('click', function () {
+        openCreateModal(selectedDate);
     });
 
-    selectedDateTitle.textContent = formatSelectedDate(selectedDate);
     renderCalendar();
 });
