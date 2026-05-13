@@ -12,6 +12,7 @@ use App\Http\Controllers\OdontologoController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ConsultaController;
+use App\Http\Controllers\AlergiaController;
 
 // dashboard
 Route::get('/', function () {
@@ -55,3 +56,6 @@ Route::resource('facturacion', FacturacionController::class);
 
 //Consultas
 Route::resource('consultas', ConsultaController::class);
+
+// alergias
+Route::resource('alergias', AlergiaController::class);

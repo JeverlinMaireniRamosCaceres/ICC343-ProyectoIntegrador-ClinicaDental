@@ -150,12 +150,16 @@
                         <span class="link-text">Especialidades</span>
                     </a>
                 </li>
-                <li>
-                    <a class="nav-link" href="#">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <span class="link-text">Alergias</span>
-                    </a>
-                </li>
+
+                <a href="{{ route('alergias.index') }}"
+                class="nav-link {{ request()->routeIs('alergias.*') ? 'active' : '' }}">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    <span class="link-text">Alergias</span>
+
+                </a>
+
             </ul>
         </li>
 
