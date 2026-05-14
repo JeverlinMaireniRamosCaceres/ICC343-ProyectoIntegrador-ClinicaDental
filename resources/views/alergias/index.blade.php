@@ -30,119 +30,22 @@
                 <div class="position-relative" style="max-width: 350px;">
                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                    <input type="text"
-                           class="form-control rounded-pill ps-5 search-input"
-                           placeholder="Buscar alergia...">
+                    <form method="GET" action="{{ route('alergias.index') }}">    
+                        <input type="text"
+                                name="buscar"
+                                id="buscarAlergia"
+                            class="form-control rounded-pill ps-5 search-input"
+                            placeholder="Buscar alergia...">
+                    </form>
+
                 </div>
             </div>
 
             <!-- valores tabla -->
-            <div class="table-responsive">
-                <table class="table table-hover-custom align-middle mb-0">
-
-                    <thead class="table-light">
-                        <tr>
-                            <th class="px-4 py-3 text-muted fw-semibold small">ID</th>
-                            <th class="px-4 py-3 text-muted fw-semibold small">Nombre</th>
-                            <th class="px-4 py-3 text-muted fw-semibold small text-center">Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr>
-                            <td class="px-4 fw-semibold">1</td>
-                            <td class="px-4">Penicilina</td>
-                            <td class="px-4 text-center">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('alergias.edit', 1) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarAlergia"
-                                            data-id="1"
-                                            data-nombre="Penicilina">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-4 fw-semibold">2</td>
-                            <td class="px-4">Látex</td>
-                            <td class="px-4 text-center">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('alergias.edit', 2) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarAlergia"
-                                            data-id="2"
-                                            data-nombre="Látex">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-4 fw-semibold">3</td>
-                            <td class="px-4">Anestesia local</td>
-                            <td class="px-4 text-center">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="{{ route('alergias.edit', 3) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarAlergia"
-                                            data-id="3"
-                                            data-nombre="Anestesia local">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-
-                </table>
+            <div id="contenedorTablaAlergias">
+                @include('alergias.partials.tabla')
             </div>
 
-            <!-- paginacion -->
-            <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
-                <span class="text-muted small">
-                    Mostrando 1–3 de 3 resultados
-                </span>
-
-                <nav>
-                    <ul class="pagination pagination-sm mb-0">
-                        <li class="page-item disabled">
-                            <a class="page-link rounded-start" href="#">‹</a>
-                        </li>
-
-                        <li class="page-item active">
-                            <a class="page-link" href="#">1</a>
-                        </li>
-
-                        <li class="page-item disabled">
-                            <a class="page-link rounded-end" href="#">›</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-
-        </div>
     </div>
 
 </div>
@@ -194,6 +97,6 @@
     </div>
 </div>
 
-<script src="{{ asset('js/alergias/modal-eliminar-alergia.js') }}"></script>
-
+<script src="{{ asset('js/modal-eliminar-alergia.js') }}"></script>
+<script src="{{ asset('js/alergia.js') }}"></script>
 @endsection
