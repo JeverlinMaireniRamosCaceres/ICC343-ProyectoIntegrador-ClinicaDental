@@ -7,15 +7,17 @@
 <div class="container-fluid py-4 px-5">
 
     <!-- header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h2 class="fw-bold text-dark mb-1">Alergias</h2>
+            <h2 class="fw-bold page-title mb-1">Alergias</h2>
         </div>
 
         <a href="{{ route('alergias.create') }}"
-           class="btn btn-primary rounded-pill px-4 shadow-sm">
+        class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+
             <i class="bi bi-plus-lg me-1"></i>
             Nueva alergia
+
         </a>
     </div>
 
@@ -29,14 +31,14 @@
                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
                     <input type="text"
-                           class="form-control rounded-pill ps-5 border-0 bg-light"
+                           class="form-control rounded-pill ps-5 search-input"
                            placeholder="Buscar alergia...">
                 </div>
             </div>
 
             <!-- valores tabla -->
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table table-hover-custom align-middle mb-0">
 
                     <thead class="table-light">
                         <tr>
