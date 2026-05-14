@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Alergia;
 
 class AlergiaController extends Controller
 {
@@ -18,6 +19,14 @@ class AlergiaController extends Controller
 
     public function store(Request $request)
     {
-        return redirect()->route('alergias.index');
+        $request -> validate([
+            'nombre' => 'required|string|max:100'
+        ]);
+
+        Alergia::create([
+            'nombre' => $request -> nombre
+        ]);
+
+        return redirect()->route('alergias.index')->with('success', 'Alergia creada correctamente');
     }
 }

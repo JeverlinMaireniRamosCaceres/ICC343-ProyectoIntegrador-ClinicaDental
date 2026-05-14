@@ -13,9 +13,11 @@
         </div>
 
         <a href="{{ route('alergias.create') }}"
-           class="btn btn-primary rounded-pill px-4 shadow-sm">
+        class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+
             <i class="bi bi-plus-lg me-1"></i>
             Nueva alergia
+
         </a>
     </div>
 
