@@ -13,6 +13,8 @@ use App\Http\Controllers\CitaController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ConsultaController;
 
+use App\Http\Controllers\EspecialidadController;
+
 // dashboard
 Route::get('/', function () {
     return view('dashboard');
@@ -55,3 +57,6 @@ Route::resource('facturacion', FacturacionController::class);
 
 //Consultas
 Route::resource('consultas', ConsultaController::class);
+
+//Especialidades
+Route::resource('especialidades', EspecialidadController::class);
