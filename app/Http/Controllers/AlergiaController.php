@@ -7,9 +7,24 @@ use App\Models\Alergia;
 
 class AlergiaController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        return view('alergias.index');
+        $buscar = $request->input('buscar');
+
+        $alergias = Alergia::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idAlergia', 'asc')
+            ->paginate(6)
+            ->withQueryString();
+
+            if ($request->ajax()) {
+                return view('alergias.partials.tabla', compact('alergias'))->render();
+            }
+
+        return view('alergias.index', compact('alergias', 'buscar'));
     }
 
     public function create()
