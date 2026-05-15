@@ -59,5 +59,8 @@ Route::resource('facturacion', FacturacionController::class);
 //Consultas
 Route::resource('consultas', ConsultaController::class);
 
+// alergias
+Route::resource('alergias', AlergiaController::class);
+
 //Especialidades
 Route::resource('especialidades', EspecialidadController::class);
