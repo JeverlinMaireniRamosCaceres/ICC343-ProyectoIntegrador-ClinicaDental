@@ -35,7 +35,9 @@ class AlergiaController extends Controller
     public function store(Request $request)
     {
         $request -> validate([
-            'nombre' => 'required|string|max:100'
+            'nombre' => 'required|string|max:100|unique:alergias,nombre'
+        ], [
+            'nombre.unique' => 'Esta alergia ya existe.'
         ]);
 
         Alergia::create([
