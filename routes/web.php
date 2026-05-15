@@ -12,6 +12,7 @@ use App\Http\Controllers\OdontologoController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ConsultaController;
+use App\Http\Controllers\AlergiaController;
 
 use App\Http\Controllers\EspecialidadController;
 
