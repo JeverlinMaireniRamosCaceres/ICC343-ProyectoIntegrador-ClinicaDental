@@ -6,6 +6,14 @@
 
 <div class="container-fluid py-4 px-5">
 
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <!-- header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -28,9 +36,14 @@
                 <div class="position-relative" style="max-width: 350px;">
                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                    <input type="text"
-                           class="form-control rounded-pill ps-5 border-0 bg-light"
-                           placeholder="Buscar alergia...">
+                    <form method="GET" action="{{ route('alergias.index') }}">
+                        <input type="text"
+                                name="buscar"
+                                id="buscarAlergia"
+                            class="form-control rounded-pill ps-5 search-input"
+                            placeholder="Buscar alergia...">
+                    </form>
+
                 </div>
             </div>
 
