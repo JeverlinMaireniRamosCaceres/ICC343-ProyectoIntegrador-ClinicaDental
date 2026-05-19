@@ -19,11 +19,28 @@ class EspecialidadController extends Controller
 
     public function store(Request $request)
     {
-        $especialidad = new Especialidad();
-        $especialidad->nombre = $request->input('nombre');
-        $especialidad->save();
+        $nombre = ucfirst(strtolower(trim($request->nombre)));
 
-        return redirect()->route('especialidades.index');
+        $request->merge([
+            'nombre' => $nombre
+        ]);
+
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:100|unique:especialidades,nombre'
+            ],
+            [
+                'nombre.unique' => 'Esta especialidad ya existe.',
+                'nombre.required' => 'El nombre es obligatorio.'
+            ]
+        );
+
+        Especialidad::create([
+            'nombre' => $nombre
+        ]);
+
+        return back()
+            ->with('success', 'Especialidad registrada correctamente.');
     }
 
     public function show($id)
