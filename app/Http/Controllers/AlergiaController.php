@@ -46,4 +46,23 @@ class AlergiaController extends Controller
 
         return redirect()->route('alergias.index')->with('success', 'Alergia creada correctamente');
     }
+
+    public function edit($id)
+    {
+        $alergia = Alergia::findOrFail($id);
+        return view('alergias.edit', compact('alergia'));
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        $request->validate([
+        'nombre' => 'required|string|max:100|unique:alergias,nombre,' . $id . ',idAlergia'],
+         ['nombre.unique' => 'Esta alergia ya se encuentra registrada en el sistema.']);
+
+        $alergia = Alergia::findOrFail($id);
+        $alergia->update($request->all());
+
+        return redirect()->route('alergias.index')->with('success', 'Alergia actualizada correctamente');
+    }
 }
