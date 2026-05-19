@@ -41,6 +41,10 @@ Route::resource('proveedores', ProveedorController::class);
 // usuarios
 Route::resource('usuarios', UsuariosController::class);
 
+// para buscar persona y vincularla al usuario
+Route::get('/buscar-personas', [UsuariosController::class, 'buscarPersonas'])
+    ->name('usuarios.buscarPersonas');
+
 // productos
 Route::resource('productos', ProductoController::class);
 
