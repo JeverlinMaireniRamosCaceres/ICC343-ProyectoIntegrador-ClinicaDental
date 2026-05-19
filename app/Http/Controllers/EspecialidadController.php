@@ -7,9 +7,23 @@ use App\Models\Especialidad;
 
 class EspecialidadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('especialidades.index');
+        $buscar = $request->input('buscar');
+
+        $especialidades = Especialidad::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idEspecialidad', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+            if ($request->ajax()) {
+                return view('especialidades.partials.tabla', compact('especialidades'))->render();
+            }
+
+        return view('especialidades.index', compact('especialidades', 'buscar'));
     }
 
     public function create()
@@ -52,7 +66,7 @@ class EspecialidadController extends Controller
     public function edit($id)
     {
         $especialidad = Especialidad::findOrFail($id);
-        
+
         return view('especialidades.edit', compact('especialidad'));
     }
 
