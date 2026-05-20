@@ -11,9 +11,23 @@ use Illuminate\Support\Facades\Hash;
 
 class UsuariosController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('usuarios.index');
+        $buscar = $request->input('buscar');
+
+        $usuarios = Usuario::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('username', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idUsuario', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        if ($request->ajax()) {
+            return view('usuarios.partials.tabla', compact('usuarios'))->render();
+        }
+
+        return view('usuarios.index', compact('usuarios', 'buscar'));
     }
 
     public function create()
@@ -25,23 +39,24 @@ class UsuariosController extends Controller
     public function store(Request $request)
     {
         $request->validate(
-        [
-            'username' => 'required|max:50|unique:usuarios,username',
-            'password' => 'required|confirmed',
-            'idRol' => 'required',
-            'idPersona' => 'required_if:idRol,3'
-        ],
-        [
-            'username.required' => 'El usuario es obligatorio.',
-            'username.unique' => 'Ese usuario ya existe.',
+            [
+                'username' => 'required|max:50|unique:usuarios,username',
+                'password' => 'required|confirmed',
+                'idRol' => 'required',
+                'idPersona' => 'required_if:idRol,3'
+            ],
+            [
+                'username.required' => 'El usuario es obligatorio.',
+                'username.unique' => 'Ese usuario ya existe.',
 
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
+                'password.required' => 'La contraseña es obligatoria.',
+                'password.confirmed' => 'Las contraseñas no coinciden.',
 
-            'idRol.required' => 'Debe seleccionar un rol.',
+                'idRol.required' => 'Debe seleccionar un rol.',
 
-            'idPersona.required_if' => 'Debe seleccionar una persona para el odontólogo.'
-        ]);
+                'idPersona.required_if' => 'Debe seleccionar una persona para el odontólogo.'
+            ]
+        );
 
         Usuario::create([
             'username' => $request->username,
@@ -65,7 +80,6 @@ class UsuariosController extends Controller
 
                 $query->where('nombre', 'LIKE', "%{$texto}%")
                     ->orWhere('apellido', 'LIKE', "%{$texto}%");
-
             })
 
             ->limit(10)

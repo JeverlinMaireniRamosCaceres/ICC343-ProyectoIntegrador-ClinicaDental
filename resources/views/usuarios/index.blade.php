@@ -1,274 +1,163 @@
 @extends('layouts.app')
 
+@section('title', 'Usuarios')
+
 @section('content')
 
-<div class="container-fluid px-4">
+    <div class="container-fluid py-4 px-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Usuarios</h2>
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ session('success') }}
 
-        <div class="d-flex align-items-center gap-2">
-            <div class="position-relative">
-                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                <input type="text"
-                       class="form-control rounded-pill ps-5 border-0 shadow-sm"
-                       placeholder="Buscar usuario..."
-                       style="width: 270px;">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <!-- header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+                <h2 class="fw-bold page-title mb-1">Usuarios</h2>
             </div>
 
-            <a href="{{ route('usuarios.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                <i class="bi bi-plus-lg me-1"></i> Nuevo
+            <a href="{{ route('usuarios.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+
+                <i class="bi bi-plus-lg me-1"></i>
+                Nuevo Usuario
+
             </a>
-        </div>
-    </div>
-
-    <div class="card border-0 shadow-sm rounded-3">
-        <div class="table-responsive">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="px-4 py-3 text-muted fw-semibold small">ID</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Usuario</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Persona</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Rol</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Fecha creación</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small">Estado</th>
-                        <th class="px-4 py-3 text-muted fw-semibold small text-center">Acciones</th>
-                    </tr>
-                </thead>
-
-                    <tbody>
-                        <tr>
-                            <td class="ps-4">1</td>
-
-                            <td>
-                                <div class="fw-semibold">admin</div>
-                                <small class="text-muted">Usuario administrador</small>
-                            </td>
-
-                            <td>
-                                <span class="text-muted">Persona #1</span>
-                            </td>
-
-                            <td>
-                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                    Administrador
-                                </span>
-                            </td>
-
-                            <td>01/05/2026</td>
-
-                            <td>
-                                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
-                                    Activo
-                                </span>
-                            </td>
-
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-
-                                    <a href="{{ route('usuarios.edit', 1) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarUsuario"
-                                            data-id="1"
-                                            data-usuario="admin">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="ps-4">2</td>
-
-                            <td>
-                                <div class="fw-semibold">recepcion</div>
-                                <small class="text-muted">Usuario recepción</small>
-                            </td>
-
-                            <td>
-                                <span class="text-muted">Persona #2</span>
-                            </td>
-
-                            <td>
-                                <span class="badge bg-info-subtle text-info rounded-pill px-3 py-2">
-                                    Recepcionista
-                                </span>
-                            </td>
-
-                            <td>28/04/2026</td>
-
-                            <td>
-                                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
-                                    Activo
-                                </span>
-                            </td>
-
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-
-                                    <a href="{{ route('usuarios.edit', 2) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarUsuario"
-                                            data-id="2"
-                                            data-usuario="recepcion">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="ps-4">3</td>
-
-                            <td>
-                                <div class="fw-semibold">doctor</div>
-                                <small class="text-muted">Usuario odontólogo</small>
-                            </td>
-
-                            <td>
-                                <span class="text-muted">Persona #3</span>
-                            </td>
-
-                            <td>
-                                <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-2">
-                                    Odontólogo
-                                </span>
-                            </td>
-
-                            <td>25/04/2026</td>
-
-                            <td>
-                                <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
-                                    Inactivo
-                                </span>
-                            </td>
-
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center align-items-center gap-2">
-
-                                    <a href="{{ route('usuarios.edit', 3) }}"
-                                       class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button type="button"
-                                            class="btn btn-sm btn-danger rounded-pill px-3"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalEliminarUsuario"
-                                            data-id="3"
-                                            data-usuario="doctor">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
-                <span class="text-muted small">Mostrando 1–3 de 3 resultados</span>
-
-                <nav>
-                    <ul class="pagination pagination-sm mb-0">
-                        <li class="page-item disabled">
-                            <a class="page-link rounded-start" href="#">‹</a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item disabled">
-                            <a class="page-link rounded-end" href="#">›</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
 
         </div>
-    </div>
 
-</div>
+        <!-- card -->
+        <div class="card border-0 shadow-sm rounded-4">
 
+            <div class="card-body p-0">
 
-<!-- Modal eliminar usuario -->
-<div class="modal fade" id="modalEliminarUsuario" tabindex="-1" aria-labelledby="modalEliminarUsuarioLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow rounded-4">
+                <!-- barra busqueda -->
+                <div class="p-4 border-bottom">
 
-            <div class="modal-header border-0 pb-0">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center"
-                         style="width: 42px; height: 42px;">
-                        <i class="bi bi-trash3-fill text-danger"></i>
+                    <div class="position-relative" style="max-width: 350px;">
+
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                        <form method="GET" action="{{ route('usuarios.index') }}">
+
+                            <input type="text" name="buscar" value="{{ request('buscar') }}"
+                                class="form-control rounded-pill ps-5 search-input" placeholder="Buscar usuario...">
+
+                        </form>
+
                     </div>
 
-                    <div>
-                        <h5 class="modal-title fw-bold mb-0" id="modalEliminarUsuarioLabel">
-                            Eliminar usuario
-                        </h5>
-                        <small class="text-muted">Esta acción no se puede deshacer</small>
-                    </div>
                 </div>
 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
+                <!-- tabla -->
+                <div id="contenedorTablaUsuarios">
 
-            <div class="modal-body pt-3">
-                <p class="mb-0">
-                    ¿Estás seguro de que deseas eliminar el usuario
-                    <strong id="nombreUsuarioEliminar">usuario</strong>?
-                </p>
-            </div>
+                    @include('usuarios.partials.tabla')
 
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
-                    Cancelar
-                </button>
+                </div>
 
-                <form id="formEliminarUsuario" action="{{ route('usuarios.destroy', 1) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-
-                    <button type="submit" class="btn btn-danger rounded-pill px-4">
-                        Eliminar
-                    </button>
-                </form>
             </div>
 
         </div>
+
     </div>
-</div>
 
+    <!-- modal eliminar -->
+    <div class="modal fade" id="modalEliminarUsuario" tabindex="-1" aria-hidden="true">
 
-<script>
-    const modalEliminarUsuario = document.getElementById('modalEliminarUsuario');
+        <div class="modal-dialog modal-dialog-centered">
 
-    modalEliminarUsuario.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
+            <div class="modal-content border-0 shadow rounded-4">
 
-        const id = button.getAttribute('data-id');
-        const usuario = button.getAttribute('data-usuario');
+                <div class="modal-header border-0 pb-0">
 
-        document.getElementById('nombreUsuarioEliminar').textContent = usuario;
+                    <div class="d-flex align-items-center gap-2">
 
-        const form = document.getElementById('formEliminarUsuario');
-        form.action = `/usuarios/${id}`;
-    });
-</script>
+                        <div class="rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center"
+                            style="width: 42px; height: 42px;">
+
+                            <i class="bi bi-trash3-fill text-danger"></i>
+
+                        </div>
+
+                        <div>
+                            <h5 class="fw-bold mb-0">Eliminar usuario</h5>
+
+                            <small class="text-muted">
+                                Esta acción no se puede deshacer
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body pt-3">
+
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas eliminar
+                        <strong id="nombreUsuarioliminar">
+                            este usuario
+                        </strong>?
+                    </p>
+
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <form id="formEliminarUsuario" method="POST">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">
+
+                            Eliminar
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const modalEliminarUsuario =
+            document.getElementById('modalEliminarUsuario');
+
+        modalEliminarUsuario.addEventListener('show.bs.modal', function(e) {
+
+            const btn = e.relatedTarget;
+
+            const id = btn.getAttribute('data-id');
+            const nombre = btn.getAttribute('data-nombre');
+
+            document.getElementById('nombreUsuarioEliminar')
+                .textContent = nombre;
+
+            document.getElementById('formEliminarUsuario')
+                .action = `/usuario/${id}`;
+
+        });
+    </script>
 
 @endsection
