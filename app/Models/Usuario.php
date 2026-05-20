@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Usuario extends Model
 {
-
-
     use SoftDeletes;
 
     protected $table = 'usuarios';
@@ -21,4 +19,9 @@ class Usuario extends Model
         'username',
         'password'
     ];
+
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class, 'idRol', 'idRol');
+    }
 }
