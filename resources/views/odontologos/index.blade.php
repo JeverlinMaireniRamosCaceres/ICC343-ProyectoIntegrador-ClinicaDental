@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Odontólogos')
+
 @section('content')
 
 <div class="container-fluid px-4">

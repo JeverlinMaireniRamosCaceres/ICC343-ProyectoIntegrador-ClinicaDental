@@ -5,12 +5,18 @@
 @section('content')
     <div class="container py-4">
 
-        <div class="d-flex align-items-center gap-3 mb-4">
-            <a href="{{ route('alergias.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <h2 class="fw-semibold mb-0">Nueva alergia</h2>
-        </div>
+    <div class="d-flex align-items-center gap-3 mb-4">
+
+        <a href="{{ route('alergias.index') }}"
+           class="btn btn-sm btn-light rounded-pill px-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+
+        <h2 class="fw-semibold mb-0">
+            Nueva alergia
+        </h2>
+
+    </div>
 
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-body p-4">
