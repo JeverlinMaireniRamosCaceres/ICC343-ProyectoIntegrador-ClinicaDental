@@ -10,7 +10,7 @@
                     </thead>
 
                     <tbody id="tablaAlergias">
-                
+
                         @foreach ($alergias as $alergia)
                             <tr>
                                 <td class="px-4 fw-semibold">{{ $alergia->idAlergia }}</td>
@@ -18,16 +18,14 @@
                                 <td class="px-4 text-center">
                                     <div class="d-flex justify-content-center gap-2">
                                         <a href="{{ route('alergias.edit', $alergia->idAlergia) }}"
-                                           class="btn btn-sm btn-warning rounded-pill px-3 text-white">
+                                            class="btn btn-sm btn-warning rounded-pill px-3 text-white">
                                             <i class="bi bi-pencil"></i>
                                         </a>
 
                                         <button type="button"
-                                                class="btn btn-sm btn-danger rounded-pill px-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#modalEliminarAlergia"
-                                                data-id="{{ $alergia->idAlergia }}"
-                                                data-nombre="{{ $alergia->nombre }}">
+                                            class="btnEliminarAlergia btn btn-sm btn-danger rounded-pill px-3"
+                                            data-bs-toggle="modal" data-bs-target="#modalEliminarAlergia"
+                                            data-id="{{ $alergia->idAlergia }}" data-nombre="{{ $alergia->nombre }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -49,4 +47,4 @@
                 {{ $alergias->links() }}
             </div>
 
-        </div>
+            </div>

@@ -16,12 +16,12 @@ class EspecialidadController extends Controller
                 $query->where('nombre', 'like', "%{$buscar}%");
             })
             ->orderBy('idEspecialidad', 'asc')
-            ->paginate(10)
+            ->paginate(6)
             ->withQueryString();
 
-            if ($request->ajax()) {
-                return view('especialidades.partials.tabla', compact('especialidades'))->render();
-            }
+        if ($request->ajax()) {
+            return view('especialidades.partials.tabla', compact('especialidades'))->render();
+        }
 
         return view('especialidades.index', compact('especialidades', 'buscar'));
     }
@@ -53,7 +53,8 @@ class EspecialidadController extends Controller
             'nombre' => $nombre
         ]);
 
-        return back()
+        return redirect()
+            ->route('especialidades.index')
             ->with('success', 'Especialidad registrada correctamente.');
     }
 
@@ -79,7 +80,9 @@ class EspecialidadController extends Controller
         $especialidad = Especialidad::findOrFail($id);
         $especialidad->update($request->all());
 
-        return redirect()->route('especialidades.index')->with('success', 'Especialidad actualizada correctamente');
+        return redirect()
+            ->route('especialidades.index')
+            ->with('success', 'Especialidad actualizada correctamente');
     }
 
     public function destroy($id)

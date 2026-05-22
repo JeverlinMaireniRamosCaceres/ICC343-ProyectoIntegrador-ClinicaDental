@@ -23,12 +23,9 @@
                             Nombre
                         </label>
 
-                        <input type="text"
-                               name="nombre"
-                               id="nombre"
-                               class="form-control @error('nombre') is-invalid @enderror"
-                               value="{{ old('nombre') }}"
-                               placeholder="Ej: Ortodoncia">
+                        <input type="text" name="nombre" id="nombre"
+                            class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}"
+                            placeholder="Ej: Ortodoncia">
 
                         @error('nombre')
                             <div class="invalid-feedback ps-2">
@@ -38,14 +35,11 @@
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end">
-                        <a href="{{ route('especialidades.index') }}"
-                           class="btn btn-light rounded-pill px-4">
+                        <a href="{{ route('especialidades.index') }}" class="btn btn-light rounded-pill px-4">
                             Cancelar
                         </a>
 
-                        <button type="submit"
-                                class="btn rounded-pill px-4 text-white"
-                                style="background-color: #0ea5e9;">
+                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
                             <i class="bi bi-floppy"></i>
                             Guardar
                         </button>

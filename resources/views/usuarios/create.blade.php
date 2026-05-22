@@ -2,178 +2,121 @@
 
 @section('content')
 
-<div class="container-fluid px-4">
+    <div class="container py-4">
 
-    <!-- header -->
-    <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
 
-        <a href="{{ route('usuarios.index') }}"
-        class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center"
-        style="width: 40px; height: 40px;">
-            <i class="bi bi-arrow-left"></i>
-        </a>
+            <a href="{{ route('usuarios.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
-        <h4 class="fw-semibold mb-0">Nuevo usuario</h4>
+            <h2 class="fw-semibold mb-0">
+                Nuevo usuario
+            </h2>
 
-    </div>
+        </div>
 
-    <form action="{{ route('usuarios.store') }}" method="POST">
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-body p-4">
 
-        @if ($errors->any())
+                <h6 class="fw-semibold mb-3">Información de cuenta</h6>
 
-            <div class="alert alert-danger">
+                <form action="{{ route('usuarios.store') }}" method="POST">
+                    @csrf
 
-                <ul class="mb-0">
-
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-
-                </ul>
-
-            </div>
-
-        @endif
-
-        @csrf
-
-        <div class="row g-4">
-
-            <!-- informacion de cuenta -->
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body">
-
-                        <h6 class="fw-semibold mb-3">Información de cuenta</h6>
-
-                        <div class="row g-3">
-
-                            <!-- usuario -->
-                            <div class="col-md-6">
-                                <label class="form-label">Usuario</label>
-                                <input type="text"
-                                       name="username"
-                                       value="{{ old('username') }}"
-                                       class="form-control border-secondary-subtle"
-                                       placeholder="Ej: admin">
-
-                                @error('username')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <!-- contrasenia -->
-                            <div class="col-md-6">
-                                <label class="form-label">Contraseña</label>
-                                <input type="password"
-                                       name="password"
-                                       class="form-control border-secondary-subtle"
-                                       placeholder="********">
-
-                                @error('password')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <!-- confirmar contrasenia -->
-                            <div class="col-md-6">
-                                <label class="form-label">Confirmar contraseña</label>
-                                <input type="password"
-                                       name="password_confirmation"
-                                       class="form-control border-secondary-subtle"
-                                       placeholder="********">
-                            </div>
-
-                        </div>
-
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-muted fw-semibold small">Usuario</label>
+                        <input type="text" name="username" id="username"
+                            class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}"
+                            placeholder="Ej: admin">
+                        @error('username')
+                            <div class="invalid-feedback ps-2">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
-            </div>
 
-            <!-- configuracion -->
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body">
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-muted fw-semibold small">Contraseña</label>
+                        <input type="password" name="password" id="password"
+                            class="form-control @error('password') is-invalid @enderror" placeholder="********">
+                        @error('password')
+                            <div class="invalid-feedback ps-2">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                        <h6 class="fw-semibold mb-3">Configuración</h6>
+                    <div class="mb-3">
+                        <label for="usuario" class="form-label text-muted fw-semibold small">Confirmar contraseña</label>
+                        <input type="password" name="password_confirmation" class="form-control" placeholder="********">
+                    </div>
 
-                        <!-- Rol -->
-                        <div class="mb-3">
-                            <label class="form-label">Rol</label>
-                            <select name="idRol" id="idRol" class="form-select border-secondary-subtle @error('idRol') is-invalid @enderror">>
+                    <br>
+
+                    <h6 class="fw-semibold mb-3">Configuración</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rol</label>
+                        <select name="idRol" id="idRol"
+                            class="form-select border-secondary-subtle @error('idRol') is-invalid @enderror">>
 
                             <option value="">Seleccione un rol</option>
 
-                            @foreach($roles as $rol)
-                                <option value="{{ $rol->idRol }}"
-                                    {{ old('idRol') == $rol->idRol ? 'selected' : '' }}>
+                            @foreach ($roles as $rol)
+                                <option value="{{ $rol->idRol }}" {{ old('idRol') == $rol->idRol ? 'selected' : '' }}>
                                     {{ $rol->nombre }}
                                 </option>
                             @endforeach
 
-                            </select>
+                        </select>
 
-                            @error('idRol')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
+                        @error('idRol')
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3 {{ old('idRol') == 3 ? '' : 'd-none' }}" id="contenedorPersona">
+                        <label class="form-label">Persona vinculada</label>
+
+                        <div class="position-relative">
+                            <input type="text" value="{{ old('persona_nombre') }}"
+                                class="form-control border-secondary-subtle pe-5" name="persona_nombre" id="persona_nombre"
+                                placeholder="Buscar persona...">
+
+                            <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                         </div>
 
-                        <!-- persona vinculada -->
-                            <div class="mb-3 d-none" id="contenedorPersona">
-                                <label class="form-label">Persona vinculada</label>
+                        <div id="resultadosPersonas" class="list-group mt-1 shadow-sm">
+                        </div>
 
-                                <div class="position-relative">
-                                    <input type="text"
-                                        value="{{ old('persona_nombre') }}"
-                                        class="form-control border-secondary-subtle pe-5"
-                                        name="persona_nombre"
-                                        id="persona_nombre"
-                                        placeholder="Buscar persona...">
+                        <input type="hidden" name="idPersona" id="persona_id" value="{{ old('idPersona') }}">
 
-                                    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
-                                </div>
+                        <small class="text-muted">
+                            Escribe el nombre de la persona para vincularla al usuario.
+                        </small>
 
-                                <div id="resultadosPersonas"
-                                    class="list-group mt-1 shadow-sm">
-                                </div>
-
-                                <input type="hidden" name="idPersona" id="persona_id" value="{{ old('idPersona') }}">
-
-                                <small class="text-muted">
-                                    Escribe el nombre de la persona para vincularla al usuario.
-                                </small>
-
-                                @error('idPersona')
-                                    <div class="text-danger small mt-1">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                        @error('idPersona')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
                             </div>
-
+                        @enderror
                     </div>
-                </div>
 
-                <!-- boton -->
-                <div class="d-grid mt-3">
-                    <button type="submit" class="btn btn-primary rounded-pill py-2 shadow-sm">
-                        Guardar
-                    </button>
-                </div>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{{ route('usuarios.index') }}" class="btn btn-light rounded-pill px-4">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                            <i class="bi bi-floppy"></i> Guardar
+                        </button>
+                    </div>
+
+                </form>
 
             </div>
-
         </div>
 
-    </form>
+    </div>
 
-</div>
-
-<script src="{{ asset('js/buscar-persona-usuario.js') }}"></script>
+    <script src="{{ asset('js/buscar-persona-usuario.js') }}"></script>
 
 @endsection
