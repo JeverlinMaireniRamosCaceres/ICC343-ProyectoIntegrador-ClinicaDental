@@ -25,7 +25,7 @@
             <a href="{{ route('usuarios.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
 
                 <i class="bi bi-plus-lg me-1"></i>
-                Nuevo Usuario
+                Nuevo
 
             </a>
 
@@ -45,9 +45,8 @@
 
                         <form method="GET" action="{{ route('usuarios.index') }}">
 
-                            <input type="text" name="buscar" value="{{ request('buscar') }}"
+                            <input type="text" name="buscar" id="buscarUsuario" value="{{ request('buscar') }}"
                                 class="form-control rounded-pill ps-5 search-input" placeholder="Buscar usuario...">
-
                         </form>
 
                     </div>
@@ -67,7 +66,7 @@
 
     </div>
 
-    <!-- modal eliminar -->
+    <!-- modal dar de baja -->
     <div class="modal fade" id="modalEliminarUsuario" tabindex="-1" aria-hidden="true">
 
         <div class="modal-dialog modal-dialog-centered">
@@ -86,11 +85,7 @@
                         </div>
 
                         <div>
-                            <h5 class="fw-bold mb-0">Eliminar usuario</h5>
-
-                            <small class="text-muted">
-                                Esta acción no se puede deshacer
-                            </small>
+                            <h5 class="fw-bold mb-0">Dar de baja a usuario</h5>
                         </div>
 
                     </div>
@@ -103,10 +98,9 @@
                 <div class="modal-body pt-3">
 
                     <p class="mb-0">
-                        ¿Estás seguro de que deseas eliminar
-                        <strong id="nombreUsuarioliminar">
-                            este usuario
-                        </strong>?
+                        ¿Estás seguro de que deseas darle de baja a
+                        <strong id="nombreUsuarioEliminar">
+                            este usuario</strong>?
                     </p>
 
                 </div>
@@ -126,7 +120,7 @@
 
                         <button type="submit" class="btn btn-danger rounded-pill px-4">
 
-                            Eliminar
+                            Dar de baja
 
                         </button>
 
@@ -140,24 +134,74 @@
 
     </div>
 
-    <script>
-        const modalEliminarUsuario =
-            document.getElementById('modalEliminarUsuario');
+    <!-- modal activar -->
+    <div class="modal fade" id="modalActivarUsuario" tabindex="-1" aria-hidden="true">
 
-        modalEliminarUsuario.addEventListener('show.bs.modal', function(e) {
+        <div class="modal-dialog modal-dialog-centered">
 
-            const btn = e.relatedTarget;
+            <div class="modal-content border-0 shadow rounded-4">
 
-            const id = btn.getAttribute('data-id');
-            const nombre = btn.getAttribute('data-nombre');
+                <div class="modal-header border-0 pb-0">
 
-            document.getElementById('nombreUsuarioEliminar')
-                .textContent = nombre;
+                    <div class="d-flex align-items-center gap-2">
 
-            document.getElementById('formEliminarUsuario')
-                .action = `/usuario/${id}`;
+                        <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center"
+                            style="width: 42px; height: 42px;">
 
-        });
-    </script>
+                            <i class="bi bi-check-circle-fill text-success"></i>
+
+                        </div>
+
+                        <div>
+                            <h5 class="fw-bold mb-0">Activar usuario</h5>
+                        </div>
+
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body pt-3">
+
+                    <p class="mb-0">
+                        ¿Estás seguro de que deseas activar
+                        <strong id="nombreUsuarioActivar">
+                            este usuario</strong>?
+                    </p>
+
+                </div>
+
+                <div class="modal-footer border-0 pt-0">
+
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <form id="formActivarUsuario" method="POST">
+
+                        @csrf
+                        @method('PUT')
+
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+
+                            Activar
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{{ asset('js/usuario.js') }}"></script>
 
 @endsection

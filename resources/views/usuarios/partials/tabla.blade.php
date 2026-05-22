@@ -33,9 +33,9 @@
 
                     <td class="px-4">
                         @if ($usuario->deleted_at)
-                            Inactivo
+                            <span class="badge rounded-pill px-3 py-2 text-danger bg-danger-subtle">Inactivo</span>
                         @else
-                            <span class="badge bg-success">Activo</span>
+                            <span class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">Activo</span>
                         @endif
                     </td>
 
@@ -44,19 +44,32 @@
                         <div class="d-flex justify-content-center gap-2">
 
                             <a href="{{ route('usuarios.edit', $usuario->idUsuario) }}"
-                                class="btn btn-sm btn-warning rounded-pill px-3 text-white">
+                                class="btn btn-sm btn-warning rounded-pill px-3 text-white"
+                                title="Editar">
 
                                 <i class="bi bi-pencil"></i>
 
                             </a>
 
-                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3"
-                                data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario"
-                                data-id="{{ $usuario->idUsuario }}" data-nombre="{{ $usuario->username }}">
+                            @if (!$usuario->trashed())
+                                <button type="button" class="btn btn-sm btn-danger rounded-pill px-3"
+                                    data-bs-toggle="modal" data-bs-target="#modalEliminarUsuario"
+                                    data-id="{{ $usuario->idUsuario }}" data-nombre="{{ $usuario->username }}"
+                                    title="Dar de baja">
 
-                                <i class="bi bi-ban"></i>
+                                    <i class="bi bi-ban"></i>
 
-                            </button>
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-sm btn-success rounded-pill px-3"
+                                    data-bs-toggle="modal" data-bs-target="#modalActivarUsuario"
+                                    data-id="{{ $usuario->idUsuario }}" data-nombre="{{ $usuario->username }}"
+                                    title="Activar">
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                </button>
+                            @endif
 
                         </div>
 

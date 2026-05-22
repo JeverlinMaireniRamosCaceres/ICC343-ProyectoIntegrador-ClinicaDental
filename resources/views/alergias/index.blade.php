@@ -24,7 +24,7 @@
         class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
 
             <i class="bi bi-plus-lg me-1"></i>
-            Nueva alergia
+            Nueva
 
         </a>
     </div>
@@ -38,7 +38,7 @@
                 <div class="position-relative" style="max-width: 350px;">
                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                    <form method="GET" action="{{ route('alergias.index') }}">    
+                    <form method="GET" action="{{ route('alergias.index') }}">
                         <input type="text"
                                 name="buscar"
                                 id="buscarAlergia"

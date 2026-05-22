@@ -20,7 +20,8 @@ class UsuariosController extends Controller
                 $query->where('username', 'like', "%{$buscar}%");
             })
             ->orderBy('idUsuario', 'asc')
-            ->paginate(10)
+            ->withTrashed()
+            ->paginate(6)
             ->withQueryString();
 
         if ($request->ajax()) {
@@ -65,9 +66,9 @@ class UsuariosController extends Controller
             'idPersona' => $request->idPersona
         ]);
 
-
-
-        return redirect()->route('usuarios.index');
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario registrado correctamente.');
     }
 
     public function buscarPersonas(Request $request)
@@ -106,6 +107,23 @@ class UsuariosController extends Controller
 
     public function destroy($id)
     {
-        return redirect()->route('usuarios.index');
+        $usuario = Usuario::findOrFail($id);
+
+        $usuario->delete();
+
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario dado de baja correctamente.');
+    }
+
+    public function activar($id)
+    {
+        $usuario = Usuario::withTrashed()->findOrFail($id);
+
+        $usuario->restore();
+
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario activado correctamente.');
     }
 }

@@ -25,7 +25,7 @@
             <a href="{{ route('especialidades.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
 
                 <i class="bi bi-plus-lg me-1"></i>
-                Nueva especialidad
+                Nueva
 
             </a>
 
