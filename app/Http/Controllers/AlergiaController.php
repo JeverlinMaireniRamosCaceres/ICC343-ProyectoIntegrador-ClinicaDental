@@ -65,4 +65,17 @@ class AlergiaController extends Controller
 
         return redirect()->route('alergias.index')->with('success', 'Alergia actualizada correctamente');
     }
+
+    public function destroy($id)
+    {
+        $alergia = Alergia::findOrFail($id);
+
+        $alergia->delete();
+
+        return redirect()
+            ->route('alergias.index')
+            ->with('success', 'Alergia eliminada correctamente');
+    }
+
 }
+

@@ -1,22 +1,16 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('click', function (e) {
 
-    const modalEliminarAlergia = document.getElementById('modalEliminarAlergia');
+    const boton = e.target.closest('.btnEliminarAlergia');
 
-    if (!modalEliminarAlergia) return;
+    if(!boton) return;
 
-    modalEliminarAlergia.addEventListener('show.bs.modal', function (event) {
+    const id = boton.dataset.id;
+    const nombre = boton.dataset.nombre;
 
-        const button = event.relatedTarget;
+    document.getElementById('nombreAlergiaEliminar')
+        .textContent = nombre;
 
-        const id = button.getAttribute('data-id');
-        const nombre = button.getAttribute('data-nombre');
-
-        document.getElementById('nombreAlergiaEliminar').textContent = nombre;
-
-        const form = document.getElementById('formEliminarAlergia');
-
-        form.action = `/alergias/${id}`;
-
-    });
+    document.getElementById('formEliminarAlergia')
+        .action = `/alergias/${id}`;
 
 });

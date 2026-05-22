@@ -1,4 +1,7 @@
-<div id="sidebar-container" class="d-flex flex-column shadow">
+<div id="sidebar-container"
+     class="d-flex flex-column shadow
+     {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}">
+      
     <div class="sidebar-header py-4 text-center text-white">
 
         <div class="brand">
