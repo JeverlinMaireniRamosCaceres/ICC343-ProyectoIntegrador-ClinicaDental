@@ -55,7 +55,7 @@
                     <div class="mb-3">
                         <label class="form-label">Rol</label>
                         <select name="idRol" id="idRol"
-                            class="form-select border-secondary-subtle @error('idRol') is-invalid @enderror">>
+                            class="form-select border-secondary-subtle @error('idRol') is-invalid @enderror">
 
                             <option value="">Seleccione un rol</option>
 
