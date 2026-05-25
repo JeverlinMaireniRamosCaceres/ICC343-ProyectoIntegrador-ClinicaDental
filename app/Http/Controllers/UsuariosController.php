@@ -95,15 +95,55 @@ class UsuariosController extends Controller
         return view('usuarios.show', compact('id'));
     }
 
-    public function edit($id)
-    {
-        return view('usuarios.edit', compact('id'));
+public function edit($id)
+{
+    $usuario = Usuario::withTrashed()->findOrFail($id);
+    
+    $roles = Rol::all();
+
+    $personaAsociada = null;
+    if ($usuario->idPersona) {
+        $personaAsociada = Persona::find($usuario->idPersona);
     }
 
-    public function update(Request $request, $id)
-    {
-        return redirect()->route('usuarios.index');
+    return view('usuarios.edit', compact('usuario', 'roles', 'personaAsociada'));
+}
+
+public function update(Request $request, $id)
+{
+    $usuario = Usuario::withTrashed()->findOrFail($id);
+
+    $request->validate(
+        [
+            'username' => 'required|max:50|unique:usuarios,username,' . $id . ',idUsuario',
+            'password' => 'nullable|confirmed', 
+            'idRol' => 'required',
+            'idPersona' => 'required_if:idRol,3'
+        ],
+        [
+            'username.required' => 'El usuario es obligatorio.',
+            'username.unique' => 'Ese usuario ya existe.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'idRol.required' => 'Debe seleccionar un rol.',
+            'idPersona.required_if' => 'Debe seleccionar una persona para el odontólogo.'
+        ]
+    );
+
+    $usuario->username = $request->username;
+    $usuario->idRol = $request->idRol;
+
+    $usuario->idPersona = ($request->idRol == 3) ? $request->idPersona : null;
+
+    if ($request->filled('password')) {
+        $usuario->password = Hash::make($request->password);
     }
+
+    $usuario->save();
+
+    return redirect()
+        ->route('usuarios.index')
+        ->with('success', 'Usuario actualizado correctamente.');
+}
 
     public function destroy($id)
     {
