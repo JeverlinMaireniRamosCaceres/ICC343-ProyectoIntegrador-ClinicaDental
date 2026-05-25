@@ -74,7 +74,11 @@ class EspecialidadController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100'
+            'nombre' => 'required|string|max:100|unique:especialidades,nombre,' . $id . ',idEspecialidad'
+        ],
+        [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.unique' => 'Esta especialidad ya existe.'
         ]);
 
         $especialidad = Especialidad::findOrFail($id);
