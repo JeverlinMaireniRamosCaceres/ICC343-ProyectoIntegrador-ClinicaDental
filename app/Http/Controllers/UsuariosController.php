@@ -97,14 +97,10 @@ class UsuariosController extends Controller
 
 public function edit($id)
     {
-        // Buscamos el usuario permitiendo que esté soft-deleted
         $usuario = Usuario::withTrashed()->findOrFail($id);
         
-        // Obtenemos todos los roles para el select
         $roles = Rol::all();
 
-        // Si el usuario tiene una persona/odontólogo vinculado, buscamos sus datos 
-        // para que aparezca precargado en el input visual del formulario
         $personaAsociada = null;
         if ($usuario->idPersona) {
             $personaAsociada = Persona::find($usuario->idPersona);
@@ -119,9 +115,7 @@ public function edit($id)
 
         $request->validate(
             [
-                // Ignoramos el idUsuario actual para que no choque con la regla 'unique' de su propio nombre
                 'username' => 'required|max:50|unique:usuarios,username,' . $id . ',idUsuario',
-                // Al editar, la contraseña pasa a ser opcional (nullable)
                 'password' => 'nullable|confirmed',
                 'idRol' => 'required',
                 'idPersona' => 'required_if:idRol,3'
@@ -135,14 +129,11 @@ public function edit($id)
             ]
         );
 
-        // Actualizamos los datos principales
         $usuario->username = $request->username;
         $usuario->idRol = $request->idRol;
 
-        // Si el rol es 3 (Odontólogo), se guarda la persona. Si cambia de rol, se limpia a null.
         $usuario->idPersona = ($request->idRol == 3) ? $request->idPersona : null;
 
-        // Únicamente encriptamos y cambiamos la contraseña si el campo no viene vacío
         if ($request->filled('password')) {
             $usuario->password = Hash::make($request->password);
         }

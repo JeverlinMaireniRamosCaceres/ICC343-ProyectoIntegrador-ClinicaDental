@@ -42,7 +42,6 @@
                                 @enderror
                             </div>
 
-                            {{-- Se muestra automáticamente si el rol actual o el anterior en la validación es Odontólogo (3) --}}
                             <div class="col-md-6 {{ old('idRol', $usuario->idRol) == 3 ? '' : 'd-none' }}" id="contenedorPersona">
                                 <label for="persona_nombre" class="form-label text-muted fw-semibold small">Persona vinculada</label>
 
@@ -58,10 +57,8 @@
                                     <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                                 </div>
 
-                                {{-- Lista donde el JS inyectará los resultados del servidor --}}
                                 <div id="resultadosPersonas" class="list-group mt-1 shadow-sm position-absolute w-100 z-3"></div>
 
-                                {{-- Input oculto indispensable para el JavaScript del main --}}
                                 <input type="hidden" name="idPersona" id="persona_id" value="{{ old('idPersona', $usuario->idPersona) }}">
                                 
                                 @error('idPersona')
@@ -138,7 +135,6 @@
 
 </div>
 
-{{-- Cargamos el script nativo que maneja la lógica perfectamente --}}
 <script src="{{ asset('js/buscar-persona-usuario.js') }}"></script>
 
 @endsection
