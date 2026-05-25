@@ -96,74 +96,62 @@ class UsuariosController extends Controller
     }
 
 public function edit($id)
-{
-    $usuario = Usuario::withTrashed()->findOrFail($id);
-    
-    $roles = Rol::all();
-
-    $personaAsociada = null;
-    if ($usuario->idPersona) {
-        $personaAsociada = Persona::find($usuario->idPersona);
-    }
-
-    return view('usuarios.edit', compact('usuario', 'roles', 'personaAsociada'));
-}
-
-public function update(Request $request, $id)
-{
-    $usuario = Usuario::withTrashed()->findOrFail($id);
-
-    $request->validate(
-        [
-            'username' => 'required|max:50|unique:usuarios,username,' . $id . ',idUsuario',
-            'password' => 'nullable|confirmed', 
-            'idRol' => 'required',
-            'idPersona' => 'required_if:idRol,3'
-        ],
-        [
-            'username.required' => 'El usuario es obligatorio.',
-            'username.unique' => 'Ese usuario ya existe.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'idRol.required' => 'Debe seleccionar un rol.',
-            'idPersona.required_if' => 'Debe seleccionar una persona para el odontólogo.'
-        ]
-    );
-
-    $usuario->username = $request->username;
-    $usuario->idRol = $request->idRol;
-
-    $usuario->idPersona = ($request->idRol == 3) ? $request->idPersona : null;
-
-    if ($request->filled('password')) {
-        $usuario->password = Hash::make($request->password);
-    }
-
-    $usuario->save();
-
-    return redirect()
-        ->route('usuarios.index')
-        ->with('success', 'Usuario actualizado correctamente.');
-}
-
-    public function destroy($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        // Buscamos el usuario permitiendo que esté soft-deleted
+        $usuario = Usuario::withTrashed()->findOrFail($id);
+        
+        // Obtenemos todos los roles para el select
+        $roles = Rol::all();
 
-        $usuario->delete();
+        // Si el usuario tiene una persona/odontólogo vinculado, buscamos sus datos 
+        // para que aparezca precargado en el input visual del formulario
+        $personaAsociada = null;
+        if ($usuario->idPersona) {
+            $personaAsociada = Persona::find($usuario->idPersona);
+        }
 
-        return redirect()
-            ->route('usuarios.index')
-            ->with('success', 'Usuario dado de baja correctamente.');
+        return view('usuarios.edit', compact('usuario', 'roles', 'personaAsociada'));
     }
 
-    public function activar($id)
+    public function update(Request $request, $id)
     {
         $usuario = Usuario::withTrashed()->findOrFail($id);
 
-        $usuario->restore();
+        $request->validate(
+            [
+                // Ignoramos el idUsuario actual para que no choque con la regla 'unique' de su propio nombre
+                'username' => 'required|max:50|unique:usuarios,username,' . $id . ',idUsuario',
+                // Al editar, la contraseña pasa a ser opcional (nullable)
+                'password' => 'nullable|confirmed',
+                'idRol' => 'required',
+                'idPersona' => 'required_if:idRol,3'
+            ],
+            [
+                'username.required' => 'El usuario es obligatorio.',
+                'username.unique' => 'Ese usuario ya existe.',
+                'password.confirmed' => 'Las contraseñas no coinciden.',
+                'idRol.required' => 'Debe seleccionar un rol.',
+                'idPersona.required_if' => 'Debe seleccionar una persona para el odontólogo.'
+            ]
+        );
+
+        // Actualizamos los datos principales
+        $usuario->username = $request->username;
+        $usuario->idRol = $request->idRol;
+
+        // Si el rol es 3 (Odontólogo), se guarda la persona. Si cambia de rol, se limpia a null.
+        $usuario->idPersona = ($request->idRol == 3) ? $request->idPersona : null;
+
+        // Únicamente encriptamos y cambiamos la contraseña si el campo no viene vacío
+        if ($request->filled('password')) {
+            $usuario->password = Hash::make($request->password);
+        }
+
+        $usuario->save();
 
         return redirect()
             ->route('usuarios.index')
-            ->with('success', 'Usuario activado correctamente.');
+            ->with('success', 'Usuario actualizado correctamente.');
     }
+
 }
