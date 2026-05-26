@@ -33,4 +33,6 @@ jobs:
 
             docker exec clinica_app php artisan migrate --force
 
+            docker exec clinica_app php artisan db:seed --class=RolSeeder --force
+
             docker exec clinica_app php artisan optimize

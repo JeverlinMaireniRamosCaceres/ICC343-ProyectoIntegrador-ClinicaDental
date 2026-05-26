@@ -48,6 +48,14 @@ RUN npm run build
 # Permisos
 RUN chown -R www-data:www-data /var/www
 
+RUN mkdir -p storage/framework/views \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/logs \
+    bootstrap/cache
+
+RUN chmod -R 775 storage bootstrap/cache
+
 EXPOSE 9000
 
 CMD ["php-fpm"]
