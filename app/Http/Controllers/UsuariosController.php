@@ -98,7 +98,7 @@ class UsuariosController extends Controller
 public function edit($id)
     {
         $usuario = Usuario::withTrashed()->findOrFail($id);
-        
+
         $roles = Rol::all();
 
         $personaAsociada = null;
@@ -143,6 +143,28 @@ public function edit($id)
         return redirect()
             ->route('usuarios.index')
             ->with('success', 'Usuario actualizado correctamente.');
+    }
+
+    public function destroy($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+
+        $usuario->delete();
+
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario dado de baja correctamente.');
+    }
+
+    public function activar($id)
+    {
+        $usuario = Usuario::withTrashed()->findOrFail($id);
+
+        $usuario->restore();
+
+        return redirect()
+            ->route('usuarios.index')
+            ->with('success', 'Usuario activado correctamente.');
     }
 
 }
