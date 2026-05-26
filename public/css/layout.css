@@ -98,29 +98,8 @@ body {
     z-index: 1000;
 }
 
-#sidebar-container.collapsed {
-    width: 80px;
-}
-
-#sidebar-container.collapsed .link-text,
-#sidebar-container.collapsed .sidebar-header h5,
-#sidebar-container.collapsed .dropdown-toggle::after {
-    display: none;
-}
-
 .sidebar-header {
     padding: 16px 18px 10px 18px;
-}
-
-#sidebar-container.collapsed .nav-link {
-    text-align: center;
-    padding: 15px 0;
-    justify-content: center;
-}
-
-#sidebar-container.collapsed .nav-link i {
-    margin: 0;
-    font-size: 1.4rem;
 }
 
 #page-content-wrapper {
@@ -164,36 +143,9 @@ body {
     margin-right: 14px;
 }
 
-.sidebar-toggle{
-    background: rgba(255,255,255,0.08);
-    border: none;
-    color: #cbd5e1;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-}
-
 .sidebar-toggle:hover{
     background: rgba(255,255,255,0.15);
 }
-
-#sidebar-container.collapsed .brand-icon {
-    display: none;
-}
-
-/* PARA ROTAR EL ICONO */
-.toggle-icon {
-    transition: transform 0.3s ease;
-}
-
-#sidebar-container.collapsed .toggle-icon {
-    transform: rotate(180deg);
-}
-
 
 /* TOPBAR */
 
@@ -353,4 +305,90 @@ body {
     background-color: #0284c7;
     border-color: #0284c7;
     color: #fff;
+}
+
+/* SIDEBAR */
+
+#sidebar-container {
+    width: 80px;
+    min-height: 100vh;
+    background: var(--sidebar-bg);
+    transition: width 0.3s ease;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#sidebar-container:hover {
+    width: 260px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 18px 20px;
+    min-height: 70px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.brand-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+#sidebar-container .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+    margin: 4px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+#sidebar-container .nav-link i {
+    min-width: 22px;
+    font-size: 1.2rem;
+    text-align: center;
+    margin: 0;
+}
+
+#sidebar-container .nav-link .link-text {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+#sidebar-container:hover .nav-link .link-text {
+    opacity: 1;
+    visibility: visible;
+}
+
+.submenu {
+    overflow: hidden;
+}
+
+#sidebar-container:not(:hover) .dropdown-toggle::after {
+    display: none;
+}
+
+
+#sidebar-container:not(:hover) .submenu {
+    display: none !important;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-bottom: 12px;
 }

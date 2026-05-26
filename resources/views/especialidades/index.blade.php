@@ -45,8 +45,12 @@
 
                         <form method="GET" action="{{ route('especialidades.index') }}">
 
-                            <input type="text" name="buscar" value="{{ request('buscar') }}"
-                                class="form-control rounded-pill ps-5 search-input" placeholder="Buscar especialidad...">
+                            <input type="text"
+                                name="buscar"
+                                id="buscarEspecialidad"
+                                value="{{ request('buscar') }}"
+                                class="form-control rounded-pill ps-5 search-input"
+                                placeholder="Buscar especialidad...">
 
                         </form>
 
@@ -159,5 +163,7 @@
 
         });
     </script>
+
+    <script src="{{ asset('js/especialidad.js') }}"></script>
 
 @endsection

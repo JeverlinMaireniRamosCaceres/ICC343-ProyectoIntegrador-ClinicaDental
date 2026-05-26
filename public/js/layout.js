@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
 
     const toggleBtn = document.getElementById('toggle-sidebar');
     const sidebar = document.getElementById('sidebar-container');
@@ -8,4 +8,4 @@ document.addEventListener('DOMContentLoaded', function () {
             sidebar.classList.toggle('collapsed');
         });
     }
-});
+});*/
