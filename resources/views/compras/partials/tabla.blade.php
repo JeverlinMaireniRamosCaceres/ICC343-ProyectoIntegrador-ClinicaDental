@@ -36,7 +36,7 @@
                     </td>
 
                     <td>
-                        @if ($compra->estado === 'pagada')
+                        @if ($compra->estado === 'Pagada')
                             <span class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
                                 Pagada
                             </span>
@@ -51,17 +51,18 @@
 
                     <div class="d-flex gap-2">
 
-                        <a href="{{ route('compras.show', $compra->id) }}" class="btn btn-sm btn-secondary rounded-pill px-3"
+                        <a href="{{ route('compras.show', $compra->idCompras) }}" class="btn btn-sm btn-secondary rounded-pill px-3"
                             title="Ver">
                             <i class="bi bi-eye-fill"></i>
                         </a>
 
-                        <a href="{{ route('compras.edit', $compra->id) }}" class="btn btn-sm btn-warning rounded-pill px-3"
+                        <a href="{{ route('compras.edit', $compra->idCompras) }}" class="btn btn-sm btn-warning rounded-pill px-3"
                             style="color:white;" title="Editar">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
 
-                        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" title="Eliminar">
+                        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modalEliminarCompra"
+                                    data-id="{{ $compra->idCompras }}" title="Activar">
                             <i class="bi bi-trash"></i>
                         </button>
 

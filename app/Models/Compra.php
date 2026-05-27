@@ -3,12 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Compra extends Model
 {
+    use softDeletes;
+
     protected $table = 'compras';
 
     protected $primaryKey = 'idCompras';
+
+    protected $casts = [
+        'fecha' => 'date',
+    ];
 
     protected $fillable = [
         'idProveedor',
@@ -17,8 +24,8 @@ class Compra extends Model
         'estado'
     ];
 
-    /*public function proveedor()
+    public function proveedor()
     {
         return $this->belongsTo(Proveedor::class, 'idProveedor', 'idProveedor');
-    }*/
+    }
 }
