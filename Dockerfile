@@ -46,15 +46,16 @@ RUN npm run build
 #RUN php artisan view:cache
 
 # Permisos
-RUN chown -R www-data:www-data /var/www
-
-RUN mkdir -p storage/framework/views \
-    storage/framework/cache \
-    storage/framework/sessions \
-    storage/logs \
-    bootstrap/cache
-
-RUN chmod -R 775 storage bootstrap/cache
+RUN mkdir -p /tmp \
+    && chmod 1777 /tmp \
+    && mkdir -p /var/www/storage/framework/views \
+    && mkdir -p /var/www/storage/framework/cache \
+    && mkdir -p /var/www/storage/framework/sessions \
+    && mkdir -p /var/www/storage/logs \
+    && chown -R www-data:www-data /var/www/storage \
+    && chown -R www-data:www-data /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage \
+    && chmod -R 775 /var/www/bootstrap/cache
 
 EXPOSE 9000
 
