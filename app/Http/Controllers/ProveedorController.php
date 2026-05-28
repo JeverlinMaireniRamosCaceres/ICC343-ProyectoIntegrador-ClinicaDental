@@ -1,17 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+use App\Models\Proveedor;
 
 class ProveedorController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('proveedores.index');
+        $buscar = $request->buscar;
+
+         $proveedores = Proveedor::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('correo', 'like', "%{$buscar}%")
+                    ->orWhere('telefono', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idProveedor', 'asc')
+            ->paginate(6)
+            ->withQueryString();
+
+        if ($request->ajax()) {
+            return view('proveedores.partials.tabla', compact('proveedores'))->render();
+        }
+
+        return view('proveedores.index', compact('proveedores', 'buscar'));
     }
 
     /**
@@ -61,4 +77,10 @@ class ProveedorController extends Controller
     {
         //
     }
+
+    public function activar($id)
+    {
+        
+    }
+
 }
