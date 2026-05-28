@@ -1,0 +1,174 @@
+<div class="table-responsive">
+
+    <table class="table table-hover align-middle mb-0">
+
+        <thead class="table-light">
+
+            <tr>
+
+                <th class="px-4 py-3 text-muted fw-semibold small">
+                    Nombre
+                </th>
+
+                <th class="px-4 py-3 text-muted fw-semibold small">
+                    Correo
+                </th>
+
+                <th class="px-4 py-3 text-muted fw-semibold small">
+                    Teléfono
+                </th>
+
+                <th class="px-4 py-3 text-muted fw-semibold small">
+                    Estado
+                </th>
+
+                <th class="px-4 py-3 text-muted fw-semibold small text-center">
+                    Acciones
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @forelse ($proveedores as $proveedor)
+
+                <tr>
+
+                    <td class="px-4 fw-medium">
+                        {{ $proveedor->nombre }}
+                    </td>
+
+                    <td class="px-4 text-muted">
+                        {{ $proveedor->correo }}
+                    </td>
+
+                    <td class="px-4 text-muted">
+                        {{ $proveedor->telefono }}
+                    </td>
+
+                    <td class="px-4">
+
+                        @if ($proveedor->estado)
+
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+
+                                Activado
+
+                            </span>
+                        @else
+
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
+
+                                Desactivado
+
+                            </span>
+
+                        @endif
+
+                    </td>
+
+                    <td class="px-4">
+
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <!-- editar -->
+                            <a href="{{ route('proveedores.edit', $proveedor->idProveedor) }}"
+                                class="btn btn-sm btn-warning rounded-pill px-3"
+                                style="color: white;"
+                                title="Editar">
+
+                                <i class="bi bi-pencil-fill"></i>
+
+                            </a>
+
+                            <!-- activar/desactivar -->
+                            @if ($proveedor->estado)
+
+                                <form action="{{ route('proveedores.destroy', $proveedor->idProveedor) }}"
+                                    method="POST">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                        class="btn btn-sm btn-danger rounded-pill px-3"
+                                        title="Desactivar">
+
+                                        <i class="bi bi-x-octagon"></i>
+
+                                    </button>
+
+                                </form>
+
+                            @else
+
+                                <form action="{{ route('proveedores.activar', $proveedor->idProveedor) }}"
+                                    method="POST">
+
+                                    @csrf
+                                    @method('PUT')
+
+                                    <button type="submit"
+                                        class="btn btn-sm btn-success rounded-pill px-3"
+                                        title="Activar">
+
+                                        <i class="bi bi-patch-check"></i>
+
+                                    </button>
+
+                                </form>
+
+                            @endif
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td colspan="6" class="text-center py-5 text-muted">
+
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+
+                        No hay proveedores registrados.
+
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- footer -->
+<div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
+
+    <small class="text-muted">
+
+        Mostrando
+        {{ $proveedores->firstItem() ?? 0 }}
+        -
+        {{ $proveedores->lastItem() ?? 0 }}
+        de
+        {{ $proveedores->total() }}
+        resultados
+
+    </small>
+
+    <div>
+
+        {{ $proveedores->links() }}
+
+    </div>
+
+</div>
