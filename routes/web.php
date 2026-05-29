@@ -36,7 +36,12 @@ Route::resource('compras', ComprasController::class);
 Route::resource('pacientes', PacientesController::class);
 
 // proveedores
-Route::resource('proveedores', ProveedorController::class);
+Route::resource('proveedores', ProveedorController::class)
+    ->parameters([
+        'proveedores' => 'proveedor'
+    ]);
+Route::put('/proveedores/{id}/activar', [ProveedorController::class, 'activar'])
+    ->name('proveedores.activar');
 
 // usuarios
 Route::resource('usuarios', UsuariosController::class);
