@@ -46,8 +46,8 @@ class ComprasController extends Controller
     public function create()
     {
         $proveedores = Proveedor::orderBy('idProveedor')->get();
-        //$productos = Producto::orderBy('idProducto')->get();
-        return view('compras.create', compact('proveedores'));
+        $productos = Producto::orderBy('idProducto')->get();
+        return view('compras.create', compact('proveedores', 'productos'));
     }
 
     /**
@@ -55,7 +55,7 @@ class ComprasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
