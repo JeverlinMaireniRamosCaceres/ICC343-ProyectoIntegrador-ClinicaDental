@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Compra;
+use App\Models\Proveedor;
+use App\Models\Producto;
 
 class ComprasController extends Controller
 {
@@ -43,7 +45,9 @@ class ComprasController extends Controller
      */
     public function create()
     {
-        return view('compras.create');
+        $proveedores = Proveedor::orderBy('idProveedor')->get();
+        //$productos = Producto::orderBy('idProducto')->get();
+        return view('compras.create', compact('proveedores'));
     }
 
     /**
