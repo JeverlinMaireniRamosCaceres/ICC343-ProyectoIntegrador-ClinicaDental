@@ -10,13 +10,15 @@
            class="btn btn-sm btn-light rounded-pill px-3">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h2 class="fw-semibold mb-0">Editar Proveedor</h2>
+        <h2 class="fw-semibold mb-0">Editar proveedor</h2>
     </div>
 
     <div class="card border-0 shadow-sm rounded-3">
         <div class="card-body p-4">
 
-            <form action="{{ route('proveedores.update', 1) }}" method="POST">
+            <form action="{{ route('proveedores.update', $proveedor->idProveedor) }}"
+                method="POST"
+                novalidate>
                 @csrf
                 @method('PUT')
 
@@ -25,12 +27,17 @@
                         Nombre
                     </label>
 
-                    <input type="text"
-                           name="nombre"
-                           id="nombre"
-                           class="form-control"
-                           value="Dental Depot"
-                           placeholder="Ej: Dental Depot">
+                <input type="text"
+                    name="nombre"
+                    id="nombre"
+                    class="form-control @error('nombre') is-invalid @enderror"
+                    value="{{ old('nombre', $proveedor->nombre) }}"
+                    placeholder="Dental Depot">
+
+                @error('nombre')
+                    <div class="invalid-feedback ps-2">{{ $message }}</div>
+                @enderror
+
                 </div>
 
                 <div class="mb-3">
@@ -38,12 +45,18 @@
                         Teléfono
                     </label>
 
-                    <input type="text"
-                           name="telefono"
-                           id="telefono"
-                           class="form-control"
-                           value="809-555-1234"
-                           placeholder="Ej: 809-555-1234">
+                <input type="text"
+                    name="telefono"
+                    id="telefono"
+                    maxlength="12"
+                    class="form-control @error('telefono') is-invalid @enderror"
+                    value="{{ old('telefono', $proveedor->telefono) }}"
+                    placeholder="809-555-1234">
+
+                @error('telefono')
+                    <div class="invalid-feedback ps-2">{{ $message }}</div>
+                @enderror
+
                 </div>
 
                 <div class="mb-4">
@@ -51,12 +64,17 @@
                         Correo
                     </label>
 
-                    <input type="email"
-                           name="correo"
-                           id="correo"
-                           class="form-control"
-                           value="dentaldepot@email.com"
-                           placeholder="Ej: proveedor@email.com">
+                <input type="email"
+                    name="correo"
+                    id="correo"
+                    class="form-control @error('correo') is-invalid @enderror"
+                    value="{{ old('correo', $proveedor->correo) }}"
+                    placeholder="proveedor@email.com">
+
+                @error('correo')
+                    <div class="invalid-feedback ps-2">{{ $message }}</div>
+                @enderror
+
                 </div>
 
                 <div class="d-flex gap-2 justify-content-end">
@@ -67,7 +85,7 @@
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary rounded-pill px-4">
+                            class="btn btn-medical-primary rounded-pill px-4">
                         <i class="bi bi-arrow-clockwise"></i> Actualizar
                     </button>
 
@@ -79,4 +97,5 @@
     </div>
 
 </div>
+<script src="{{ asset('js/proveedor.js') }}"></script>
 @endsection

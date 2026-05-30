@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Nuevo Proveedor')
+@section('title', 'Nuevo proveedor')
 
 @section('content')
 <div class="container py-4">
@@ -10,13 +10,13 @@
            class="btn btn-sm btn-light rounded-pill px-3">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h2 class="fw-semibold mb-0">Nuevo Proveedor</h2>
+        <h2 class="fw-semibold mb-0">Nuevo proveedor</h2>
     </div>
 
     <div class="card border-0 shadow-sm rounded-3">
         <div class="card-body p-4">
 
-            <form action="{{ route('proveedores.store') }}" method="POST">
+            <form action="{{ route('proveedores.store') }}" method="POST" novalidate>
                 @csrf
 
                 <!-- NOMBRE -->
@@ -31,7 +31,7 @@
                            id="nombre"
                            class="form-control @error('nombre') is-invalid @enderror"
                            value="{{ old('nombre') }}"
-                           placeholder="Ej: Dental Depot">
+                           placeholder="Dental Depot">
 
                     @error('nombre')
                         <div class="invalid-feedback ps-2">{{ $message }}</div>
@@ -45,12 +45,14 @@
                         Teléfono
                     </label>
 
-                    <input type="text"
-                           name="telefono"
-                           id="telefono"
-                           class="form-control @error('telefono') is-invalid @enderror"
-                           value="{{ old('telefono') }}"
-                           placeholder="Ej: 809-555-1234">
+                <input type="text"
+                    name="telefono"
+                    id="telefono"
+                    maxlength="12"
+                    pattern="(809|829|849)-[0-9]{3}-[0-9]{4}"
+                    class="form-control @error('telefono') is-invalid @enderror"
+                    value="{{ old('telefono') }}"
+                    placeholder="809-555-1234">
 
                     @error('telefono')
                         <div class="invalid-feedback ps-2">{{ $message }}</div>
@@ -64,12 +66,12 @@
                         Correo
                     </label>
 
-                    <input type="email"
-                           name="correo"
-                           id="correo"
-                           class="form-control @error('correo') is-invalid @enderror"
-                           value="{{ old('correo') }}"
-                           placeholder="Ej: proveedor@email.com">
+                <input type="email"
+                    name="correo"
+                    id="correo"
+                    class="form-control @error('correo') is-invalid @enderror"
+                    value="{{ old('correo') }}"
+                    placeholder="proveedor@email.com">
 
                     @error('correo')
                         <div class="invalid-feedback ps-2">{{ $message }}</div>
@@ -85,7 +87,7 @@
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary rounded-pill px-4">
+                            class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
                         <i class="bi bi-floppy"></i> Guardar
                     </button>
                 </div>
@@ -96,4 +98,6 @@
     </div>
 
 </div>
+<script src="{{ asset('js/proveedor.js') }}"></script>
 @endsection
+
