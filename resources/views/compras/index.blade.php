@@ -39,31 +39,36 @@
                             <form method="GET" action="{{ route('compras.index') }}">
 
                                 <input type="text" name="buscar" id="buscarCompra" value="{{ request('buscar') }}"
-                                    class="form-control rounded-pill ps-5 search-input" placeholder="Buscar por proveedor...">
+                                    class="form-control rounded-pill ps-5 search-input"
+                                    placeholder="Buscar por proveedor...">
 
                             </form>
 
                         </div>
 
-                        <!-- estado -->
-                        <select name="estado" id="filtroEstado" class="form-select rounded-pill" style="width: 200px;">
+                        <div class="d-flex gap-3 ms-auto flex-wrap align-items-center">
 
-                            <option value="">
-                                Todos los estados
-                            </option>
+                            <!-- estado -->
+                            <select name="estado" id="filtroEstado" class="form-select rounded-pill" style="width: 150px;">
 
-                            <option value="pagada">
-                                Pagada
-                            </option>
+                                <option value="">
+                                    Todos
+                                </option>
 
-                            <option value="pendiente">
-                                Pendiente
-                            </option>
+                                <option value="pagada">
+                                    Pagada
+                                </option>
 
-                        </select>
+                                <option value="pendiente">
+                                    Pendiente
+                                </option>
 
-                        <!-- fecha -->
-                        <input type="date" name="fecha" id="filtroFecha" class="form-control rounded-pill" style="width: 200px;">
+                            </select>
+
+                            <!-- fecha -->
+                            <input type="date" name="fecha" id="filtroFecha" class="form-control rounded-pill"
+                                style="width: 150px;">
+                        </div>
 
                     </div>
 
@@ -71,7 +76,6 @@
 
                 <!-- tabla -->
                 <div id="contenedorTablaCompras">
-
                     @include('compras.partials.tabla')
 
                 </div>
