@@ -3,7 +3,17 @@
 @section('title', 'Compras')
 
 @section('content')
-    <div class="container-fluid py-4 px-5">
+
+<div class="container-fluid py-4 px-5">
+
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {{ session('success') }}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
