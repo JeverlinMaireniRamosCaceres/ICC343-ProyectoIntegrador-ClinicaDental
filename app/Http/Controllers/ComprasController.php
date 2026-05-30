@@ -32,7 +32,7 @@ class ComprasController extends Controller
             ->when($fecha, function ($query) use ($fecha) {
                 $query->where('fecha', $fecha);
             })
-            ->orderBy('idCompras', 'asc')
+            ->orderBy('idCompras', 'desc')
             ->paginate(6)
             ->withQueryString();
 
@@ -125,22 +125,30 @@ class ComprasController extends Controller
                 'fecha' => 'required|date',
                 'estado' => 'required',
 
-                'idProducto' => 'required|array|min:1',
-                'idProducto.*' => 'required|exists:productos,idProducto',
+                'idProducto' => [
+                    'required',
+                    'array',
+                    function ($attribute, $value, $fail) {
+                        if (collect($value)->filter()->isEmpty()) {
+                            $fail('Debe agregar al menos un producto.');
+                        }
+                    }
+                ],
+
+                'idProducto.*' => 'exists:productos,idProducto',
 
                 'cantidad' => 'required|array|min:1',
                 'cantidad.*' => 'required|integer|min:1',
 
                 'costoTotal' => 'required|array|min:1',
-                'costoTotal.*' => 'required|numeric|min:0'
-
-                
+                'costoTotal.*' => 'required|numeric|gt:0'
             ],
             [
                 'idProveedor.required' => 'Debe seleccionar un proveedor.',
                 'fecha.required' => 'La fecha es obligatoria.',
                 'estado.required' => 'Debe seleccionar un estado.',
-                'idProducto.required' => 'Debe agregar al menos un producto.'
+                'idProducto.required' => 'Debe agregar al menos un producto.',
+                'costoTotal.*.gt' => 'El costo total debe ser mayor que cero.'
             ]
         );
     }

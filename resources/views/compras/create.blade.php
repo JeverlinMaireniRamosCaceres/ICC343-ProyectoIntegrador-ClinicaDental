@@ -24,27 +24,51 @@
                         </label>
 
                         <div class="position-relative">
-                            <input type="text" id="nombreProveedor" class="form-control"
-                                placeholder="Buscar proveedor..." readonly data-bs-toggle="modal"
+                            <input type="text" id="nombreProveedor" name="nombreProveedor"
+                                value="{{ old('nombreProveedor') }}" class="form-control" readonly data-bs-toggle="modal"
                                 data-bs-target="#modalProveedores">
 
                             <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
                         </div>
 
-                        <input type="hidden" name="idProveedor" id="idProveedor">
+                        <input type="hidden" name="idProveedor" id="idProveedor" value="{{ old('idProveedor') }}">
+
+                        @error('idProveedor')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-muted fw-semibold small">Fecha</label>
-                        <input type="date" name="fecha" class="form-control" value="{{ now()->format('Y-m-d') }}">
+                        <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror"
+                            value="{{ old('fecha', now()->format('Y-m-d')) }}">
+
+                        @error('fecha')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-muted fw-semibold small">Estado</label>
-                        <select name="estado" class="form-select">
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Pagada">Pagada</option>
+                        <select name="estado" class="form-select @error('estado') is-invalid @enderror">
+                            <option value="Pendiente" {{ old('estado') == 'Pendiente' ? 'selected' : '' }}>
+                                Pendiente
+                            </option>
+
+                            <option value="Pagada" {{ old('estado') == 'Pagada' ? 'selected' : '' }}>
+                                Pagada
+                            </option>
                         </select>
+
+                        @error('estado')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
@@ -93,8 +117,8 @@
                                         </td>
 
                                         <td>
-                                            <input type="number" class="form-control form-control-sm costo-total" min="0"
-                                                step="0.01" value="0" name="costoTotal[]">
+                                            <input type="number" class="form-control form-control-sm costo-total"
+                                                min="0" step="0.01" value="0" name="costoTotal[]">
                                         </td>
 
                                         <td>
@@ -114,6 +138,18 @@
                                 </tbody>
 
                             </table>
+
+                            @error('idProducto')
+                                <div class="text-danger small mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                            @if ($errors->has('costoTotal.0'))
+                                <div class="text-danger small mt-2">
+                                    {{ $errors->first('costoTotal.0') }}
+                                </div>
+                            @endif
                         </div>
 
 
@@ -216,7 +252,8 @@
                                         <td class="text-end">
                                             <button type="button"
                                                 class="btn btn-sm btn-primary rounded-pill px-3 btnSeleccionarProveedor"
-                                                style="width: 50px; height: 38px;" data-id="{{ $proveedor->idProveedor }}"
+                                                style="width: 50px; height: 38px;"
+                                                data-id="{{ $proveedor->idProveedor }}"
                                                 data-nombre="{{ $proveedor->nombre }}">
 
                                                 <i class="bi bi-check-lg"></i>
