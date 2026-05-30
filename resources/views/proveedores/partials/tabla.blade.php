@@ -50,7 +50,7 @@
 
                     <td class="px-4">
 
-                        @if ($proveedor->estado)
+                        @if (!$proveedor->trashed())
 
                             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
 
@@ -75,50 +75,48 @@
 
                             <!-- editar -->
                             <a href="{{ route('proveedores.edit', $proveedor->idProveedor) }}"
-                                class="btn btn-sm btn-warning rounded-pill px-3"
-                                style="color: white;"
-                                title="Editar">
+                            class="btn btn-sm btn-warning rounded-pill px-3 text-white">
 
-                                <i class="bi bi-pencil-fill"></i>
+                                <i class="bi bi-pencil"></i>
 
                             </a>
 
                             <!-- activar/desactivar -->
-                            @if ($proveedor->estado)
-
-                                <form action="{{ route('proveedores.destroy', $proveedor->idProveedor) }}"
-                                    method="POST">
+                            @if (!$proveedor->trashed())
 
                                     @csrf
                                     @method('DELETE')
 
                                     <button type="submit"
                                         class="btn btn-sm btn-danger rounded-pill px-3"
-                                        title="Desactivar">
+                                        title="Desactivar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminarProveedor"
+
+                                        data-id="{{ $proveedor->idProveedor }}"
+                                        data-nombre="{{ $proveedor->nombre }}">
 
                                         <i class="bi bi-x-octagon"></i>
 
                                     </button>
 
-                                </form>
-
                             @else
-
-                                <form action="{{ route('proveedores.activar', $proveedor->idProveedor) }}"
-                                    method="POST">
 
                                     @csrf
                                     @method('PUT')
 
                                     <button type="submit"
                                         class="btn btn-sm btn-success rounded-pill px-3"
-                                        title="Activar">
+                                        title="Activar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalActivarProveedor"
+
+                                        data-id="{{ $proveedor->idProveedor }}"
+                                        data-nombre="{{ $proveedor->nombre }}">
 
                                         <i class="bi bi-patch-check"></i>
 
                                     </button>
-
-                                </form>
 
                             @endif
 
@@ -147,6 +145,10 @@
         </tbody>
 
     </table>
+
+@include('proveedores.partials.modal-eliminar')
+
+@include('proveedores.partials.modal-activar')
 
 </div>
 

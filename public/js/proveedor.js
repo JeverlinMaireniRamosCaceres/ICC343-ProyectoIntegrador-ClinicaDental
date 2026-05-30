@@ -1,8 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    document
-        .getElementById("buscarProveedor")
-        .addEventListener("keyup", async function () {
+    // barra de busqueda AJAX
+
+    const buscarProveedor = document.getElementById("buscarProveedor");
+
+    if (buscarProveedor) {
+
+        buscarProveedor.addEventListener("keyup", async function () {
 
             const texto = this.value;
 
@@ -16,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("contenedorTablaProveedores").innerHTML = html;
         });
+
+    }
+
+    // paginacion con AJAX
 
     document.addEventListener("click", async function (e) {
 
@@ -37,6 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // modal activar
+
     const modalActivarProveedor = document.getElementById("modalActivarProveedor");
 
     if (modalActivarProveedor) {
@@ -55,6 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // modal eliminar
+
     const modalEliminarProveedor = document.getElementById("modalEliminarProveedor");
 
     if (modalEliminarProveedor) {
@@ -70,6 +82,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("formEliminarProveedor").action =
                 `/proveedores/${id}`;
+        });
+    }
+
+    // formato telefono
+
+    const telefono = document.getElementById("telefono");
+
+    if (telefono) {
+
+        telefono.addEventListener("input", function (e) {
+
+            let valor = e.target.value.replace(/\D/g, "");
+
+            valor = valor.substring(0, 10);
+
+            if (valor.length > 6) {
+                valor = valor.replace(
+                    /(\d{3})(\d{3})(\d{0,4})/,
+                    "$1-$2-$3"
+                );
+            } else if (valor.length > 3) {
+                valor = valor.replace(
+                    /(\d{3})(\d+)/,
+                    "$1-$2"
+                );
+            }
+
+            e.target.value = valor;
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Proveedor;
+use Illuminate\Validation\Rule;
 
 class ProveedorController extends Controller
 {
@@ -13,7 +14,7 @@ class ProveedorController extends Controller
     {
         $buscar = $request->buscar;
 
-         $proveedores = Proveedor::query()
+        $proveedores = Proveedor::withTrashed()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%")
                     ->orWhere('correo', 'like', "%{$buscar}%")
@@ -35,6 +36,7 @@ class ProveedorController extends Controller
      */
     public function create()
     {
+
         return view('proveedores.create');
     }
 
@@ -43,7 +45,41 @@ class ProveedorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate(
+            [
+                'nombre' => 'required|unique:proveedores,nombre',
+                'telefono' => [
+                    'required',
+                    'unique:proveedores,telefono',
+                    'regex:/^(809|829|849)-\d{3}-\d{4}$/'
+                ],
+                'correo' => 'required|email:rfc,dns|unique:proveedores,correo',
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.unique' => 'Ya existe un proveedor con ese nombre.',
+
+                'telefono.required' => 'El teléfono es obligatorio.',
+                'telefono.unique' => 'Ese teléfono ya está registrado.',
+                'telefono.regex' => 'El teléfono debe tener el formato 809-555-1234.',
+
+                'correo.required' => 'El correo es obligatorio.',
+                'correo.email' => 'Ingrese un correo válido.',
+                'correo.unique' => 'Ese correo ya está registrado.'
+            ]
+        );
+
+        Proveedor::create([
+            'nombre' => $request->nombre,
+            'telefono' => $request->telefono,
+            'correo' => $request->correo,
+        ]);
+
+        return redirect()
+            ->route('proveedores.index')
+            ->with('success', 'Proveedor registrado correctamente.');
+
     }
 
     /**
@@ -59,7 +95,9 @@ class ProveedorController extends Controller
      */
     public function edit(string $id)
     {
-        return view('proveedores.edit');
+        $proveedor = Proveedor::withTrashed()->findOrFail($id);
+
+        return view('proveedores.edit', compact('proveedor'));
     }
 
     /**
@@ -67,7 +105,43 @@ class ProveedorController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $proveedor = Proveedor::withTrashed()->findOrFail($id);
+
+        $request->validate(
+            [
+                'nombre' => 'required|unique:proveedores,nombre,' . $id . ',idProveedor',
+
+                'telefono' => [
+                    'required',
+                    'regex:/^\d{3}-\d{3}-\d{4}$/',
+                    'unique:proveedores,telefono,' . $id . ',idProveedor'
+                ],
+
+                'correo' => 'required|email:rfc,dns|unique:proveedores,correo,' . $id . ',idProveedor',
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.unique' => 'Ya existe un proveedor con ese nombre.',
+
+                'telefono.required' => 'El teléfono es obligatorio.',
+                'telefono.unique' => 'Ese teléfono ya está registrado.',
+                'telefono.regex' => 'El teléfono debe tener el formato 809-555-1234.',
+
+                'correo.required' => 'El correo es obligatorio.',
+                'correo.email' => 'Ingrese un correo válido.',
+                'correo.unique' => 'Ese correo ya está registrado.'
+            ]
+        );
+
+        $proveedor->nombre = $request->nombre;
+        $proveedor->telefono = $request->telefono;
+        $proveedor->correo = $request->correo;
+
+        $proveedor->save();
+
+        return redirect()
+            ->route('proveedores.index')
+            ->with('success', 'Proveedor actualizado correctamente.');
     }
 
     /**
@@ -75,12 +149,25 @@ class ProveedorController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $proveedor = Proveedor::findOrFail($id);
+
+        $proveedor->delete();
+
+        return redirect()
+            ->route('proveedores.index')
+            ->with('success', 'Proveedor dado de baja correctamente.');
     }
 
     public function activar($id)
     {
-        
+        $proveedor = Proveedor::withTrashed()->findOrFail($id);
+
+        $proveedor->restore();
+
+        return redirect()
+            ->route('proveedores.index')
+            ->with('success', 'Proveedor activado correctamente.');
+
     }
 
 }
