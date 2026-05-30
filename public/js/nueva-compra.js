@@ -27,36 +27,31 @@ btnAgregarFila.addEventListener("click", () => {
                         name="cantidad[]">
                     </td>
 
+                    <td class="unidad-producto text-center text-muted">
+                        -
+                    </td>
+
                     <td>
                         <input type="number"
-                        class="form-control form-control-sm precio"
+                        class="form-control form-control-sm costo-total"
                         min="0"
                         step="0.01"
                         value="0"
-                        name="precio[]">
+                        name="costoTotal[]">
                     </td>
 
                     <td>
-                        <input type="number"
-                            class="form-control form-control-sm subtotal"
-                            min="0"
-                            step="0.01"
-                            value="0"
-                            readonly>
+                        <input type="date"
+                        class="form-control form-control-sm"
+                        name="fechaVencimiento[]">
                     </td>
 
-                <td>
-                    <input type="date"
-                    class="form-control form-control-sm"
-                    name="fechaVencimiento[]">
-                </td>
-
-                <td class="text-center">
-                    <button type="button"
-                    class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
-                    <i class="bi bi-trash"></i>
-                    </button>
-                </td>
+                    <td class="text-center">
+                        <button type="button"
+                        class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+                        <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
 
                 </tr>
             `;
@@ -254,8 +249,11 @@ document.addEventListener("click", function (e) {
     if (filaProductoActual) {
         filaProductoActual.value = btn.dataset.nombre;
 
-        filaProductoActual.closest("td").querySelector(".id-producto").value =
-            btn.dataset.id;
+        const fila = filaProductoActual.closest("tr");
+
+        fila.querySelector(".id-producto").value = btn.dataset.id;
+
+        fila.querySelector(".unidad-producto").textContent = btn.dataset.unidad;
 
         actualizarEstadoProductos();
     }
@@ -265,29 +263,19 @@ document.addEventListener("click", function (e) {
     ).hide();
 });
 
-function actualizarSubtotal(fila) {
-    const cantidad = parseFloat(fila.querySelector(".cantidad").value) || 0;
-
-    const precio = parseFloat(fila.querySelector(".precio").value) || 0;
-
-    fila.querySelector(".subtotal").value = (cantidad * precio).toFixed(2);
-
-    actualizarMontoTotal();
-}
-
 detalleBody.addEventListener("input", function (e) {
     if (
         e.target.classList.contains("cantidad") ||
-        e.target.classList.contains("precio")
+        e.target.classList.contains("costo-total")
     ) {
-        actualizarSubtotal(e.target.closest("tr"));
+        actualizarMontoTotal();
     }
 });
 
 function actualizarMontoTotal() {
     let subtotal = 0;
 
-    document.querySelectorAll(".subtotal").forEach((input) => {
+    document.querySelectorAll(".costo-total").forEach((input) => {
         subtotal += parseFloat(input.value) || 0;
     });
 

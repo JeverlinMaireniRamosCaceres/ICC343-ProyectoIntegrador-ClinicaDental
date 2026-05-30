@@ -43,7 +43,7 @@
                         <label class="form-label text-muted fw-semibold small">Estado</label>
                         <select name="estado" class="form-select">
                             <option value="Pendiente">Pendiente</option>
-                            <option value="Completada">Pagada</option>
+                            <option value="Pagada">Pagada</option>
                         </select>
                     </div>
 
@@ -62,12 +62,12 @@
 
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="small text-muted">Producto</th>
-                                        <th class="small text-muted">Cantidad</th>
-                                        <th class="small text-muted">Precio Unitario</th>
-                                        <th class="small text-muted">Subtotal</th>
-                                        <th class="small text-muted">Fecha Vencimiento</th>
-                                        <th class="small text-muted text-center">Acciones</th>
+                                        <th style="width: 30%;">Producto</th>
+                                        <th style="width: 10%;">Cantidad</th>
+                                        <th style="width: 15%;">Ud. Medida</th>
+                                        <th style="width: 15%;">Costo Total</th>
+                                        <th style="width: 15%;">Fecha Vencimiento</th>
+                                        <th style="width: 5%;">Acciones</th>
                                     </tr>
                                 </thead>
 
@@ -88,18 +88,18 @@
                                                 min="1" step="1" value="1" name="cantidad[]">
                                         </td>
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm precio" min="0"
-                                                step="0.01" value="0" name="precio[]">
+                                        <td class="unidad-producto text-center text-muted">
+                                            -
                                         </td>
 
                                         <td>
-                                            <input type="number" class="form-control form-control-sm subtotal"
-                                                min="0" step="0.01" value="0" readonly>
+                                            <input type="number" class="form-control form-control-sm costo-total" min="0"
+                                                step="0.01" value="0" name="costoTotal[]">
                                         </td>
 
                                         <td>
-                                            <input type="date" class="form-control form-control-sm" name="fechaVencimiento[]">
+                                            <input type="date" class="form-control form-control-sm"
+                                                name="fechaVencimiento[]">
                                         </td>
 
                                         <td class="text-center">
@@ -287,7 +287,8 @@
                                             <button type="button"
                                                 class="btn btn-sm btn-primary rounded-pill px-3 btnSeleccionarProducto"
                                                 style="width: 50px; height: 38px;" data-id="{{ $producto->idProducto }}"
-                                                data-nombre="{{ $producto->nombre }}">
+                                                data-nombre="{{ $producto->nombre }}"
+                                                data-unidad="{{ $producto->unidadMedida }}">
 
                                                 <i class="bi bi-check-lg"></i>
                                             </button>

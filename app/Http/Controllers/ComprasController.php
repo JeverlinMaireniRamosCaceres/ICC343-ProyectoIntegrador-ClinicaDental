@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Compra;
 use App\Models\Proveedor;
 use App\Models\Producto;
+use App\Models\DetalleCompra;
+use Illuminate\Support\Facades\DB;
 
 class ComprasController extends Controller
 {
@@ -46,7 +48,11 @@ class ComprasController extends Controller
     public function create()
     {
         $proveedores = Proveedor::orderBy('idProveedor')->get();
-        $productos = Producto::orderBy('idProducto')->get();
+        $productos = Producto::select(
+            'idProducto',
+            'nombre',
+            'unidadMedida'
+        )->orderBy('idProducto')->get();
         return view('compras.create', compact('proveedores', 'productos'));
     }
 
@@ -55,7 +61,28 @@ class ComprasController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        $this->validarCompra($request);
+
+        DB::transaction(function () use ($request) {
+
+            $compra = Compra::create([
+                'idProveedor' => $request->idProveedor,
+                'fecha' => $request->fecha,
+                'monto' => 0,
+                'estado' => $request->estado
+            ]);
+
+            $montoTotal = $this->guardarDetalles(
+                $request,
+                $compra
+            );
+
+            $compra->update([
+                'monto' => $montoTotal
+            ]);
+        });
+
+        return redirect()->route('compras.index')->with('success', 'Compra registrada correctamente.');
     }
 
     /**
@@ -88,5 +115,69 @@ class ComprasController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function validarCompra(Request $request)
+    {
+        $request->validate(
+            [
+                'idProveedor' => 'required',
+                'fecha' => 'required|date',
+                'estado' => 'required',
+
+                'idProducto' => 'required|array|min:1',
+                'idProducto.*' => 'required|exists:productos,idProducto',
+
+                'cantidad' => 'required|array|min:1',
+                'cantidad.*' => 'required|integer|min:1',
+
+                'costoTotal' => 'required|array|min:1',
+                'costoTotal.*' => 'required|numeric|min:0'
+
+                
+            ],
+            [
+                'idProveedor.required' => 'Debe seleccionar un proveedor.',
+                'fecha.required' => 'La fecha es obligatoria.',
+                'estado.required' => 'Debe seleccionar un estado.',
+                'idProducto.required' => 'Debe agregar al menos un producto.'
+            ]
+        );
+    }
+
+    private function guardarDetalles(Request $request, Compra $compra)
+    {
+        $montoTotal = 0;
+
+        foreach ($request->idProducto as $i => $idProducto) {
+
+            $cantidad = (int) $request->cantidad[$i];
+            $costoTotal = (float) $request->costoTotal[$i];
+
+            DetalleCompra::create([
+                'idCompras' => $compra->idCompras,
+                'idProducto' => $idProducto,
+                'cantidad' => $cantidad,
+                'costoTotal' => $costoTotal,
+                'fechaVencimiento' => $request->fechaVencimiento[$i] ?? null
+            ]);
+
+            $this->actualizarStock($idProducto, $cantidad);
+
+            $montoTotal += $costoTotal;
+        }
+
+        if ($request->has('aplicarItbis')) {
+            $montoTotal *= 1.18;
+        }
+
+        return round($montoTotal, 2);
+    }
+
+    private function actualizarStock(int $idProducto, int $cantidad)
+    {
+        $producto = Producto::findOrFail($idProducto);
+        $producto->stockActual += $cantidad;
+        $producto->save();
     }
 }
