@@ -18,7 +18,7 @@ class ProcedimientoController extends Controller
             $query->where('nombre', 'like', "%{$buscar}%");
         })
             ->orderBy('idProcedimiento')
-            ->paginate(10)
+            ->paginate(6)
             ->withQueryString();
 
         return view('procedimientos.index', compact('procedimientos'));
