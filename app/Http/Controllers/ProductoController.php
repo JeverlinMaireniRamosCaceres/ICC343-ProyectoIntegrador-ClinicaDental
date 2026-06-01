@@ -11,23 +11,19 @@ class ProductoController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-        {
-            $buscar = $request->input('buscar');
+    {
+        $buscar = $request->input('buscar');
 
-            $productos = Producto::query()
-                ->when($buscar, function ($query, $buscar) {
-                    $query->where('nombre', 'like', "%{$buscar}%")
-                        ->orWhere('descripcion', 'like', "%{$buscar}%");
-                })
-                ->orderBy('idProducto', 'asc')
-                ->paginate(6)
-                ->withQueryString();
+        $productos = Producto::query()
+            ->when($buscar, function ($query, $buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%")
+                      ->orWhere('descripcion', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idProducto', 'asc')
+            ->paginate(6)
+            ->withQueryString();
 
-            if ($request->ajax()) {
-                return view('productos.partials.tabla', compact('productos'))->render();
-            }
-
-            return view('productos.index', compact('productos', 'buscar'));
+        return view('productos.index', compact('productos', 'buscar'));
     }
 
     /**
