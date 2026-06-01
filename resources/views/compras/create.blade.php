@@ -195,7 +195,7 @@
                         <a href="{{ route('compras.index') }}" class="btn btn-light rounded-pill px-4">
                             Cancelar
                         </a>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
                             <i class="bi bi-floppy"></i> Guardar
                         </button>
                     </div>

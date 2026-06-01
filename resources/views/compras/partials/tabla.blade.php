@@ -85,6 +85,8 @@
 
     </table>
 
+    @include('compras.partials.modal-eliminar')
+
 </div>
 
 <!-- paginacion -->
