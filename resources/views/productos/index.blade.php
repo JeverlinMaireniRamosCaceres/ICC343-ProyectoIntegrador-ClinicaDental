@@ -3,32 +3,31 @@
 @section('title', 'Productos')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container py-4 px-5">
 
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h2 class="fw-semibold mb-0">Productos</h2>
-            
-            <a href="{{ route('productos.create') }}"
-                class="btn d-flex align-items-center gap-2 rounded-pill px-4 text-white"
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark mb-1">Productos</h2>
+
+            <a href="{{ route('productos.create') }}" class="btn d-flex align-items-center gap-2 rounded-pill px-4 text-white"
                 style="background-color: #0ea5e9;">
                 <i class="bi bi-plus-lg"></i> Nuevo
             </a>
         </div>
 
         <div class="card border-0 shadow-sm rounded-3">
-            
-            <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2">
-                <form method="GET" action="{{ route('productos.index') }}">
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent"
-                        style="width: 280px; transition: border-color 0.2s;"
-                        onfocusin="this.style.background='#fff'; this.style.borderColor='#0ea5e9';"
-                        onfocusout="this.style.background=''; this.style.borderColor='transparent';">
-                        <i class="bi bi-search text-secondary" style="font-size: 14px;"></i>
-                        <input type="text" name="buscar" value="{{ $buscar }}"
-                            class="border-0 bg-transparent p-0 w-100" style="outline: none; font-size: 14px;"
-                            placeholder="Buscar producto...">
+
+            <div class="card-body p-0">
+                <div class="p-4 border-bottom">
+                    <div class="position-relative" style="max-width: 350px;">
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                        <form method="GET" action="{{ route('productos.index') }}">
+
+                            <input type="text" name="buscar" id="buscarUsuario" value="{{ request('buscar') }}"
+                                class="form-control rounded-pill ps-5 search-input" placeholder="Buscar producto...">
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -53,17 +52,13 @@
                                     <div class="d-flex gap-2 justify-content-end">
                                         <a href="{{ route('productos.edit', $producto->idProducto) }}"
                                             class="btn btn-sm btn-warning rounded-circle p-0 d-flex align-items-center justify-content-center text-white"
-                                            style="width: 32px; height: 32px;"
-                                            title="Editar">
+                                            style="width: 32px; height: 32px;" title="Editar">
                                             <i class="bi bi-pencil-fill small"></i>
                                         </a>
-                                        <button type="button" 
+                                        <button type="button"
                                             class="btn btn-sm btn-danger rounded-circle p-0 d-flex align-items-center justify-content-center"
-                                            style="width: 32px; height: 32px;"
-                                            title="Eliminar" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#modalEliminar"
-                                            data-id="{{ $producto->idProducto }}"
+                                            style="width: 32px; height: 32px;" title="Eliminar" data-bs-toggle="modal"
+                                            data-bs-target="#modalEliminar" data-id="{{ $producto->idProducto }}"
                                             data-nombre="{{ $producto->nombre }}">
                                             <i class="bi bi-trash3-fill small"></i>
                                         </button>
@@ -83,7 +78,8 @@
 
             <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
                 <small class="text-muted">
-                    Mostrando {{ $productos->firstItem() ?? 0 }}–{{ $productos->lastItem() ?? 0 }} de {{ $productos->total() }} resultados
+                    Mostrando {{ $productos->firstItem() ?? 0 }}–{{ $productos->lastItem() ?? 0 }} de
+                    {{ $productos->total() }} resultados
                 </small>
                 {{ $productos->links() }}
             </div>
