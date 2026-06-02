@@ -26,4 +26,28 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }, 300);
     });
+
+
+    // paginacion con AJAX
+        document.addEventListener('click', async function (e) {
+
+        if (e.target.closest('.pagination a')) {
+
+            e.preventDefault();
+
+            const url = e.target.closest('a').href;
+
+            const response = await fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const html = await response.text();
+
+            contenedorTabla.innerHTML = html;
+        }
+    });
+
+
 });

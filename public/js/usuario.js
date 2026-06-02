@@ -14,6 +14,27 @@ document
         document.getElementById("contenedorTablaUsuarios").innerHTML = html;
     });
 
+// paginacion con ajax
+document.addEventListener("click", async function (e) {
+
+    if (e.target.closest(".pagination a")) {
+
+        e.preventDefault();
+
+        const url = e.target.closest("a").href;
+
+        const response = await fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
+
+        const html = await response.text();
+
+        document.getElementById("contenedorTablaUsuarios").innerHTML = html;
+    }
+});
+
 const modalActivarUsuario = document.getElementById("modalActivarUsuario");
 
 modalActivarUsuario.addEventListener("show.bs.modal", function (e) {
