@@ -129,7 +129,7 @@ class ComprasController extends Controller
     {
         $this->validarCompra($request);
         DB::transaction(function () use ($request, $id) {
-            $compra = Compra::with('detalles') ->findOrFail($id);
+            $compra = Compra::with('detalles')->findOrFail($id);
             $this->revertirStockYEliminarDetalles($compra);
             $this->actualizarCabeceraCompra($request, $compra);
             $montoTotal = $this->guardarDetalles($request, $compra);
@@ -146,6 +146,19 @@ class ComprasController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function anular($id)
+    {
+        DB::transaction(function () use ($id) {
+            $compra = Compra::with('detalles')->findOrFail($id);
+            $this->revertirStockCompra($compra);
+            $compra->update([
+                'estado' => 'Anulada'
+            ]);
+        });
+
+        return redirect()->route('compras.index')->with('success','Compra anulada correctamente.');
     }
 
     private function validarCompra(Request $request)
@@ -240,5 +253,13 @@ class ComprasController extends Controller
             }
         }
         DetalleCompra::where('idCompras', $compra->idCompras)->delete();
+    }
+
+    private function revertirStockCompra(Compra $compra) {
+        foreach ($compra->detalles as $detalle) {
+            $producto = Producto::findOrFail($detalle->idProducto);
+            $producto->stockActual -= $detalle->cantidad;
+            $producto->save();
+        }
     }
 }

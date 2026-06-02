@@ -54,13 +54,13 @@ async function filtrarCompras() {
 
 const modalEliminarCompra = document.getElementById("modalEliminarCompra");
 
-modalEliminarCompra.addEventListener("show.bs.modal", function (e) {
-    const btn = e.relatedTarget;
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".btnAnularCompra");
 
-    const id = btn.getAttribute("data-id");
-    const nombre = btn.getAttribute("data-nombre");
+    if (!btn) return;
 
-    document.getElementById("nombreCompraEliminar").textContent = nombre;
+    const idCompra = btn.dataset.id;
 
-    document.getElementById("formEliminarCompra").action = `/compras/${id}`;
+    document.getElementById("formAnularCompra").action =
+        `/compras/${idCompra}/anular`;
 });
