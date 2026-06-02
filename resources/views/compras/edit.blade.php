@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Compra')
+@section('title', 'Editar compra')
 
 @section('content')
     <div class="container py-4">
@@ -9,125 +9,240 @@
             <a href="{{ route('compras.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h2 class="fw-semibold mb-0">Editar Compra</h2>
+            <h2 class="fw-semibold mb-0">Editar compra</h2>
         </div>
 
         <div class="card border-0 shadow-sm rounded-3">
             <div class="card-body p-4">
 
-                <form action="{{ route('compras.update', 1) }}" method="POST">
+                <form action="{{ route('compras.update', $compra->idCompras) }}" method="POST">
                     @csrf
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label class="form-label text-muted fw-semibold small">Proveedor</label>
-                        <select name="idProveedor" class="form-select">
+                        <label class="form-label text-muted fw-semibold small">
+                            Proveedor
+                        </label>
 
-                            <option value="1" selected>Dental Depot</option>
-                            <option value="2">Odonto Supply</option>
-                            <option value="3">Medident SRL</option>
+                        <div class="position-relative">
+                            <input type="text" id="nombreProveedor" name="nombreProveedor"
+                                value="{{ old('nombreProveedor', $compra->proveedor->nombre) }}" class="form-control"
+                                readonly data-bs-toggle="modal" data-bs-target="#modalProveedores">
 
-                        </select>
+                            <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                        </div>
+
+                        <input type="hidden" name="idProveedor" id="idProveedor"
+                            value="{{ old('idProveedor', $compra->idProveedor) }}">
+
+                        @error('idProveedor')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label text-muted fw-semibold small">Fecha</label>
-                        <input type="date" name="fecha" class="form-control" value="2026-05-01">
+
+                        <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror"
+                            value="{{ old('fecha', $compra->fecha->format('Y-m-d')) }}">
+
+                        @error('fecha')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label text-muted fw-semibold small">Estado</label>
-                        <select name="estado" class="form-select">
 
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Completada" selected>Completada</option>
-                            <option value="Cancelada">Cancelada</option>
+                        <select name="estado" class="form-select @error('estado') is-invalid @enderror">
+
+                            <option value="Pendiente" {{ old('estado', $compra->estado) == 'Pendiente' ? 'selected' : '' }}>
+                                Pendiente
+                            </option>
+
+                            <option value="Pagada" {{ old('estado', $compra->estado) == 'Pagada' ? 'selected' : '' }}>
+                                Pagada
+                            </option>
 
                         </select>
+
+                        @error('estado')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label text-muted fw-semibold small">Detalle de compra</label>
+                        <label class="form-label text-muted fw-semibold small">
+                            Detalle de compra
+                        </label>
+
+                        <div class="mb-2 d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                id="btnAgregarFila">
+
+                                <i class="bi bi-plus-lg"></i>
+                                Agregar producto
+
+                            </button>
+                        </div>
 
                         <div class="table-responsive">
+
                             <table class="table table-bordered align-middle mb-0">
 
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="small text-muted">Producto</th>
-                                        <th class="small text-muted">Cantidad</th>
-                                        <th class="small text-muted">Precio Unitario</th>
-                                        <th class="small text-muted">Subtotal</th>
-                                        <th class="small text-muted">Fecha Vencimiento</th>
-                                        <th class="small text-muted text-center">Acciones</th>
+                                        <th style="width: 30%;">Producto</th>
+                                        <th style="width: 10%;">Cantidad</th>
+                                        <th style="width: 15%;">Ud. Medida</th>
+                                        <th style="width: 15%;">Costo Total</th>
+                                        <th style="width: 15%;">Fecha Vencimiento</th>
+                                        <th style="width: 5%;">Acciones</th>
                                     </tr>
                                 </thead>
 
                                 <tbody id="detalleBody">
 
-                                    <tr>
+                                    @foreach ($compra->detalles as $detalle)
+                                        <tr>
 
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm producto-input"
-                                                value="Guantes Latex" readonly data-bs-toggle="modal"
-                                                data-bs-target="#modalProductos">
-                                        </td>
+                                            <td>
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="2">
-                                        </td>
+                                                <input type="text" class="form-control form-control-sm producto-input"
+                                                    value="{{ $detalle->producto->nombre }}" readonly
+                                                    data-bs-toggle="modal" data-bs-target="#modalProductos">
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="500">
-                                        </td>
+                                                <input type="hidden" name="idProducto[]" class="id-producto"
+                                                    value="{{ $detalle->idProducto }}">
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm" value="1000"
-                                                readonly>
-                                        </td>
+                                            </td>
 
-                                        <td>
-                                            <input type="date" class="form-control form-control-sm" value="2026-12-01">
-                                        </td>
+                                            <td>
 
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-sm btn-danger btnEliminarFila">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                                                <input type="number" class="form-control form-control-sm cantidad"
+                                                    min="1" step="1" value="{{ $detalle->cantidad }}"
+                                                    name="cantidad[]">
 
-                                    </tr>
+                                            </td>
+
+                                            <td class="unidad-producto text-center text-muted">
+                                                {{ $detalle->producto->unidadMedida }}
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number" class="form-control form-control-sm costo-total"
+                                                    min="0" step="0.01" value="{{ $detalle->costoTotal }}"
+                                                    name="costoTotal[]">
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="fechaVencimiento[]" value="{{ $detalle->fechaVencimiento }}">
+
+                                            </td>
+
+                                            <td class="text-center">
+
+                                                <button type="button"
+                                                    class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
 
                                 </tbody>
 
                             </table>
-                        </div>
 
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary px-3" id="btnAgregarFila">
-                                <i class="bi bi-plus-lg"></i> Agregar producto
-                            </button>
+                            @error('idProducto')
+                                <div class="text-danger small mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                            @if ($errors->has('costoTotal.0'))
+                                <div class="text-danger small mt-2">
+                                    {{ $errors->first('costoTotal.0') }}
+                                </div>
+                            @endif
+
                         </div>
 
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label text-muted fw-semibold small">Monto total</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted">
-                                RD$
-                            </span>
-                            <input type="number" name="monto" class="form-control border-start-0" value="3100">
+                    <div class="form-check mb-3">
+
+                        <input class="form-check-input" type="checkbox" name="aplicarItbis" id="aplicarItbis" {{ $compra->aplicaItbis ? 'checked' : '' }}>
+
+                        <label class="form-check-label" for="aplicarItbis">
+                            Aplicar ITBIS (18%)
+                        </label>
+
+                    </div>
+
+                    <div class="mt-3 mb-3">
+
+                        <div class="card-body">
+
+                            <h6 class="fw-semibold mb-3">
+                                Resumen de compra
+                            </h6>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span id="lblSubtotal">
+                                    RD$ {{ number_format($compra->monto, 2) }}
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>ITBIS</span>
+                                <span id="lblItbis">RD$ 0.00</span>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total</span>
+                                <span id="lblTotal">
+                                    RD$ {{ number_format($compra->monto, 2) }}
+                                </span>
+                            </div>
+
                         </div>
+
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end">
+
                         <a href="{{ route('compras.index') }}" class="btn btn-light rounded-pill px-4">
+
                             Cancelar
+
                         </a>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">
-                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+
+                        <button type="submit" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #0ea5e9;">
+
+                            <i class="bi bi-pencil-square"></i>
+                            Actualizar
+
                         </button>
+
                     </div>
 
                 </form>
@@ -137,152 +252,10 @@
 
     </div>
 
-    <!-- MODAL PRODUCTOS -->
+    @include('compras.partials.modal-proveedores')
 
-    <div class="modal fade" id="modalProductos" tabindex="-1">
+    @include('compras.partials.modal-productos')
 
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-
-            <div class="modal-content border-0 shadow rounded-3">
-
-                <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
-                        Buscar producto
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                <div class="modal-body">
-
-                    <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Buscar producto...">
-                    </div>
-
-                    <div class="table-responsive">
-
-                        <table class="table table-hover align-middle">
-
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                <tr>
-                                    <td>1</td>
-                                    <td>Guantes Latex</td>
-                                    <td>RD$ 500.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>2</td>
-                                    <td>Mascarillas</td>
-                                    <td>RD$ 300.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>3</td>
-                                    <td>Anestesia</td>
-                                    <td>RD$ 1200.00</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">
-                                            Seleccionar
-                                        </button>
-                                    </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-@endsection
-
-@section('scripts')
-
-    <script>
-        const detalleBody = document.getElementById('detalleBody');
-        const btnAgregarFila = document.getElementById('btnAgregarFila');
-
-        btnAgregarFila.addEventListener('click', () => {
-
-            let fila = `
-                <tr>
-
-                    <td>
-                        <input type="text" class = "form-control form-control-sm producto-input" placeholder = "Buscar producto..." readonly data-bs-toggle = "modal" data-bs-target = "#modalProductos">
-                    </td>
-
-                    <td>
-                        <input type = "number" class = "form-control form-control-sm" value = "1">
-                    </td>
-
-                    <td>
-                        <input type = "number" class = "form-control form-control-sm" value="0">
-                    </td>
-
-                    <td>
-                        <input type = "number" class = "form-control form-control-sm" value = "0" readonly>
-                    </td>
-
-                    <td>
-                        <input type = "date" class="form-control form-control-sm">
-                    </td>
-
-                    <td class="text-center">
-                        <button type = "button" class = "btn btn-sm btn-danger btnEliminarFila">
-                            <i class = "bi bi-trash"></i>
-                        </button>
-                    </td>
-
-                </tr>
-                `;
-
-            detalleBody.insertAdjacentHTML('beforeend', fila);
-
-        });
-
-        detalleBody.addEventListener('click', function(e) {
-
-            if (e.target.closest('.btnEliminarFila')) {
-
-                const fila = e.target.closest('tr');
-
-                if (detalleBody.rows.length > 1) {
-
-                    fila.remove();
-
-                }
-
-            }
-
-        });
-    </script>
+    <script src="{{ asset('js/nueva-compra.js') }}"></script>
 
 @endsection

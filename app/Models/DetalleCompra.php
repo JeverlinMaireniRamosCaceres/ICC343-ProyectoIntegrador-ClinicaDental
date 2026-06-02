@@ -17,4 +17,13 @@ class DetalleCompra extends Model
         'costoTotal',
         'fechaVencimiento'
     ];
+
+    public function producto()
+    {
+        return $this->belongsTo(
+            Producto::class,
+            'idProducto',
+            'idProducto'
+        );
+    }
 }

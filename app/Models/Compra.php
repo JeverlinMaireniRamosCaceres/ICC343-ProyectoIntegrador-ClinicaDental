@@ -21,11 +21,19 @@ class Compra extends Model
         'idProveedor',
         'fecha',
         'monto',
-        'estado'
+        'estado',
+        'aplicaItbis'
     ];
 
     public function proveedor()
     {
         return $this->belongsTo(Proveedor::class, 'idProveedor', 'idProveedor');
+    }
+
+    public function detalles()
+    {
+        return $this->hasMany(
+            DetalleCompra::class,'idCompras','idCompras'
+        );
     }
 }

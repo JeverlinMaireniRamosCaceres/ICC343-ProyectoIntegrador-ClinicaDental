@@ -69,7 +69,8 @@ class ComprasController extends Controller
                 'idProveedor' => $request->idProveedor,
                 'fecha' => $request->fecha,
                 'monto' => 0,
-                'estado' => $request->estado
+                'estado' => $request->estado,
+                'aplicaItbis' => $request->has('aplicarItbis')
             ]);
 
             $montoTotal = $this->guardarDetalles(
@@ -98,7 +99,27 @@ class ComprasController extends Controller
      */
     public function edit($id)
     {
-        return view('compras.edit');
+        $compra = Compra::with([
+            'proveedor',
+            'detalles.producto'
+        ])->findOrFail($id);
+
+        $proveedores = Proveedor::orderBy('idProveedor')->get();
+
+        $productos = Producto::select(
+            'idProducto',
+            'nombre',
+            'unidadMedida'
+        )->orderBy('idProducto')->get();
+
+        return view(
+            'compras.edit',
+            compact(
+                'compra',
+                'proveedores',
+                'productos'
+            )
+        );
     }
 
     /**
@@ -106,7 +127,17 @@ class ComprasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validarCompra($request);
+        DB::transaction(function () use ($request, $id) {
+            $compra = Compra::with('detalles') ->findOrFail($id);
+            $this->revertirStockYEliminarDetalles($compra);
+            $this->actualizarCabeceraCompra($request, $compra);
+            $montoTotal = $this->guardarDetalles($request, $compra);
+            $compra->update([
+                'monto' => $montoTotal
+            ]);
+        });
+        return redirect()->route('compras.index')->with('success', 'Compra actualizada correctamente.');
     }
 
     /**
@@ -187,5 +218,27 @@ class ComprasController extends Controller
         $producto = Producto::findOrFail($idProducto);
         $producto->stockActual += $cantidad;
         $producto->save();
+    }
+
+    private function actualizarCabeceraCompra(Request $request, Compra $compra)
+    {
+        $compra->update([
+            'idProveedor' => $request->idProveedor,
+            'fecha' => $request->fecha,
+            'estado' => $request->estado,
+            'aplicaItbis' => $request->has('aplicarItbis')
+        ]);
+    }
+
+    private function revertirStockYEliminarDetalles(Compra $compra)
+    {
+        foreach ($compra->detalles as $detalle) {
+            $producto = Producto::find($detalle->idProducto);
+            if ($producto) {
+                $producto->stockActual -= $detalle->cantidad;
+                $producto->save();
+            }
+        }
+        DetalleCompra::where('idCompras', $compra->idCompras)->delete();
     }
 }
