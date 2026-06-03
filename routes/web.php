@@ -13,6 +13,7 @@ use App\Http\Controllers\CitaController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\AlergiaController;
+use App\Http\Controllers\InventarioController;
 
 use App\Http\Controllers\EspecialidadController;
 
@@ -77,3 +78,6 @@ Route::resource('alergias', AlergiaController::class);
 
 //Especialidades
 Route::resource('especialidades', EspecialidadController::class);
+
+// Inventario
+Route::resource('inventario', InventarioController::class);
