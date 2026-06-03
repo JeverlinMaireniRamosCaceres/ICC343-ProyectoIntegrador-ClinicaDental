@@ -20,13 +20,19 @@
     <link rel="stylesheet" href="{{ asset('css/citas.css') }}">
     <!-- estilos para consultas -->
     <link rel="stylesheet" href="{{ asset('css/consultas.css') }}">
-
+    <!-- estilos para inventario -->
+    <link rel="stylesheet" href="{{ asset('css/inventario.css') }}">
+    
 </head>
 <body>
 
     <div id="wrapper">
         <!-- incluir sidebar -->
         @include('components.sidebar')
+
+        <script>
+            document.getElementById('sidebar-container').classList.add('sidebar-collapsed');
+        </script>
 
         <div id="page-content-wrapper">
             <!-- incluir topbar -->
@@ -49,6 +55,24 @@
     <script src="{{ asset('js/citas.js') }}"></script>
 
      @yield('scripts')
+
+    <script>
+        const sidebar = document.getElementById('sidebar-container');
+        let collapseTimer;
+
+        sidebar.addEventListener('mouseenter', () => {
+            clearTimeout(collapseTimer);
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            collapseTimer = setTimeout(() => {
+                sidebar.classList.remove('sidebar-expanded');
+                sidebar.classList.add('sidebar-collapsed');
+            }, 50);
+        });
+    </script>
 
 </body>
 </html>
