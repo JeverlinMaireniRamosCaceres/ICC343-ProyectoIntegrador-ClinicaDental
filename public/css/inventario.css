@@ -1,0 +1,104 @@
+.inv-metric-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.inv-alerta-item {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+}
+
+.inv-alerta-warning {
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffe69c;
+}
+
+.inv-alerta-danger {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+}
+
+.inv-alerta-pink {
+    background-color: #fce4ec;
+    color: #880e4f;
+    border: 1px solid #f8bbd0;
+}
+
+.search-input {
+    border-color: #e5e7eb;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+}
+
+.btn-outline-info {
+    color: #0ea5e9;
+    border-color: #0ea5e9;
+}
+
+.btn-outline-info:hover {
+    background-color: #0ea5e9;
+    color: #fff;
+}
+
+.badge.bg-success-subtle {
+    font-size: 12px;
+}
+
+.badge.bg-warning-subtle {
+    font-size: 12px;
+}
+
+.badge.bg-danger-subtle {
+    font-size: 12px;
+}
+
+#modalMovimientos .modal-header {
+    padding: 1.25rem 1.5rem 0.75rem;
+}
+
+#modalMovimientos .modal-body {
+    min-height: 200px;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+
+@media (max-width: 768px) {
+    .inv-metric-icon {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+.btn-filtro {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    font-size: 0.82rem;
+}
+
+.btn-filtro:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-filtro.active {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
