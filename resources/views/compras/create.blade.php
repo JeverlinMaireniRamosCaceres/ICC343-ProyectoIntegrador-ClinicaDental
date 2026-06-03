@@ -97,43 +97,125 @@
 
                                 <tbody id="detalleBody">
 
-                                    <tr>
+                                    @if (old('idProducto'))
 
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm producto-input"
-                                                placeholder="Buscar producto..." readonly data-bs-toggle="modal"
-                                                data-bs-target="#modalProductos">
+                                        @foreach (old('idProducto') as $i => $idProducto)
+                                            @php
+                                                $productoSeleccionado = $productos->firstWhere(
+                                                    'idProducto',
+                                                    $idProducto,
+                                                );
+                                            @endphp
 
-                                            <input type="hidden" name="idProducto[]" class="id-producto">
-                                        </td>
+                                            <tr>
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm cantidad"
-                                                min="1" step="1" value="1" name="cantidad[]">
-                                        </td>
+                                                <td>
 
-                                        <td class="unidad-producto text-center text-muted">
-                                            -
-                                        </td>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm producto-input"
+                                                        value="{{ $productoSeleccionado?->nombre }}" readonly
+                                                        data-bs-toggle="modal" data-bs-target="#modalProductos">
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm costo-total"
-                                                min="0" step="0.01" value="0" name="costoTotal[]">
-                                        </td>
+                                                    <input type="hidden" name="idProducto[]" class="id-producto"
+                                                        value="{{ $idProducto }}">
 
-                                        <td>
-                                            <input type="date" class="form-control form-control-sm"
-                                                name="fechaVencimiento[]">
-                                        </td>
+                                                </td>
 
-                                        <td class="text-center">
-                                            <button type="button"
-                                                class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                                                <td>
 
-                                    </tr>
+                                                    <input type="number" class="form-control form-control-sm cantidad"
+                                                        min="1" step="1" name="cantidad[]"
+                                                        value="{{ old('cantidad')[$i] }}">
+
+                                                </td>
+
+                                                <td class="unidad-producto text-center text-muted">
+
+                                                    {{ $productoSeleccionado?->unidadMedida ?? '-' }}
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="number" class="form-control form-control-sm costo-total"
+                                                        min="0" step="0.01" name="costoTotal[]"
+                                                        value="{{ old('costoTotal')[$i] }}">
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="fechaVencimiento[]"
+                                                        value="{{ old('fechaVencimiento')[$i] ?? '' }}">
+
+                                                </td>
+
+                                                <td class="text-center">
+
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm producto-input"
+                                                    placeholder="Buscar producto..." readonly data-bs-toggle="modal"
+                                                    data-bs-target="#modalProductos">
+
+                                                <input type="hidden" name="idProducto[]" class="id-producto">
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number" class="form-control form-control-sm cantidad"
+                                                    min="1" step="1" value="1" name="cantidad[]">
+
+                                            </td>
+
+                                            <td class="unidad-producto text-center text-muted">
+                                                -
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number" class="form-control form-control-sm costo-total"
+                                                    min="0" step="0.01" value="0" name="costoTotal[]">
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="fechaVencimiento[]">
+
+                                            </td>
+
+                                            <td class="text-center">
+
+                                                <button type="button"
+                                                    class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    @endif
 
                                 </tbody>
 

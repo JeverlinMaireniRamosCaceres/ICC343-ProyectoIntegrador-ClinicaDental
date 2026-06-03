@@ -158,7 +158,7 @@ class ComprasController extends Controller
             ]);
         });
 
-        return redirect()->route('compras.index')->with('success','Compra anulada correctamente.');
+        return redirect()->route('compras.index')->with('success', 'Compra anulada correctamente.');
     }
 
     private function validarCompra(Request $request)
@@ -168,13 +168,18 @@ class ComprasController extends Controller
                 'idProveedor' => 'required',
                 'fecha' => 'required|date',
                 'estado' => 'required',
-
                 'idProducto' => [
                     'required',
                     'array',
                     function ($attribute, $value, $fail) {
-                        if (collect($value)->filter()->isEmpty()) {
-                            $fail('Debe agregar al menos un producto.');
+
+                        foreach ($value as $idProducto) {
+
+                            if (empty($idProducto)) {
+
+                                $fail('Debe completar o eliminar las filas vacías.');
+                                return;
+                            }
                         }
                     }
                 ],
@@ -255,7 +260,8 @@ class ComprasController extends Controller
         DetalleCompra::where('idCompras', $compra->idCompras)->delete();
     }
 
-    private function revertirStockCompra(Compra $compra) {
+    private function revertirStockCompra(Compra $compra)
+    {
         foreach ($compra->detalles as $detalle) {
             $producto = Producto::findOrFail($detalle->idProducto);
             $producto->stockActual -= $detalle->cantidad;

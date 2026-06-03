@@ -109,60 +109,130 @@
 
                                 <tbody id="detalleBody">
 
-                                    @foreach ($compra->detalles as $detalle)
-                                        <tr>
+                                    @if (old('idProducto'))
 
-                                            <td>
+                                        @foreach (old('idProducto') as $i => $idProducto)
+                                            @php
+                                                $productoSeleccionado = $productos->firstWhere(
+                                                    'idProducto',
+                                                    $idProducto,
+                                                );
+                                            @endphp
 
-                                                <input type="text" class="form-control form-control-sm producto-input"
-                                                    value="{{ $detalle->producto->nombre }}" readonly
-                                                    data-bs-toggle="modal" data-bs-target="#modalProductos">
+                                            <tr>
 
-                                                <input type="hidden" name="idProducto[]" class="id-producto"
-                                                    value="{{ $detalle->idProducto }}">
+                                                <td>
 
-                                            </td>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm producto-input"
+                                                        value="{{ $productoSeleccionado?->nombre }}" readonly
+                                                        data-bs-toggle="modal" data-bs-target="#modalProductos">
 
-                                            <td>
+                                                    <input type="hidden" name="idProducto[]" class="id-producto"
+                                                        value="{{ $idProducto }}">
 
-                                                <input type="number" class="form-control form-control-sm cantidad"
-                                                    min="1" step="1" value="{{ $detalle->cantidad }}"
-                                                    name="cantidad[]">
+                                                </td>
 
-                                            </td>
+                                                <td>
 
-                                            <td class="unidad-producto text-center text-muted">
-                                                {{ $detalle->producto->unidadMedida }}
-                                            </td>
+                                                    <input type="number" class="form-control form-control-sm cantidad"
+                                                        min="1" step="1" value="{{ old('cantidad')[$i] }}"
+                                                        name="cantidad[]">
 
-                                            <td>
+                                                </td>
 
-                                                <input type="number" class="form-control form-control-sm costo-total"
-                                                    min="0" step="0.01" value="{{ $detalle->costoTotal }}"
-                                                    name="costoTotal[]">
+                                                <td class="unidad-producto text-center text-muted">
+                                                    {{ $productoSeleccionado?->unidadMedida ?? '-' }}
+                                                </td>
 
-                                            </td>
+                                                <td>
 
-                                            <td>
+                                                    <input type="number" class="form-control form-control-sm costo-total"
+                                                        min="0" step="0.01" value="{{ old('costoTotal')[$i] }}"
+                                                        name="costoTotal[]">
 
-                                                <input type="date" class="form-control form-control-sm"
-                                                    name="fechaVencimiento[]" value="{{ $detalle->fechaVencimiento }}">
+                                                </td>
 
-                                            </td>
+                                                <td>
 
-                                            <td class="text-center">
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="fechaVencimiento[]"
+                                                        value="{{ old('fechaVencimiento')[$i] ?? '' }}">
 
-                                                <button type="button"
-                                                    class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+                                                </td>
 
-                                                    <i class="bi bi-trash"></i>
+                                                <td class="text-center">
 
-                                                </button>
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
 
-                                            </td>
+                                                        <i class="bi bi-trash"></i>
 
-                                        </tr>
-                                    @endforeach
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        @foreach ($compra->detalles as $detalle)
+                                            <tr>
+
+                                                <td>
+
+                                                    <input type="text"
+                                                        class="form-control form-control-sm producto-input"
+                                                        value="{{ $detalle->producto->nombre }}" readonly
+                                                        data-bs-toggle="modal" data-bs-target="#modalProductos">
+
+                                                    <input type="hidden" name="idProducto[]" class="id-producto"
+                                                        value="{{ $detalle->idProducto }}">
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="number" class="form-control form-control-sm cantidad"
+                                                        min="1" step="1" value="{{ $detalle->cantidad }}"
+                                                        name="cantidad[]">
+
+                                                </td>
+
+                                                <td class="unidad-producto text-center text-muted">
+                                                    {{ $detalle->producto->unidadMedida }}
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="number" class="form-control form-control-sm costo-total"
+                                                        min="0" step="0.01" value="{{ $detalle->costoTotal }}"
+                                                        name="costoTotal[]">
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="fechaVencimiento[]"
+                                                        value="{{ $detalle->fechaVencimiento }}">
+
+                                                </td>
+
+                                                <td class="text-center">
+
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+
+                                    @endif
 
                                 </tbody>
 
@@ -180,13 +250,16 @@
                                 </div>
                             @endif
 
+
+
                         </div>
 
                     </div>
 
                     <div class="form-check mb-3">
 
-                        <input class="form-check-input" type="checkbox" name="aplicarItbis" id="aplicarItbis" {{ $compra->aplicaItbis ? 'checked' : '' }}>
+                        <input class="form-check-input" type="checkbox" name="aplicarItbis" id="aplicarItbis"
+                            {{ $compra->aplicaItbis ? 'checked' : '' }}>
 
                         <label class="form-check-label" for="aplicarItbis">
                             Aplicar ITBIS (18%)
