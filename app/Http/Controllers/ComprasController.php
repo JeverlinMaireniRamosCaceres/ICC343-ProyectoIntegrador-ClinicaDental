@@ -91,7 +91,12 @@ class ComprasController extends Controller
      */
     public function show($id)
     {
-        return view('compras.show');
+        $compra = Compra::with([
+            'proveedor',
+            'detalles.producto'
+        ])->findOrFail($id);
+
+        return view('compras.show', compact('compra'));
     }
 
     /**
