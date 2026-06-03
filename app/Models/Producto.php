@@ -24,4 +24,13 @@ class Producto extends Model
         'stockMinimo',
         'unidadMedida'
     ];
+
+    public function detallesCompra()
+    {
+        return $this->hasMany(
+            DetalleCompra::class,
+            'idProducto',
+            'idProducto'
+        );
+    }
 }
