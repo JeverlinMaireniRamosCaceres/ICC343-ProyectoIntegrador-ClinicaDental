@@ -23,6 +23,10 @@ class ProductoController extends Controller
             ->paginate(6)
             ->withQueryString();
 
+        if ($request->ajax()) {
+            return view('productos.partials.tabla', compact('productos'))->render();
+        }
+
         return view('productos.index', compact('productos', 'buscar'));
     }
 
@@ -55,7 +59,9 @@ class ProductoController extends Controller
      */
     public function edit(string $id)
     {
-        return view('productos.edit');
+        $producto = Producto::findOrFail($id);
+
+        return view('productos.edit', compact('producto'));
     }
 
     /**
@@ -63,14 +69,52 @@ class ProductoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:100|unique:productos,nombre,' . $id . ',idProducto',
+            'descripcion' => 'nullable|string|max:255',
+            'stockMinimo' => 'required|integer|min:0',
+            'unidadMedida' => 'required|string|max:50'
+
+        ],
+        [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.unique' => 'Este producto ya existe.',
+
+            'stockMinimo.required' => 'El stock mínimo es obligatorio.',
+            'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
+            'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
+        ]);
+
+        $producto = Producto::findOrFail($id);
+        $producto->update($request->all());
+        
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
+public function destroy(string $id)
+{
+    $producto = Producto::findOrFail($id);
+
+    try {
+        $producto->delete();
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto eliminado correctamente.');
+
+    } catch (\Illuminate\Database\QueryException $e) {
+        if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'a foreign key constraint fails')) {
+            return redirect()
+                ->route('productos.index')
+                ->with('error', "No se puede eliminar el producto '{$producto->nombre}' porque está siendo utilizado en compras, facturación u otros registros del sistema.");
+        }
+
+        throw $e;
     }
+}
 }

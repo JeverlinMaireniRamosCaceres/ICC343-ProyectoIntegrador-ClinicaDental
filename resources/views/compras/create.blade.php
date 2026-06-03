@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Nueva Compra')
+@section('title', 'Nueva compra')
 
 @section('content')
     <div class="container py-4">
@@ -9,7 +9,7 @@
             <a href="{{ route('compras.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h2 class="fw-semibold mb-0">Nueva Compra</h2>
+            <h2 class="fw-semibold mb-0">Nueva compra</h2>
         </div>
 
         <div class="card border-0 shadow-sm rounded-3">
@@ -97,43 +97,125 @@
 
                                 <tbody id="detalleBody">
 
-                                    <tr>
+                                    @if (old('idProducto'))
 
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm producto-input"
-                                                placeholder="Buscar producto..." readonly data-bs-toggle="modal"
-                                                data-bs-target="#modalProductos">
+                                        @foreach (old('idProducto') as $i => $idProducto)
+                                            @php
+                                                $productoSeleccionado = $productos->firstWhere(
+                                                    'idProducto',
+                                                    $idProducto,
+                                                );
+                                            @endphp
 
-                                            <input type="hidden" name="idProducto[]" class="id-producto">
-                                        </td>
+                                            <tr>
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm cantidad"
-                                                min="1" step="1" value="1" name="cantidad[]">
-                                        </td>
+                                                <td>
 
-                                        <td class="unidad-producto text-center text-muted">
-                                            -
-                                        </td>
+                                                    <input type="text"
+                                                        class="form-control form-control-sm producto-input"
+                                                        value="{{ $productoSeleccionado?->nombre }}" readonly
+                                                        data-bs-toggle="modal" data-bs-target="#modalProductos">
 
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm costo-total"
-                                                min="0" step="0.01" value="0" name="costoTotal[]">
-                                        </td>
+                                                    <input type="hidden" name="idProducto[]" class="id-producto"
+                                                        value="{{ $idProducto }}">
 
-                                        <td>
-                                            <input type="date" class="form-control form-control-sm"
-                                                name="fechaVencimiento[]">
-                                        </td>
+                                                </td>
 
-                                        <td class="text-center">
-                                            <button type="button"
-                                                class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </td>
+                                                <td>
 
-                                    </tr>
+                                                    <input type="number" class="form-control form-control-sm cantidad"
+                                                        min="1" step="1" name="cantidad[]"
+                                                        value="{{ old('cantidad')[$i] }}">
+
+                                                </td>
+
+                                                <td class="unidad-producto text-center text-muted">
+
+                                                    {{ $productoSeleccionado?->unidadMedida ?? '-' }}
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="number" class="form-control form-control-sm costo-total"
+                                                        min="0" step="0.01" name="costoTotal[]"
+                                                        value="{{ old('costoTotal')[$i] }}">
+
+                                                </td>
+
+                                                <td>
+
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="fechaVencimiento[]"
+                                                        value="{{ old('fechaVencimiento')[$i] ?? '' }}">
+
+                                                </td>
+
+                                                <td class="text-center">
+
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+
+                                            <td>
+
+                                                <input type="text" class="form-control form-control-sm producto-input"
+                                                    placeholder="Buscar producto..." readonly data-bs-toggle="modal"
+                                                    data-bs-target="#modalProductos">
+
+                                                <input type="hidden" name="idProducto[]" class="id-producto">
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number" class="form-control form-control-sm cantidad"
+                                                    min="1" step="1" value="1" name="cantidad[]">
+
+                                            </td>
+
+                                            <td class="unidad-producto text-center text-muted">
+                                                -
+                                            </td>
+
+                                            <td>
+
+                                                <input type="number" class="form-control form-control-sm costo-total"
+                                                    min="0" step="0.01" value="0" name="costoTotal[]">
+
+                                            </td>
+
+                                            <td>
+
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="fechaVencimiento[]">
+
+                                            </td>
+
+                                            <td class="text-center">
+
+                                                <button type="button"
+                                                    class="btn btn-sm btn-danger rounded-pill px-3 btnEliminarFila">
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    @endif
 
                                 </tbody>
 
@@ -195,7 +277,8 @@
                         <a href="{{ route('compras.index') }}" class="btn btn-light rounded-pill px-4">
                             Cancelar
                         </a>
-                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                        <button type="submit" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #0ea5e9;">
                             <i class="bi bi-floppy"></i> Guardar
                         </button>
                     </div>
@@ -207,148 +290,9 @@
 
     </div>
 
-    <!-- MODAL Proveedores -->
+    @include('compras.partials.modal-proveedores')
 
-    <div class="modal fade" id="modalProveedores" tabindex="-1">
-
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-
-            <div class="modal-content border-0 shadow rounded-3">
-
-                <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
-                        Seleccionar proveedor
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                <div class="modal-body p-4 d-flex flex-column" style="height: 550px;">
-
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent mb-3"
-                        style="transition: border-color 0.2s;"
-                        onfocusin="this.style.background='#fff'; this.style.borderColor='#2563EB';"
-                        onfocusout="this.style.background=''; this.style.borderColor='transparent';">
-                        <i class="bi bi-search text-secondary" style="font-size: 14px;"></i>
-                        <input type="text" id="buscarProveedor" class="border-0 bg-transparent p-0 w-100"
-                            style="outline: none; font-size: 14px;" placeholder="Buscar proveedor...">
-                    </div>
-
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
-
-                            <thead class="table-light sticky-top">
-                                <tr>
-                                    <th class="px-3 py-3 text-muted fw-semibold small">Proveedor</th>
-                                    <th class="px-3 py-3"></th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="tablaProveedores">
-                                @foreach ($proveedores as $proveedor)
-                                    <tr>
-                                        <td class="fw-medium">{{ $proveedor->nombre }}</td>
-                                        <td class="text-end">
-                                            <button type="button"
-                                                class="btn btn-sm btn-primary rounded-pill px-3 btnSeleccionarProveedor"
-                                                style="width: 50px; height: 38px;"
-                                                data-id="{{ $proveedor->idProveedor }}"
-                                                data-nombre="{{ $proveedor->nombre }}">
-
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                                <tr id="sinResultados" style="display: none;">
-                                    <td colspan="2" class="text-center text-muted py-4">
-                                        No se encontraron proveedores.
-                                    </td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- MODAL PRODUCTOS -->
-
-    <div class="modal fade" id="modalProductos" tabindex="-1">
-
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-
-            <div class="modal-content border-0 shadow rounded-3">
-
-                <div class="modal-header">
-                    <h5 class="modal-title fw-semibold">
-                        Buscar producto
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-                </div>
-
-                <div class="modal-body p-4 d-flex flex-column" style="height: 550px;">
-
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent mb-3"
-                        style="transition: border-color 0.2s;"
-                        onfocusin="this.style.background='#fff'; this.style.borderColor='#2563EB';"
-                        onfocusout="this.style.background=''; this.style.borderColor='transparent';">
-                        <i class="bi bi-search text-secondary" style="font-size: 14px;"></i>
-                        <input type="text" id="buscarProducto" class="border-0 bg-transparent p-0 w-100"
-                            style="outline: none; font-size: 14px;" placeholder="Buscar producto...">
-                    </div>
-
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light sticky-top">
-                                <tr>
-                                    <th class="px-3 py-3 text-muted fw-semibold small">Producto</th>
-                                    <th class="px-3 py-3"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaProductos">
-                                @foreach ($productos as $producto)
-                                    <tr>
-                                        <td class="fw-medium">{{ $producto->nombre }}</td>
-                                        <td class="text-end">
-                                            <button type="button"
-                                                class="btn btn-sm btn-primary rounded-pill px-3 btnSeleccionarProducto"
-                                                style="width: 50px; height: 38px;" data-id="{{ $producto->idProducto }}"
-                                                data-nombre="{{ $producto->nombre }}"
-                                                data-unidad="{{ $producto->unidadMedida }}">
-
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                                <tr id="sinResultadosProductos" style="display: none;">
-                                    <td colspan="2" class="text-center text-muted py-4">
-                                        No se encontraron productos.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    @include('compras.partials.modal-productos')
 
     <script src="{{ asset('js/nueva-compra.js') }}"></script>
 

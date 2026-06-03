@@ -69,7 +69,8 @@ class ComprasController extends Controller
                 'idProveedor' => $request->idProveedor,
                 'fecha' => $request->fecha,
                 'monto' => 0,
-                'estado' => $request->estado
+                'estado' => $request->estado,
+                'aplicaItbis' => $request->has('aplicarItbis')
             ]);
 
             $montoTotal = $this->guardarDetalles(
@@ -90,7 +91,12 @@ class ComprasController extends Controller
      */
     public function show($id)
     {
-        return view('compras.show');
+        $compra = Compra::with([
+            'proveedor',
+            'detalles.producto'
+        ])->findOrFail($id);
+
+        return view('compras.show', compact('compra'));
     }
 
     /**
@@ -98,7 +104,27 @@ class ComprasController extends Controller
      */
     public function edit($id)
     {
-        return view('compras.edit');
+        $compra = Compra::with([
+            'proveedor',
+            'detalles.producto'
+        ])->findOrFail($id);
+
+        $proveedores = Proveedor::orderBy('idProveedor')->get();
+
+        $productos = Producto::select(
+            'idProducto',
+            'nombre',
+            'unidadMedida'
+        )->orderBy('idProducto')->get();
+
+        return view(
+            'compras.edit',
+            compact(
+                'compra',
+                'proveedores',
+                'productos'
+            )
+        );
     }
 
     /**
@@ -106,7 +132,17 @@ class ComprasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validarCompra($request);
+        DB::transaction(function () use ($request, $id) {
+            $compra = Compra::with('detalles')->findOrFail($id);
+            $this->revertirStockYEliminarDetalles($compra);
+            $this->actualizarCabeceraCompra($request, $compra);
+            $montoTotal = $this->guardarDetalles($request, $compra);
+            $compra->update([
+                'monto' => $montoTotal
+            ]);
+        });
+        return redirect()->route('compras.index')->with('success', 'Compra actualizada correctamente.');
     }
 
     /**
@@ -117,6 +153,19 @@ class ComprasController extends Controller
         //
     }
 
+    public function anular($id)
+    {
+        DB::transaction(function () use ($id) {
+            $compra = Compra::with('detalles')->findOrFail($id);
+            $this->revertirStockCompra($compra);
+            $compra->update([
+                'estado' => 'Anulada'
+            ]);
+        });
+
+        return redirect()->route('compras.index')->with('success', 'Compra anulada correctamente.');
+    }
+
     private function validarCompra(Request $request)
     {
         $request->validate(
@@ -124,13 +173,18 @@ class ComprasController extends Controller
                 'idProveedor' => 'required',
                 'fecha' => 'required|date',
                 'estado' => 'required',
-
                 'idProducto' => [
                     'required',
                     'array',
                     function ($attribute, $value, $fail) {
-                        if (collect($value)->filter()->isEmpty()) {
-                            $fail('Debe agregar al menos un producto.');
+
+                        foreach ($value as $idProducto) {
+
+                            if (empty($idProducto)) {
+
+                                $fail('Debe completar o eliminar las filas vacías.');
+                                return;
+                            }
                         }
                     }
                 ],
@@ -187,5 +241,36 @@ class ComprasController extends Controller
         $producto = Producto::findOrFail($idProducto);
         $producto->stockActual += $cantidad;
         $producto->save();
+    }
+
+    private function actualizarCabeceraCompra(Request $request, Compra $compra)
+    {
+        $compra->update([
+            'idProveedor' => $request->idProveedor,
+            'fecha' => $request->fecha,
+            'estado' => $request->estado,
+            'aplicaItbis' => $request->has('aplicarItbis')
+        ]);
+    }
+
+    private function revertirStockYEliminarDetalles(Compra $compra)
+    {
+        foreach ($compra->detalles as $detalle) {
+            $producto = Producto::find($detalle->idProducto);
+            if ($producto) {
+                $producto->stockActual -= $detalle->cantidad;
+                $producto->save();
+            }
+        }
+        DetalleCompra::where('idCompras', $compra->idCompras)->delete();
+    }
+
+    private function revertirStockCompra(Compra $compra)
+    {
+        foreach ($compra->detalles as $detalle) {
+            $producto = Producto::findOrFail($detalle->idProducto);
+            $producto->stockActual -= $detalle->cantidad;
+            $producto->save();
+        }
     }
 }
