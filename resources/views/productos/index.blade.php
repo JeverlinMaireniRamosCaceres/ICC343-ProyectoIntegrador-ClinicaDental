@@ -3,7 +3,7 @@
 @section('title', 'Productos')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container py-4 px-5">
 
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
@@ -23,28 +23,23 @@
 
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h2 class="fw-semibold mb-0">Productos</h2>
-            
+
             <a href="{{ route('productos.create') }}"
-                class="btn d-flex align-items-center gap-2 rounded-pill px-4 text-white"
-                style="background-color: #0ea5e9;">
+                class="btn d-flex align-items-center gap-2 rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
                 <i class="bi bi-plus-lg"></i> Nuevo
             </a>
         </div>
 
         <div class="card border-0 shadow-sm rounded-3">
-            
+
             <div class="p-4 border-bottom">
                 <div class="position-relative" style="max-width: 350px;">
                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
                     <form method="GET" action="{{ route('productos.index') }}" onsubmit="event.preventDefault();">
-                        <input type="text"
-                            name="buscar"
-                            id="buscarProducto" {{-- ID usado por el JS --}}
-                            value="{{ request('buscar') }}"
-                            class="form-control rounded-pill ps-5 search-input"
-                            placeholder="Buscar producto..."
-                            autocomplete="off">
+                        <input type="text" name="buscar" id="buscarProducto" {{-- ID usado por el JS --}}
+                            value="{{ request('buscar') }}" class="form-control rounded-pill ps-5 search-input"
+                            placeholder="Buscar producto..." autocomplete="off">
                     </form>
                 </div>
             </div>
@@ -104,7 +99,7 @@
             document.getElementById('formEliminar').action = `/productos/${id}`;
         });
     </script>
-    
+
     {{-- Inclusión de tu nuevo script de productos --}}
     <script src="{{ asset('js/producto.js') }}"></script>
 @endsection
