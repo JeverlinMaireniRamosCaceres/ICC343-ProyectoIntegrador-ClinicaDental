@@ -3,15 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\CajaChica;
 
 class CajaChicaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('caja_chica.index');
+        $cajas = CajaChica::query();
+
+        if ($request->filled('fecha')) {
+
+            $cajas->whereDate('fecha', $request->fecha);
+        }
+
+        $cajas = $cajas
+            ->orderByDesc('fecha')
+            ->orderByDesc('horaApertura')
+            ->paginate(6);
+
+        if ($request->ajax()) {
+
+            return view(
+                'caja_chica.partials.tabla',
+                compact('cajas')
+            )->render();
+        }
+
+        return view('caja_chica.index', compact('cajas'));
     }
 
     /**
