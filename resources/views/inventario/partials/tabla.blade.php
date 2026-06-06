@@ -84,9 +84,10 @@
 
                             @php
 
-                                $vencePronto =
-                                   \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)
-                                        ->diffInDays(now(), false) <= 30;
+                                $diasRestantes = now()->diffInDays(
+                                    \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento), false
+                                );
+                                $vencePronto = $diasRestantes >= 0 && $diasRestantes <= 30;
 
                             @endphp
 
