@@ -32,6 +32,22 @@ document.addEventListener("DOMContentLoaded", function () {
         ).innerHTML = html;
     }
 
+    // cargar movimientos
+    async function cargarMovimientos(url = null) {
+        let ruta = url || `/inventario?tipo=movimientos`;
+
+        if (url) {
+            const separador = ruta.includes("?") ? "&" : "?";
+            ruta += `${separador}tipo=movimientos`;
+        }
+
+        const response = await fetch(ruta, {
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
+
+        document.getElementById("contenedorTablaMovimientos").innerHTML = await response.text();
+    }
+
     // busqueda AJAX
 
     if (buscarProducto) {
@@ -66,14 +82,26 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("click", function (e) {
 
         const link = e.target.closest(".pagination a");
+        if (!link) return;
+        e.preventDefault();
 
-        if (link) {
+        const tabActivoBtn = document.querySelector(".nav-link.active[data-bs-target]");
+        const tabActivo = tabActivoBtn ? tabActivoBtn.getAttribute("data-bs-target") : null;
+        console.log('Tab activo:', tabActivo);
 
-            e.preventDefault();
-
+        if (tabActivo === "#tab-productos") {
             cargarProductos(link.href);
+        } else if (tabActivo === "#tab-movimientos") {
+            cargarMovimientos(link.href);
         }
 
     });
 
+    const hash = window.location.hash;
+    if (hash) {
+        const tabBtn = document.querySelector(`[data-bs-target="${hash}"]`);
+        if (tabBtn) {
+            bootstrap.Tab.getOrCreateInstance(tabBtn).show();
+        }
+    }
 });
