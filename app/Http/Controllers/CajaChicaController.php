@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CajaChica;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class CajaChicaController extends Controller
 {
@@ -48,7 +51,24 @@ class CajaChicaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $this->validarCajaAbierta();
+
+        $this->validarDatos($request);
+
+        CajaChica::create([
+            'idUsuarioApertura' => 1,
+            'fecha' => $request->fecha,
+            'horaApertura' => $request->horaApertura,
+            'saldoInicial' => $request->saldoInicial,
+            'monto' => $request->saldoInicial,
+            'estado' => 'Abierta',
+            'diferencia' => 0,
+        ]);
+
+        return redirect()
+            ->route('caja-chica.index')
+            ->with('success', 'Caja abierta exitosamente.');
     }
 
     /**
@@ -81,5 +101,35 @@ class CajaChicaController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function validarCajaAbierta()
+    {
+        if (CajaChica::where('estado', 'Abierta')->exists()) {
+            abort(
+                redirect()
+                    ->back()
+                    ->withInput()
+                    ->withErrors([
+                        'fecha' => 'Ya existe una caja abierta.'
+                    ])
+            );
+        }
+    }
+
+    private function validarDatos(Request $request)
+    {
+        $request->validate([
+            'fecha' => [
+                'required',
+                'date',
+                Rule::unique('caja_chicas', 'fecha'),
+            ],
+            'horaApertura' => 'required|date_format:H:i',
+            'saldoInicial' => 'required|numeric|gt:0',
+        ], [
+            'fecha.unique' => 'Ya existe una caja para esta fecha.',
+            'saldoInicial.gt' => 'El saldo inicial debe ser mayor que cero.',
+        ]);
     }
 }
