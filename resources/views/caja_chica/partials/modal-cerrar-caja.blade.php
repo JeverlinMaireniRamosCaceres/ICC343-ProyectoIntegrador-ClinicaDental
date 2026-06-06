@@ -20,7 +20,8 @@
                     <label class="form-label small text-muted fw-semibold">Monto contado</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0 text-muted">RD$</span>
-                        <input type="number" id="montoContado" class="form-control border-start-0" placeholder="0.00" step="0.01" min="0">
+                        <input type="number" id="montoContado" class="form-control border-start-0" placeholder="0.00"
+                            step="0.01" min="0">
                     </div>
                 </div>
 
@@ -40,8 +41,10 @@
 
             <div class="modal-footer border-0 pt-0">
                 <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                <button class="btn btn-danger rounded-pill px-4"><i class="bi bi-lock-fill me-1"></i> Confirmar
-                    cierre</button>
+                <button class="btn btn-danger rounded-pill px-4" id="btnConfirmarCierre" disabled>
+                    <i class="bi bi-lock-fill me-1"></i>
+                    Confirmar cierre
+                </button>
             </div>
 
         </div>

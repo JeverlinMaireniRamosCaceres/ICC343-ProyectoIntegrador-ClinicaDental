@@ -51,6 +51,8 @@ document.addEventListener("click", function (e) {
     document.getElementById("montoContado").value = "";
 
     document.getElementById("diferenciaCaja").textContent = "RD$ 0.00";
+
+    document.getElementById("btnConfirmarCierre").disabled = true;
 });
 
 document.addEventListener("input", function (e) {
@@ -73,4 +75,7 @@ document.addEventListener("input", function (e) {
     } else {
         span.classList.add("text-secondary");
     }
+
+    document.getElementById("btnConfirmarCierre").disabled =
+        e.target.value.trim() === "";
 });
