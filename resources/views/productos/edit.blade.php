@@ -99,7 +99,8 @@
                         Cancelar
                     </a>
                     <button type="submit"
-                            class="btn btn-primary rounded-pill px-4">
+                            class="btn btn-primary rounded-pill px-4"
+                            style="background-color: #0ea5e9;">
                         <i class="bi bi-arrow-clockwise"></i>
                         Actualizar
                     </button>
