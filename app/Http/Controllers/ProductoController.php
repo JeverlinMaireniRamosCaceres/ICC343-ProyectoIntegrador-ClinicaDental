@@ -39,11 +39,37 @@ class ProductoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
+ * Store a newly created resource in storage.
+ */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:100|unique:productos,nombre',
+            'descripcion' => 'nullable|string|max:255',
+            'stockActual' => 'required|integer|min:0',
+            'stockMinimo' => 'required|integer|min:0',
+            'unidadMedida' => 'required|string|max:50'
+        ],
+        [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.unique' => 'Este producto ya existe.',
+            
+            'stockActual.required' => 'El stock inicial es obligatorio.',
+            'stockActual.integer' => 'El stock inicial debe ser un número entero.',
+            'stockActual.min' => 'El stock inicial no puede ser negativo.',
+
+            'stockMinimo.required' => 'El stock mínimo es obligatorio.',
+            'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
+            'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
+            
+            'unidadMedida.required' => 'Debes seleccionar una unidad de medida.',
+        ]);
+
+        Producto::create($request->all());
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto creado exitosamente.');
     }
 
     /**
