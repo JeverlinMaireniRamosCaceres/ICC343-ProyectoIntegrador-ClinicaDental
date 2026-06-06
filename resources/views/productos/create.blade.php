@@ -25,106 +25,102 @@
                 @csrf
 
                 <!-- NOMBRE -->
-
                 <div class="mb-3">
-
                     <label class="form-label text-muted fw-semibold small">
-                        Nombre
+                        Nombre del producto
                     </label>
-
                     <input type="text"
                            name="nombre"
-                           class="form-control"
+                           class="form-control @error('nombre') is-invalid @enderror"
+                           value="{{ old('nombre') }}"
                            placeholder="Ej: Guantes Latex">
-
+                    @error('nombre')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <!-- DESCRIPCION -->
-
                 <div class="mb-3">
-
                     <label class="form-label text-muted fw-semibold small">
                         Descripción
                     </label>
-
                     <textarea name="descripcion"
-                              class="form-control"
+                              class="form-control @error('descripcion') is-invalid @enderror"
                               rows="3"
-                              placeholder="Ej: Caja de guantes desechables"></textarea>
-
+                              placeholder="Ej: Caja de guantes desechables">{{ old('descripcion') }}</textarea>
+                    @error('descripcion')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
+                <!-- FILA PARA STOCKS -->
+                <div class="row mb-3">
+                    <!-- STOCK INICIAL -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label text-muted fw-semibold small">
+                            Stock Inicial
+                        </label>
+                        <input type="number"
+                               name="stockActual"
+                               class="form-control @error('stockActual') is-invalid @enderror"
+                               value="{{ old('stockActual', 0) }}"
+                               placeholder="0"
+                               min="0">
+                        @error('stockActual')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                <!-- STOCK MINIMO -->
-
-                <div class="mb-3">
-
-                    <label class="form-label text-muted fw-semibold small">
-                        Stock Mínimo
-                    </label>
-
-                    <input type="number"
-                           name="stockMinimo"
-                           class="form-control"
-                           placeholder="0"
-                           min="0">
-
+                    <!-- STOCK MINIMO -->
+                    <div class="col-md-6">
+                        <label class="form-label text-muted fw-semibold small">
+                            Stock Mínimo
+                        </label>
+                        <input type="number"
+                               name="stockMinimo"
+                               class="form-control @error('stockMinimo') is-invalid @enderror"
+                               value="{{ old('stockMinimo') }}"
+                               placeholder="0"
+                               min="0">
+                        @error('stockMinimo')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
 
                 <!-- UNIDAD MEDIDA -->
-
                 <div class="mb-4">
-
                     <label class="form-label text-muted fw-semibold small">
                         Unidad de Medida
                     </label>
-
                     <select name="unidadMedida"
-                            class="form-select">
-
+                            class="form-select @error('unidadMedida') is-invalid @enderror">
                         <option value="">
                             Seleccionar unidad
                         </option>
-
-                        <option value="Unidades">
-                            Unidades
-                        </option>
-
-                        <option value="Cajas">
-                            Cajas
-                        </option>
-
-                        <option value="Paquetes">
-                            Paquetes
-                        </option>
-
-                        <option value="Frascos">
-                            Frascos
-                        </option>
-
+                        @foreach(['Unidades', 'Cajas', 'Paquetes', 'Frascos'] as $unidad)
+                            <option value="{{ $unidad }}" {{ old('unidadMedida') == $unidad ? 'selected' : '' }}>
+                                {{ $unidad }}
+                            </option>
+                        @endforeach
                     </select>
-
+                    @error('unidadMedida')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <!-- BOTONES -->
-
+                <!-- BOTONES PARA GUARDAR O CANCELAR -->
                 <div class="d-flex gap-2 justify-content-end">
-
                     <a href="{{ route('productos.index') }}"
                        class="btn btn-light rounded-pill px-4">
-
                         Cancelar
-
                     </a>
-
                     <button type="submit"
-                            class="btn btn-primary rounded-pill px-4">
-
+                            class="btn btn-primary rounded-pill px-4"
+                            style="background-color: #0ea5e9;">
                         <i class="bi bi-floppy"></i>
                         Guardar
-
                     </button>
-
                 </div>
 
             </form>
