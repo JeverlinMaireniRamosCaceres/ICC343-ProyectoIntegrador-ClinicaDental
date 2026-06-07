@@ -66,6 +66,8 @@ Route::resource('citas', CitaController::class);
 
 //caja chica
 Route::resource('caja-chica', CajaChicaController::class);
+Route::post('/caja-chica/{caja}/egreso', [CajaChicaController::class, 'registrarEgreso'])
+    ->name('caja-chica.egreso');
 
 //Facturacion
 Route::resource('facturacion', FacturacionController::class);

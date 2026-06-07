@@ -5,6 +5,19 @@
 @section('content')
     <div class="container py-4">
 
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4">
+
+                <i class="bi bi-check-circle-fill me-2"></i>
+
+                {{ session('success') }}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert">
+                </button>
+
+            </div>
+        @endif
+
         <div class="d-flex align-items-center gap-3 mb-4">
 
             <a href="{{ route('caja-chica.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
@@ -134,15 +147,15 @@
                                     <td>
 
                                         @if ($movimiento->tipo === 'Egreso')
-                                            <span class="badge bg-danger-subtle text-danger">
+                                            <span class="badge rounded-pill bg-danger-subtle text-danger">
                                                 Egreso
                                             </span>
                                         @elseif ($movimiento->tipo === 'Ingreso')
-                                            <span class="badge bg-success-subtle text-success">
+                                            <span class="badge rounded-pill bg-success-subtle text-success">
                                                 Ingreso
                                             </span>
                                         @else
-                                            <span class="badge bg-secondary-subtle text-secondary">
+                                            <span class="badge rounded-pill bg-secondary-subtle text-secondary">
                                                 {{ $movimiento->tipo }}
                                             </span>
                                         @endif
@@ -206,7 +219,11 @@
 
                         <div class="d-flex justify-content-between mb-2">
 
-                            <span>Saldo actual</span>
+                            @if ($caja->estado === 'Cerrada')
+                                <span>Saldo final</span>
+                            @else
+                                <span>Saldo actual</span>
+                            @endif
 
                             <span>
                                 RD$ {{ number_format($caja->monto, 2) }}
@@ -252,6 +269,20 @@
         @include('caja_chica.partials.modal-cerrar-caja')
 
         <script src="{{ asset('js/caja-chica.js') }}"></script>
+        <!-- Cuando hay un error, volver a abrir el modal de egreso -->
+        @if ($errors->any())
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+
+                    const modal = new bootstrap.Modal(
+                        document.getElementById('modalEgreso')
+                    );
+
+                    modal.show();
+
+                });
+            </script>
+        @endif
 
     </div>
 @endsection

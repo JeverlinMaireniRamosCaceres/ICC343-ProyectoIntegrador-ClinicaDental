@@ -7,7 +7,7 @@ use App\Models\CajaChica;
 use App\Models\MovimientoCajaChica;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\DB;
 
 class CajaChicaController extends Controller
 {
@@ -52,7 +52,6 @@ class CajaChicaController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validarCajaAbierta();
 
         $this->validarDatos($request);
@@ -122,16 +121,44 @@ class CajaChicaController extends Controller
     private function validarDatos(Request $request)
     {
         $request->validate([
-            'fecha' => [
-                'required',
-                'date',
-                Rule::unique('caja_chicas', 'fecha'),
-            ],
+            'fecha' => ['required', 'date', Rule::unique('caja_chicas', 'fecha'),],
             'horaApertura' => 'required|date_format:H:i',
             'saldoInicial' => 'required|numeric|gt:0',
         ], [
             'fecha.unique' => 'Ya existe una caja para esta fecha.',
             'saldoInicial.gt' => 'El saldo inicial debe ser mayor que cero.',
         ]);
+    }
+
+    public function registrarEgreso(Request $request, CajaChica $caja)
+    {
+        $request->validate([
+            'monto' => ['required', 'numeric', 'min:0.01'],
+            'descripcion' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($request->monto > $caja->monto) {
+            return back()->withErrors([
+                'monto' => 'El monto excede el saldo disponible.'
+            ]);
+        }
+
+        DB::transaction(function () use ($request, $caja) {
+
+            MovimientoCajaChica::create([
+                'idUsuario' => 1, // Cambiar luego por auth()->user()->idUsuario
+                'idCajaChica' => $caja->idCajaChica,
+                'hora' => now()->format('H:i:s'),
+                'monto' => $request->monto,
+                'tipo' => 'Egreso',
+                'descripcion' => $request->descripcion,
+            ]);
+
+            $caja->decrement('monto', $request->monto);
+        });
+
+        return redirect()
+            ->route('caja-chica.show', $caja->idCajaChica)
+            ->with('success', 'Egreso registrado correctamente.');
     }
 }

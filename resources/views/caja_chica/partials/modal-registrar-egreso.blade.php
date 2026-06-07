@@ -28,37 +28,52 @@
 
             <div class="modal-body pt-3">
 
-                <div class="mb-3">
+                <form id="formEgreso" method="POST" action="{{ route('caja-chica.egreso', $caja->idCajaChica) }}">
+                    @csrf
 
-                    <label class="form-label small text-muted fw-semibold">
-                        Monto
-                    </label>
+                    <div class="mb-3">
 
-                    <div class="input-group">
+                        <label class="form-label small text-muted fw-semibold">
+                            Monto
+                        </label>
 
-                        <span class="input-group-text bg-light border-end-0 text-muted">
-                            RD$
-                        </span>
+                        <div class="input-group">
 
-                        <input type="number" id="montoEgreso" class="form-control border-start-0" placeholder="0.00"
-                            step="0.01" min="0">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                RD$
+                            </span>
+
+                            <input type="number" name="monto" id="montoEgreso" class="form-control border-start-0"
+                                placeholder="0.00" step="0.01" min="0.01">
+
+                        </div>
+
+                        @error('monto')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
                     </div>
 
-                </div>
+                    <div class="mb-3">
 
-                <div class="mb-3">
+                        <label class="form-label small text-muted fw-semibold">
+                            Descripción
+                        </label>
 
-                    <label class="form-label small text-muted fw-semibold">
-                        Descripción
-                    </label>
+                        <input type="text" name="descripcion" id="descripcionEgreso" class="form-control"
+                            placeholder="Ej: Compra de materiales">
 
-                    <input type="text" id="descripcionEgreso" class="form-control"
-                        placeholder="Ej: Compra de materiales">
+                        @error('descripcion')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
-                </div>
+                    </div>
 
-
+                </form>
 
             </div>
 
@@ -70,7 +85,8 @@
 
                 </button>
 
-                <button class="btn btn-danger rounded-pill px-4" id="btnGuardarEgreso" disabled>
+                <button type="submit" form="formEgreso" class="btn btn-danger rounded-pill px-4" id="btnGuardarEgreso"
+                    disabled>
 
                     <i class="bi bi-arrow-down-circle me-1"></i>
                     Registrar egreso
