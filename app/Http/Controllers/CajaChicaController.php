@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CajaChica;
+use App\Models\MovimientoCajaChica;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -74,9 +75,10 @@ class CajaChicaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        return view('caja_chica.show');
+        $caja = CajaChica::with('movimientos')->findOrFail($id);
+        return view('caja_chica.show', compact('caja'));
     }
 
     /**

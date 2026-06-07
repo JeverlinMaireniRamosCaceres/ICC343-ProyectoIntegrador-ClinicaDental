@@ -35,4 +35,13 @@ class CajaChica extends Model
         'horaApertura' => 'datetime:H:i:s',
         'horaCierre' => 'datetime:H:i:s',
     ];
+    
+    public function movimientos()
+    {
+        return $this->hasMany(
+            MovimientoCajaChica::class,
+            'idCajaChica',
+            'idCajaChica'
+        );
+    }
 }

@@ -1,25 +1,33 @@
-document.getElementById("filtroFecha").addEventListener("change", filtrarCajas);
+// Filtro fecha
+
+const filtroFecha = document.getElementById("filtroFecha");
+
+if (filtroFecha) {
+    filtroFecha.addEventListener("change", filtrarCajas);
+}
 
 // Paginación AJAX
+
 document.addEventListener("click", async function (e) {
-    if (e.target.closest(".pagination a")) {
-        e.preventDefault();
+    const link = e.target.closest(".pagination a");
 
-        const url = e.target.closest("a").href;
+    if (!link) return;
 
-        const response = await fetch(url, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-            },
-        });
+    e.preventDefault();
 
-        const html = await response.text();
+    const response = await fetch(link.href, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
 
-        document.getElementById("contenedorTablaCajas").innerHTML = html;
-    }
+    const html = await response.text();
+
+    document.getElementById("contenedorTablaCajas").innerHTML = html;
 });
 
 // Filtrar cajas
+
 async function filtrarCajas() {
     const fecha = document.getElementById("filtroFecha").value;
 
@@ -33,6 +41,8 @@ async function filtrarCajas() {
 
     document.getElementById("contenedorTablaCajas").innerHTML = html;
 }
+
+// Modal cerrar caja
 
 let saldoActual = 0;
 
@@ -79,3 +89,33 @@ document.addEventListener("input", function (e) {
     document.getElementById("btnConfirmarCierre").disabled =
         e.target.value.trim() === "";
 });
+
+// Modal egreso
+
+document.addEventListener("input", function () {
+    const montoInput = document.getElementById("montoEgreso");
+
+    const descripcionInput = document.getElementById("descripcionEgreso");
+
+    const btnGuardar = document.getElementById("btnGuardarEgreso");
+
+    if (!montoInput || !descripcionInput || !btnGuardar) return;
+
+    const monto = parseFloat(montoInput.value) || 0;
+
+    const descripcion = descripcionInput.value.trim();
+
+    btnGuardar.disabled = monto <= 0 || descripcion === "";
+});
+
+const modalEgreso = document.getElementById("modalEgreso");
+
+if (modalEgreso) {
+    modalEgreso.addEventListener("show.bs.modal", function () {
+        document.getElementById("montoEgreso").value = "";
+
+        document.getElementById("descripcionEgreso").value = "";
+
+        document.getElementById("btnGuardarEgreso").disabled = true;
+    });
+}

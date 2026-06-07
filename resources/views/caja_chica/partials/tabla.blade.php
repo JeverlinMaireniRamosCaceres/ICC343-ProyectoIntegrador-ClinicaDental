@@ -49,7 +49,7 @@
                         <div class="d-flex gap-2">
 
                             <div class="d-flex gap-2">
-                                <a href="{{ route('caja-chica.show', 1) }}"
+                                <a href="{{ route('caja-chica.show', $caja->idCajaChica) }}"
                                     class="btn btn-sm btn-secondary rounded-pill px-3">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
