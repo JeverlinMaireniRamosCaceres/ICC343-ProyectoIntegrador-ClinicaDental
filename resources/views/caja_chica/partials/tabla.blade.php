@@ -53,13 +53,6 @@
                                     class="btn btn-sm btn-secondary rounded-pill px-3">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
-                                @if ($caja->estado === 'Abierta')
-                                    <button class="btn btn-sm btn-danger rounded-pill px-3 btnCerrarCaja"
-                                        data-bs-toggle="modal" data-bs-target="#modalCerrarCaja"
-                                        data-id="{{ $caja->idCajaChica }}" data-monto="{{ $caja->monto }}">
-                                        <i class="bi bi-lock-fill"></i>
-                                    </button>
-                                @endif
                             </div>
 
                         </div>

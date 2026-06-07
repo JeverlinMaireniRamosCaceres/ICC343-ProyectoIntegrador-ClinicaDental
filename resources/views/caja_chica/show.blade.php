@@ -147,15 +147,15 @@
                                     <td>
 
                                         @if ($movimiento->tipo === 'Egreso')
-                                            <span class="badge rounded-pill bg-danger-subtle text-danger">
+                                            <span class="badge px-2 py-1 bg-danger-subtle text-danger">
                                                 Egreso
                                             </span>
                                         @elseif ($movimiento->tipo === 'Ingreso')
-                                            <span class="badge rounded-pill bg-success-subtle text-success">
+                                            <span class="badge px-2 py-1 bg-success-subtle text-success">
                                                 Ingreso
                                             </span>
                                         @else
-                                            <span class="badge rounded-pill bg-secondary-subtle text-secondary">
+                                            <span class="badge px-2 py-1 bg-secondary-subtle text-secondary">
                                                 {{ $movimiento->tipo }}
                                             </span>
                                         @endif

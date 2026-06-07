@@ -42,35 +42,16 @@ async function filtrarCajas() {
     document.getElementById("contenedorTablaCajas").innerHTML = html;
 }
 
-// Modal cerrar caja
-
-let saldoActual = 0;
-
-document.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btnCerrarCaja");
-
-    if (!btn) return;
-
-    saldoActual = parseFloat(btn.dataset.monto);
-
-    document.getElementById("idCajaCerrar").value = btn.dataset.id;
-
-    document.getElementById("saldoSistema").textContent =
-        `RD$ ${saldoActual.toFixed(2)}`;
-
-    document.getElementById("montoContado").value = "";
-
-    document.getElementById("diferenciaCaja").textContent = "RD$ 0.00";
-
-    document.getElementById("btnConfirmarCierre").disabled = true;
-});
-
 document.addEventListener("input", function (e) {
     if (e.target.id !== "montoContado") return;
 
+    const saldo = parseFloat(
+        document.getElementById("saldoSistema").dataset.saldo,
+    );
+
     const contado = parseFloat(e.target.value) || 0;
 
-    const diferencia = contado - saldoActual;
+    const diferencia = contado - saldo;
 
     const span = document.getElementById("diferenciaCaja");
 

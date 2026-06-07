@@ -18,7 +18,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
 
             <div>
-                <h2 class="fw-bold page-title mb-1">Caja chica</h2>
+                <h2 class="fw-bold page-title mb-1">Historial de cajas chicas</h2>
             </div>
 
             <a href="{{ route('caja-chica.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
@@ -58,6 +58,5 @@
 
     </div>
 
-    @include('caja_chica.partials.modal-cerrar-caja')
     <script src="{{ asset('js/caja-chica.js') }}"></script>
 @endsection

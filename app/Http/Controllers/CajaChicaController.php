@@ -161,4 +161,25 @@ class CajaChicaController extends Controller
             ->route('caja-chica.show', $caja->idCajaChica)
             ->with('success', 'Egreso registrado correctamente.');
     }
+
+    public function cerrarCaja(Request $request, $idCaja)
+    {
+        $request->validate([
+            'montoContado' => 'required|numeric|min:0',
+        ]);
+
+        $caja = CajaChica::findOrFail($idCaja);
+
+        $caja->horaCierre = now()->format('H:i:s');
+
+        $caja->diferencia = $request->montoContado - $caja->monto;
+
+        $caja->estado = 'Cerrada';
+
+        $caja->save();
+
+        return redirect()
+            ->route('caja-chica.show', $idCaja)
+            ->with('success', 'Caja cerrada correctamente.');
+    }
 }
