@@ -20,9 +20,9 @@ class AlergiaController extends Controller
             ->paginate(6)
             ->withQueryString();
 
-            if ($request->ajax()) {
-                return view('alergias.partials.tabla', compact('alergias'))->render();
-            }
+        if ($request->ajax()) {
+            return view('alergias.partials.tabla', compact('alergias'))->render();
+        }
 
         return view('alergias.index', compact('alergias', 'buscar'));
     }
@@ -34,14 +34,14 @@ class AlergiaController extends Controller
 
     public function store(Request $request)
     {
-        $request -> validate([
+        $request->validate([
             'nombre' => 'required|string|max:100|unique:alergias,nombre'
         ], [
             'nombre.unique' => 'Esta alergia ya existe.'
         ]);
 
         Alergia::create([
-            'nombre' => $request -> nombre
+            'nombre' => $request->nombre
         ]);
 
         return redirect()->route('alergias.index')->with('success', 'Alergia creada correctamente');
@@ -56,9 +56,12 @@ class AlergiaController extends Controller
     public function update(Request $request, $id)
     {
 
-        $request->validate([
-        'nombre' => 'required|string|max:100|unique:alergias,nombre,' . $id . ',idAlergia'],
-         ['nombre.unique' => 'Esta alergia ya se encuentra registrada en el sistema.']);
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:100|unique:alergias,nombre,' . $id . ',idAlergia'
+            ],
+            ['nombre.unique' => 'Esta alergia ya se encuentra registrada en el sistema.']
+        );
 
         $alergia = Alergia::findOrFail($id);
         $alergia->update($request->all());
@@ -76,6 +79,4 @@ class AlergiaController extends Controller
             ->route('alergias.index')
             ->with('success', 'Alergia eliminada correctamente');
     }
-
 }
-

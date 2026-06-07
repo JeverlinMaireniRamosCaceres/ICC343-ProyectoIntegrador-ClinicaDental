@@ -12,7 +12,7 @@
             </a>
 
             <h2 class="fw-semibold mb-0">
-                Detalle de Compra
+                Detalle de compra
             </h2>
 
         </div>

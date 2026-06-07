@@ -3,106 +3,116 @@
 @section('title', 'Abrir Caja')
 
 @section('content')
-<div class="container py-4">
+    <div class="container py-4">
 
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <a href="{{ route('caja-chica.index') }}"
-           class="btn btn-sm btn-light rounded-pill px-3">
-            <i class="bi bi-arrow-left"></i>
-        </a>
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="{{ route('caja-chica.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
-        <h2 class="fw-semibold mb-0">
-            Abrir Caja
-        </h2>
-    </div>
+            <h2 class="fw-semibold mb-0">
+                Abrir caja
+            </h2>
+        </div>
 
-    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card border-0 shadow-sm rounded-3">
 
-        <div class="card-body p-4">
+            <div class="card-body p-4">
 
-            <form action="{{ route('caja-chica.store') }}" method="POST">
+                <form action="{{ route('caja-chica.store') }}" method="POST">
 
-                @csrf
+                    @csrf
 
-                <!-- FECHA -->
+                    <!-- FECHA -->
 
-                <div class="mb-3">
+                    <div class="mb-3">
 
-                    <label class="form-label text-muted fw-semibold small">
-                        Fecha
-                    </label>
+                        <label class="form-label text-muted fw-semibold small">
+                            Fecha
+                        </label>
 
-                    <input type="date"
-                           name="fecha"
-                           class="form-control"
-                           value="{{ date('Y-m-d') }}">
+                        <input type="date" name="fecha" class="form-control @error('fecha') is-invalid @enderror"
+                            value="{{ old('fecha', date('Y-m-d')) }}" readonly>
 
-                </div>
-
-                <!-- HORA APERTURA -->
-
-                <div class="mb-3">
-
-                    <label class="form-label text-muted fw-semibold small">
-                        Hora de apertura
-                    </label>
-
-                    <input type="time"
-                           name="horaApertura"
-                           class="form-control"
-                           value="{{ date('H:i') }}">
-
-                </div>
-
-                <!-- MONTO INICIAL -->
-
-                <div class="mb-4">
-
-                    <label class="form-label text-muted fw-semibold small">
-                        Monto inicial
-                    </label>
-
-                    <div class="input-group">
-
-                        <span class="input-group-text bg-light border-end-0 text-muted">
-                            RD$
-                        </span>
-
-                        <input type="number"
-                               name="montoInicial"
-                               class="form-control border-start-0"
-                               placeholder="0.00"
-                               step="0.01"
-                               min="0">
+                        @error('fecha')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
                     </div>
 
-                </div>
+                    <!-- HORA APERTURA -->
 
-                <!-- BOTONES -->
+                    <div class="mb-3">
 
-                <div class="d-flex gap-2 justify-content-end">
+                        <label class="form-label text-muted fw-semibold small">
+                            Hora de apertura
+                        </label>
 
-                    <a href="{{ route('caja-chica.index') }}"
-                       class="btn btn-light rounded-pill px-4">
-                        Cancelar
-                    </a>
+                        <input type="time" name="horaApertura"
+                            class="form-control @error('horaApertura') is-invalid @enderror"
+                            value="{{ old('horaApertura', date('H:i')) }}" readonly>
 
-                    <button type="submit"
-                            class="btn btn-primary rounded-pill px-4">
+                        @error('horaApertura')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
-                        <i class="bi bi-cash-coin"></i>
-                        Abrir caja
+                    </div>
 
-                    </button>
+                    <!-- MONTO INICIAL -->
 
-                </div>
+                    <div class="mb-4">
 
-            </form>
+                        <label class="form-label text-muted fw-semibold small">
+                            Monto inicial
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                RD$
+                            </span>
+
+                            <input type="number" name="saldoInicial"
+                                class="form-control border-start-0 @error('saldoInicial') is-invalid @enderror"
+                                value="{{ old('saldoInicial') }}" placeholder="0.00" step="0.01" min="0">
+
+                            @error('saldoInicial')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                        </div>
+
+                    </div>
+
+                    <!-- BOTONES -->
+
+                    <div class="d-flex gap-2 justify-content-end">
+
+                        <a href="{{ route('caja-chica.index') }}" class="btn btn-light rounded-pill px-4">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="btn rounded-pill px-4"
+                            style="background-color: #0ea5e9; color: white;">
+
+                            <i class="bi bi-cash-coin"></i>
+                            Abrir caja
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
 
         </div>
 
     </div>
-
-</div>
 @endsection
