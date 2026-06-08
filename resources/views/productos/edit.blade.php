@@ -11,7 +11,7 @@
             <i class="bi bi-arrow-left"></i>
         </a>
         <h2 class="fw-semibold mb-0">
-            Editar Producto
+            Editar producto
         </h2>
     </div>
 
@@ -57,7 +57,7 @@
 
                 <div class="mb-3">
                     <label class="form-label text-muted fw-semibold small">
-                        Stock Mínimo
+                        Stock mínimo
                     </label>
                     <input type="number"
                            name="stockMinimo"
@@ -71,7 +71,7 @@
 
                 <div class="mb-4">
                     <label class="form-label text-muted fw-semibold small">
-                        Unidad de Medida
+                        Unidad de medida
                     </label>
                     <select name="unidadMedida"
                             class="form-select @error('unidadMedida') is-invalid @enderror">

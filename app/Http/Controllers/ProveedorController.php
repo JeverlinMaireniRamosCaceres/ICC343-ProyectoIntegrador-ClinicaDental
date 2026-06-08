@@ -113,7 +113,7 @@ class ProveedorController extends Controller
 
                 'telefono' => [
                     'required',
-                    'regex:/^\d{3}-\d{3}-\d{4}$/',
+                    'regex:/^(809|829|849)-\d{3}-\d{4}$/',
                     'unique:proveedores,telefono,' . $id . ',idProveedor'
                 ],
 
