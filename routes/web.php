@@ -34,6 +34,8 @@ Route::get('/login', function () {
 Route::resource('compras', ComprasController::class);
 Route::patch('/compras/{id}/anular', [ComprasController::class, 'anular'])
     ->name('compras.anular');
+Route::patch('/compras/{id}/pagar', [ComprasController::class, 'marcarCompraPagada'])
+    ->name('compras.pagar');
 
 // pacientes
 Route::resource('pacientes', PacientesController::class);
