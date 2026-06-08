@@ -61,16 +61,25 @@
                             </a>
 
                             @if ($compra->estado !== 'Anulada')
-                            <a href="{{ route('compras.edit', $compra->idCompras) }}"
-                                class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;" title="Editar">
-                                <i class="bi bi-pencil-fill"></i>
-                            </a>
+                                <a href="{{ route('compras.edit', $compra->idCompras) }}"
+                                    class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;"
+                                    title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
                                 <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 btnAnularCompra"
                                     data-bs-toggle="modal" data-bs-target="#modalAnularCompra"
                                     data-id="{{ $compra->idCompras }}" title="Anular">
 
                                     <i class="bi bi-x-octagon"></i>
                                 </button>
+                                @if ($compra->estado === 'Pendiente')
+                                    <button type="button" class="btn btn-success btn-sm rounded-pill px-3"
+                                        onclick="abrirModalMarcarPagada('{{ route('compras.pagar', $compra->idCompras) }}')" title="Marcar como pagada">
+
+                                        <i class="bi bi-cash-stack"></i>
+
+                                    </button>
+                                @endif
                             @endif
 
                         </div>
@@ -92,6 +101,7 @@
     </table>
 
     @include('compras.partials.modal-anular')
+    @include('compras.partials.modal-marcar-pagada')
 
 </div>
 

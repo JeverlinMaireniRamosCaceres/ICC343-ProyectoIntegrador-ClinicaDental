@@ -32,7 +32,7 @@ class ComprasController extends Controller
             ->when($fecha, function ($query) use ($fecha) {
                 $query->where('fecha', $fecha);
             })
-            ->orderBy('idCompras', 'desc')
+            ->orderBy('fecha', 'desc')
             ->paginate(6)
             ->withQueryString();
 
@@ -272,5 +272,19 @@ class ComprasController extends Controller
             $producto->stockActual -= $detalle->cantidad;
             $producto->save();
         }
+    }
+
+    public function marcarCompraPagada(Request $request, $id)
+    {
+        $compra = Compra::findOrFail($id);
+
+        if ($compra->estado === 'Anulada') {
+            return redirect()->route('compras.index')->with('error', 'No se puede marcar como pagada una compra anulada.');
+        }
+
+        $compra->update([
+            'estado' => 'Pagada'
+        ]);
+        return redirect()->route('compras.index')->with('success', 'Compra marcada como pagada correctamente.');
     }
 }

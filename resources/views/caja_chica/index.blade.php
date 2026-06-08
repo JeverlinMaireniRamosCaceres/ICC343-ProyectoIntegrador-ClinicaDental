@@ -36,11 +36,11 @@
             <div class="card-body p-0">
 
                 <!-- filtro por fecha -->
-                <div class="p-4 border-bottom d-flex justify-content-end">
+                <div class="p-4 border-bottom d-flex justify-content-start">
                     <form id="formFiltroCaja">
 
                         <input type="date" name="fecha" id="filtroFecha" value="{{ request('fecha') }}"
-                            class="form-control rounded-pill" style="width: 150px;">
+                            class="form-control rounded-pill" style="width: 350px;">
 
                     </form>
                 </div>

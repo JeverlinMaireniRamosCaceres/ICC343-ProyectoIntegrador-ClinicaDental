@@ -64,3 +64,13 @@ document.addEventListener("click", function (e) {
     document.getElementById("formAnularCompra").action =
         `/compras/${idCompra}/anular`;
 });
+
+function abrirModalMarcarPagada(url) {
+    document.getElementById("formMarcarPagada").action = url;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById("modalMarcarPagada"),
+    );
+
+    modal.show();
+}
