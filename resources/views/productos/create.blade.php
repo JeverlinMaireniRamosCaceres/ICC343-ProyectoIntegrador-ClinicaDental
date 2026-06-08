@@ -12,7 +12,7 @@
         </a>
 
         <h2 class="fw-semibold mb-0">
-            Nuevo Producto
+            Nuevo producto
         </h2>
     </div>
 
@@ -58,7 +58,7 @@
                     <!-- STOCK INICIAL -->
                     <div class="col-md-6 mb-3 mb-md-0">
                         <label class="form-label text-muted fw-semibold small">
-                            Stock Inicial
+                            Stock inicial
                         </label>
                         <input type="number"
                                name="stockActual"
@@ -74,7 +74,7 @@
                     <!-- STOCK MINIMO -->
                     <div class="col-md-6">
                         <label class="form-label text-muted fw-semibold small">
-                            Stock Mínimo
+                            Stock mínimo
                         </label>
                         <input type="number"
                                name="stockMinimo"
@@ -91,7 +91,7 @@
                 <!-- UNIDAD MEDIDA -->
                 <div class="mb-4">
                     <label class="form-label text-muted fw-semibold small">
-                        Unidad de Medida
+                        Unidad de medida
                     </label>
                     <select name="unidadMedida"
                             class="form-select @error('unidadMedida') is-invalid @enderror">

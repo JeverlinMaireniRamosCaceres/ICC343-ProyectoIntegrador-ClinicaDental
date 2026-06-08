@@ -17,8 +17,7 @@
         <div class="card-body p-4">
 
             <form action="{{ route('proveedores.update', $proveedor->idProveedor) }}"
-                method="POST"
-                novalidate>
+                method="POST" novalidate>
                 @csrf
                 @method('PUT')
 
@@ -49,6 +48,7 @@
                     name="telefono"
                     id="telefono"
                     maxlength="12"
+                    pattern="(809|829|849)-[0-9]{3}-[0-9]{4}"
                     class="form-control @error('telefono') is-invalid @enderror"
                     value="{{ old('telefono', $proveedor->telefono) }}"
                     placeholder="809-555-1234">

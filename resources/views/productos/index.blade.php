@@ -88,7 +88,7 @@
 
 @section('scripts')
     <script>
-        // Modal de eliminar
+
         const modalEliminar = document.getElementById('modalEliminar');
         modalEliminar.addEventListener('show.bs.modal', function(e) {
             const btn = e.relatedTarget;
@@ -100,6 +100,6 @@
         });
     </script>
 
-    {{-- Inclusión de tu nuevo script de productos --}}
+
     <script src="{{ asset('js/producto.js') }}"></script>
 @endsection

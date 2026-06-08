@@ -4,7 +4,7 @@
             <tr>
                 <th class="px-4 py-3 text-muted fw-semibold small">Nombre</th>
                 <th class="px-4 py-3 text-muted fw-semibold small">Descripción</th>
-                <th class="px-4 py-3 text-muted fw-semibold small">Stock Mínimo</th>
+                <th class="px-4 py-3 text-muted fw-semibold small">Stock mínimo</th>
                 <th class="px-4 py-3 text-muted fw-semibold small">Unidad</th>
                 <th class="px-4 py-3 text-muted fw-semibold small text-center">Acciones</th>
             </tr>
