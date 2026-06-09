@@ -266,6 +266,101 @@
     </div>
 
 
+    <!-- modal ajuste de inventario -->
+    <div class="modal fade" id="modalAjuste" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle bg-info bg-opacity-10 d-flex align-items-center justify-content-center"
+                            style="width:40px; height:40px;">
+                            <i class="bi bi-pencil-square text-info" style="font-size:16px;"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-semibold mb-0">Realizar ajuste</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body px-3 py-2">
+                    <form id="formAjuste" action="{{ route('inventario.ajuste') }}" method="POST">
+                        @csrf
+
+                        <!-- producto -->
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Producto</label>
+                            <div class="position-relative">
+
+                                <input type="text" id="producto_nombre" class="form-control rounded-pill pe-5"
+                                    placeholder="Buscar producto...">
+
+                                <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+
+                            </div>
+
+                            <div id="resultadosProductos" class="list-group mt-1 shadow-sm"></div>
+
+                            <input type="hidden" name="idProducto" id="producto_id">
+                        </div>
+
+                        <!-- stock actual -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-muted">Stock actual</label>
+                            <input type="text" id="stockActualAjuste" class="form-control rounded-pill bg-light"
+                                placeholder="—" readonly>
+                        </div>
+
+                        <!-- nuevo stock -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-muted">Nuevo stock</label>
+                            <div class="input-group">
+                                <input type="number" name="nuevoStock" id="nuevoStockAjuste"
+                                    class="form-control rounded-pill" min="0" placeholder="0" required>
+                                <span class="input-group-text bg-light border-0 text-muted small ms-2 rounded-pill"
+                                    id="unidadAjuste"></span>
+                            </div>
+                        </div>
+
+                        <!-- motivo -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-muted">Motivo del ajuste</label>
+                            <select name="motivo" class="form-select rounded-pill" required>
+                                <option value="">Seleccionar motivo...</option>
+                                <option value="Producto vencido">Producto vencido</option>
+                                <option value="Producto dañado">Producto dañado</option>
+                                <option value="Conteo físico">Corrección por conteo físico</option>
+                                <option value="Error de registro">Error de registro</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <!-- observacion opcional -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold text-muted">
+                                Observación <span class="fw-normal">(opcional)</span>
+                            </label>
+                            <textarea name="observacion" class="form-control" style="border-radius:12px;" rows="1"
+                                placeholder="Detalles adicionales..."></textarea>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer border-0 pt-0 px-4">
+                    <button type="button" class="btn btn-sm rounded-pill px-4"
+                        style="border:1px solid #dee2e6; color:#6c757d;" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="formAjuste" class="btn btn-sm rounded-pill px-4 text-white"
+                        style="background-color:#0ea5e9; border:none;">
+                        <i class="bi bi-check-lg me-1"></i> Guardar ajuste
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')

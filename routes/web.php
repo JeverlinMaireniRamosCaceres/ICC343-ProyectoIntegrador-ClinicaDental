@@ -87,3 +87,10 @@ Route::resource('especialidades', EspecialidadController::class);
 
 // Inventario
 Route::resource('inventario', InventarioController::class);
+// ruta de ajuste de inventario
+Route::post('inventario/ajuste', [InventarioController::class, 'ajuste'])
+    ->name('inventario.ajuste');
+// para buscar productos
+Route::get(
+    '/buscar-productos', [InventarioController::class, 'buscarProductos'])
+    ->name('inventario.buscar-productos');

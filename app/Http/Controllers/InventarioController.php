@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\DetalleCompra;
 use App\Models\ProductoProcedimiento;
+use App\Models\Ajuste;
 
 class InventarioController extends Controller
 {
@@ -99,7 +100,18 @@ class InventarioController extends Controller
             ]);
 
         // combinar, ordenar y paginar movimientos
-        $movimientos = $entradas->concat($salidas)
+        $ajustes = Ajuste::with('producto')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(fn($a) => [
+                'fecha' => $a->created_at,
+                'producto' => $a->producto->nombre ?? '—',
+                'tipo' => $a->stockNuevo < $a->stockAnterior ? 'SALIDA' : 'ENTRADA',
+                'cantidad' => abs($a->stockNuevo - $a->stockAnterior),
+                'motivo' => 'Ajuste: ' . $a->motivo,
+            ]);
+
+        $movimientos = $entradas->concat($salidas)->concat($ajustes)
             ->sortByDesc('fecha')
             ->values();
 
@@ -117,13 +129,19 @@ class InventarioController extends Controller
             $tipo = $request->get('tipo');
 
             if ($tipo === 'movimientos') {
-                return view('inventario.partials.tabla-movimientos',
-                    compact('movimientosPag'))->render();
+                return view(
+                    'inventario.partials.tabla-movimientos',
+                    compact('movimientosPag')
+                )->render();
             }
 
-            return view('inventario.partials.tabla',
-                compact('productos'))->render();
-        }        
+            return view(
+                'inventario.partials.tabla',
+                compact('productos')
+            )->render();
+        }
+
+        $todosProductos = Producto::orderBy('nombre')->get(['idProducto', 'nombre', 'stockActual', 'unidadMedida']);
 
         return view('inventario.index', compact(
             'productos',
@@ -135,10 +153,52 @@ class InventarioController extends Controller
             'alertasStockBajo',
             'alertasVencimiento',
             'totalAlertas',
-            'movimientosPag'
+            'movimientosPag',
+            'todosProductos'
         ));
 
 
+    }
+
+    public function ajuste(Request $request)
+    {
+        $request->validate([
+            'idProducto' => 'required|exists:productos,idProducto',
+            'nuevoStock' => 'required|integer|min:0',
+            'motivo' => 'required|string',
+        ]);
+
+        $producto = Producto::findOrFail($request->idProducto);
+
+        Ajuste::create([
+            'idProducto' => $producto->idProducto,
+            'idUsuario' => auth()->id(),
+            'stockAnterior' => $producto->stockActual,
+            'stockNuevo' => $request->nuevoStock,
+            'motivo' => $request->motivo,
+            'observacion' => $request->observacion,
+        ]);
+
+        $producto->stockActual = $request->nuevoStock;
+        $producto->save();
+
+        return redirect()->route('inventario.index')
+            ->with('success', "Stock de \"{$producto->nombre}\" ajustado correctamente.");
+    }
+
+    public function buscarProductos(Request $request)
+    {
+        $texto = $request->texto;
+
+        $productos = Producto::where(
+            'nombre',
+            'like',
+            "%{$texto}%"
+        )
+            ->limit(10)
+            ->get();
+
+        return response()->json($productos);
     }
 
 

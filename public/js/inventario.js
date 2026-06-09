@@ -104,4 +104,86 @@ document.addEventListener("DOMContentLoaded", function () {
             bootstrap.Tab.getOrCreateInstance(tabBtn).show();
         }
     }
+
+    // buscar producto en el modal de ajuste
+    const inputProductoAjuste = document.getElementById("producto_nombre");
+
+    const resultadosProductosAjuste = document.getElementById("resultadosProductos");
+
+    const productoIdAjuste = document.getElementById("producto_id");
+
+    const stockActualAjuste = document.getElementById("stockActualAjuste");
+
+    const unidadAjuste = document.getElementById("unidadAjuste");
+
+    if (inputProductoAjuste) {
+
+        inputProductoAjuste.addEventListener("keyup", async function () {
+
+            const texto = this.value;
+
+            if (texto.length < 2) {
+                resultadosProductosAjuste.innerHTML = "";
+                return;
+            }
+
+            const response = await fetch(
+                `/buscar-productos?texto=${encodeURIComponent(texto)}`
+            );
+
+            const productos = await response.json();
+
+            resultadosProductosAjuste.innerHTML = "";
+
+            productos.forEach(producto => {
+
+                resultadosProductosAjuste.innerHTML += `
+                <button
+                    type="button"
+                    class="list-group-item list-group-item-action"
+                    data-id="${producto.idProducto}"
+                    data-nombre="${producto.nombre}"
+                    data-stock="${producto.stockActual}"
+                    data-unidad="${producto.unidadMedida}">
+
+                    <div class="fw-semibold">
+                        ${producto.nombre}
+                    </div>
+
+                    <small class="text-muted">
+                        Stock actual: ${producto.stockActual} ${producto.unidadMedida}
+                    </small>
+
+                </button>
+            `;
+            });
+
+        });
+
+        resultadosProductosAjuste.addEventListener("click", function (e) {
+
+            const boton = e.target.closest(
+                ".list-group-item"
+            );
+
+            if (!boton) return;
+
+            inputProductoAjuste.value =
+                boton.dataset.nombre;
+
+            productoIdAjuste.value =
+                boton.dataset.id;
+
+            stockActualAjuste.value =
+                `${boton.dataset.stock} ${boton.dataset.unidad}`;
+
+            unidadAjuste.textContent =
+                boton.dataset.unidad;
+
+            resultadosProductosAjuste.innerHTML = "";
+        });
+
+    }
+
+
 });

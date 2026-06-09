@@ -1,10 +1,20 @@
+
+// para manejar los botones de filtro
+let filtroEstadoActual = "";
+
+document.querySelectorAll(".btn-filtro").forEach(btn => {
+    btn.addEventListener("click", function () {
+        document.querySelectorAll(".btn-filtro")
+            .forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        filtroEstadoActual = this.dataset.filtro;
+        filtrarCompras();
+    });
+});
+
 document
     .getElementById("buscarCompra")
     .addEventListener("keyup", filtrarCompras);
-
-document
-    .getElementById("filtroEstado")
-    .addEventListener("change", filtrarCompras);
 
 document
     .getElementById("filtroFecha")
@@ -33,7 +43,7 @@ document.addEventListener("click", async function (e) {
 
 async function filtrarCompras() {
     const buscar = document.getElementById("buscarCompra").value;
-    const estado = document.getElementById("filtroEstado").value;
+    const estado = filtroEstadoActual;
     const fecha = document.getElementById("filtroFecha").value;
 
     const response = await fetch(

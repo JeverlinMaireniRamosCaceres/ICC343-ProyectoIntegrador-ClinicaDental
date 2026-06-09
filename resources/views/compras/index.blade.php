@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="container-fluid py-4 px-5">
+    <div class="container-fluid py-4 px-5">
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
@@ -59,24 +59,19 @@
                         <div class="d-flex gap-3 ms-auto flex-wrap align-items-center">
 
                             <!-- estado -->
-                            <select name="estado" id="filtroEstado" class="form-select rounded-pill" style="width: 150px;">
-
-                                <option value="">
-                                    Todos
-                                </option>
-
-                                <option value="pagada">
-                                    Pagada
-                                </option>
-
-                                <option value="pendiente">
-                                    Pendiente
-                                </option>
-
-                            </select>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro active"
+                                    data-filtro="">Todos</button>
+                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
+                                    data-filtro="pagada">Pagada</button>
+                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
+                                    data-filtro="pendiente">Pendiente</button>
+                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
+                                       data-filtro="anulada">Anulada</button>
+                            </div>
 
                             <!-- fecha -->
-                            <input type="date" name="fecha" id="filtroFecha" class="form-control rounded-pill"
+                            <input type="date" name="fecha" id="filtroFecha" class="form-control date-input"
                                 style="width: 150px;">
                         </div>
 
@@ -96,7 +91,7 @@
 
     </div>
 
-    
+
 
     <script src="{{ asset('js/compras.js') }}"></script>
 

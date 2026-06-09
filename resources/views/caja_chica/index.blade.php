@@ -40,7 +40,7 @@
                     <form id="formFiltroCaja">
 
                         <input type="date" name="fecha" id="filtroFecha" value="{{ request('fecha') }}"
-                            class="form-control rounded-pill" style="width: 350px;">
+                            class="form-control date-input" style="width: 250px;">
 
                     </form>
                 </div>
