@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     use SoftDeletes;
 
@@ -23,5 +23,10 @@ class Usuario extends Model
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'idRol', 'idRol');
+    }
+
+    public function persona()
+    {
+        return $this->belongsTo(Persona::class, 'idPersona', 'idPersona');
     }
 }
