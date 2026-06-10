@@ -1,10 +1,13 @@
-<div id="sidebar-container" class="d-flex flex-column shadow">
+<div id="sidebar-container" class="d-flex flex-column shadow sidebar-expanded">
 
     <div class="sidebar-header">
         <div class="brand">
             <img src="{{ asset('favicon.ico') }}" alt="Logo Clínica" class="brand-icon">
             <span class="link-text">Clínica Dental</span>
         </div>
+        <button id="sidebarToggle" class="sidebar-toggle-btn">
+            <i class="bi bi-chevron-left"></i>
+        </button>
     </div>
 
     <ul class="nav flex-column sidebar-nav flex-grow-1">
@@ -176,3 +179,49 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const sidebar = document.getElementById('sidebar-container');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const icon = toggleBtn.querySelector('i');
+
+        const collapsed =
+            localStorage.getItem('sidebarCollapsed') === 'true';
+
+        if (collapsed) {
+            sidebar.classList.remove('sidebar-expanded');
+            sidebar.classList.add('sidebar-collapsed');
+
+            icon.classList.remove('bi-chevron-left');
+            icon.classList.add('bi-chevron-right');
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+
+            sidebar.classList.toggle('sidebar-expanded');
+            sidebar.classList.toggle('sidebar-collapsed');
+
+            const isCollapsed =
+                sidebar.classList.contains('sidebar-collapsed');
+
+            localStorage.setItem(
+                'sidebarCollapsed',
+                isCollapsed
+            );
+
+            if (isCollapsed) {
+                icon.classList.remove('bi-chevron-left');
+                icon.classList.add('bi-chevron-right');
+            } else {
+                icon.classList.remove('bi-chevron-right');
+                icon.classList.add('bi-chevron-left');
+            }
+        });
+
+    });
+</script>

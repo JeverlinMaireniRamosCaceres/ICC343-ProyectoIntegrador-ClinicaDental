@@ -22,17 +22,18 @@
     <link rel="stylesheet" href="{{ asset('css/consultas.css') }}">
     <!-- estilos para inventario -->
     <link rel="stylesheet" href="{{ asset('css/inventario.css') }}">
-    
+
 </head>
 <body>
 
     <div id="wrapper">
         <!-- incluir sidebar -->
         @include('components.sidebar')
-
+{{--
         <script>
             document.getElementById('sidebar-container').classList.add('sidebar-collapsed');
         </script>
+--}}
 
         <div id="page-content-wrapper">
             <!-- incluir topbar -->
@@ -55,7 +56,7 @@
     <script src="{{ asset('js/citas.js') }}"></script>
 
      @yield('scripts')
-
+    {{--}}
     <script>
         const sidebar = document.getElementById('sidebar-container');
         let collapseTimer;
@@ -73,6 +74,6 @@
             }, 50);
         });
     </script>
-
+--}}
 </body>
 </html>
