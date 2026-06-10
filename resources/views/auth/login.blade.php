@@ -37,7 +37,8 @@
             </div>
 
             @if ($errors->has('login'))
-                <div class="alert alert-danger">
+                <div class="alert alert-danger rounded-3 small py-2 d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-circle-fill"></i>
                     {{ $errors->first('login') }}
                 </div>
             @endif
@@ -46,27 +47,35 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">
-                        Usuario
-                    </label>
-
-                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="username"
-                        name="username" value="{{ old('username') }}" placeholder="Ingrese su usuario" required
-                        autofocus>
+                    <label for="username" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"
+                            style="border-radius: 10px 0 0 10px; border: 1px solid #e2e8f0;">
+                            <i class="bi bi-person text-muted"></i>
+                        </span>
+                        <input type="text"
+                            class="form-control border-start-0 @error('username') is-invalid @enderror" id="username"
+                            name="username" value="{{ old('username') }}" placeholder="Ingrese su usuario"
+                            style="border-radius: 0 10px 10px 0;" required autofocus>
+                    </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">
-                        Contraseña
-                    </label>
-
-                    <input type="password" class="form-control" id="password" name="password" placeholder="••••••••"
-                        required>
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"
+                            style="border-radius: 10px 0 0 10px; border: 1px solid #e2e8f0;">
+                            <i class="bi bi-lock text-muted"></i>
+                        </span>
+                        <input type="password" class="form-control border-start-0" id="password" name="password"
+                            placeholder="••••••••" style="border-radius: 0 10px 10px 0;" required>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-login w-100 shadow-sm">
-                    Iniciar sesión
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar sesión
                 </button>
+
             </form>
 
         </div>
