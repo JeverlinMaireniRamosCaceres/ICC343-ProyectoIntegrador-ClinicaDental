@@ -3,12 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Odontologo;
+use App\Models\Persona;
+use App\Models\Usuario;
 
 class OdontologoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('odontologos.index');
+        $buscar = $request->input('buscar');
+
+        $odontologos = Odontologo::query()
+            ->withTrashed()
+            ->with(['persona', 'especialidades'])
+            ->when($buscar, function ($query, $buscar) {
+                $query->whereHas('persona', function ($q) use ($buscar) {
+                    $q->where('nombre', 'like', "%{$buscar}%")
+                        ->orWhere('apellido', 'like', "%{$buscar}%")
+                        ->orWhere('cedula', 'like', "%{$buscar}%");
+                })
+                    ->orWhere('exequatur', 'like', "%{$buscar}%");
+            })
+            ->orderBy('idOdontologo', 'asc')
+            ->paginate(6)
+            ->withQueryString();
+
+        if ($request->ajax()) {
+            return view('odontologos.partials.tabla', compact('odontologos'))->render();
+        }
+
+        return view('odontologos.index', compact('odontologos', 'buscar'));
     }
 
     public function create()
@@ -38,6 +62,33 @@ class OdontologoController extends Controller
 
     public function destroy($id)
     {
-        return redirect()->route('odontologos.index');
+        $odontologo = Odontologo::findOrFail($id);
+        $odontologo->delete();
+
+        if ($odontologo->usuario) {
+            $odontologo->usuario->delete();
+        }
+
+        return redirect()
+            ->route('odontologos.index')
+            ->with('success', 'Odontólogo desactivado correctamente.');
+    }
+
+    public function activar($id)
+    {
+        $odontologo = Odontologo::withTrashed()->findOrFail($id);
+        $odontologo->restore();
+
+        $usuario = Usuario::withTrashed()
+            ->where('idPersona', $odontologo->idPersona)
+            ->first();
+
+        if ($usuario) {
+            $usuario->restore();
+        }
+
+        return redirect()
+            ->route('odontologos.index')
+            ->with('success', 'Odontólogo activado correctamente.');
     }
 }

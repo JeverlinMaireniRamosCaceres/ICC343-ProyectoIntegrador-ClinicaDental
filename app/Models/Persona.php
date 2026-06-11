@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Persona extends Model
 {
+    use softDeletes;
+
     protected $table = 'personas';
 
     protected $primaryKey = 'idPersona';
@@ -15,6 +18,7 @@ class Persona extends Model
         'nombre',
         'apellido',
         'fechaNacimiento',
+        'sexo',
         'telefono',
         'correo'
     ];
@@ -24,6 +28,16 @@ class Persona extends Model
     {
         return $this->hasOne(
             Odontologo::class,
+            'idPersona',
+            'idPersona'
+        );
+    }
+
+    // relacion con usuario
+    public function usuario()
+    {
+        return $this->hasOne(
+            Usuario::class,
             'idPersona',
             'idPersona'
         );
