@@ -115,4 +115,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/buscar-productos', [InventarioController::class, 'buscarProductos'])
         ->name('inventario.buscar-productos');
+    
+    Route::get('inventario/{id}/detalle', [InventarioController::class, 'detalle'])
+        ->name('inventario.detalle');
+
 });
+

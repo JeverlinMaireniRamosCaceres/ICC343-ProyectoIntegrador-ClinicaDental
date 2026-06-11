@@ -26,4 +26,10 @@ class DetalleCompra extends Model
             'idProducto'
         );
     }
+
+    public function compra()
+    {
+        return $this->belongsTo(Compra::class, 'idCompras', 'idCompras');
+    }
+
 }
