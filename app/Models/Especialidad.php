@@ -18,4 +18,14 @@ class Especialidad extends Model
     protected $fillable = [
         'nombre'
     ];
+
+    public function odontologos()
+    {
+        return $this->belongsToMany(
+            Odontologo::class,
+            'odontologo_especialidad',
+            'idEspecialidad',
+            'idOdontologo'
+        );
+    }
 }

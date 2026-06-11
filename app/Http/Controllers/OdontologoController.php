@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Odontologo;
-use App\Models\Persona;
+use App\Models\Especialidad;
 use App\Models\Usuario;
 
 class OdontologoController extends Controller
@@ -37,7 +37,8 @@ class OdontologoController extends Controller
 
     public function create()
     {
-        return view('odontologos.create');
+        $especialidades = Especialidad::orderBy('nombre')->get();
+        return view('odontologos.create', compact('especialidades'));
     }
 
     public function store(Request $request)

@@ -54,6 +54,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <!-- javascript para citas -->
     <script src="{{ asset('js/citas.js') }}"></script>
+    <!-- masks -->
+    <script src="{{ asset('js/masks.js') }}"></script>
 
      @yield('scripts')
     {{--}}
