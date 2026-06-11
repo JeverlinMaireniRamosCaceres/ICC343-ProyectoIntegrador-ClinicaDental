@@ -94,3 +94,6 @@ Route::post('inventario/ajuste', [InventarioController::class, 'ajuste'])
 Route::get(
     '/buscar-productos', [InventarioController::class, 'buscarProductos'])
     ->name('inventario.buscar-productos');
+// ver detalle de inventario
+Route::get('inventario/{id}/detalle', [InventarioController::class, 'detalle'])
+    ->name('inventario.detalle');

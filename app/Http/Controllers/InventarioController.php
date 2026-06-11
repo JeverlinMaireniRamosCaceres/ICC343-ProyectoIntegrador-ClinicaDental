@@ -201,5 +201,17 @@ class InventarioController extends Controller
         return response()->json($productos);
     }
 
+    public function detalle($id)
+    {
+        $producto = Producto::with([
+            'detallesCompra' => function ($q) {
+                $q->with('compra.proveedor')
+                    ->orderBy('fechaVencimiento', 'asc');
+            }
+        ])->findOrFail($id);
+
+        return view('inventario.detalle', compact('producto'));
+    }
+
 
 }

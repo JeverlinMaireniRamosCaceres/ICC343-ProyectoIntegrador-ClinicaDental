@@ -58,12 +58,12 @@
                             </span>
 
                             <span style="
-                                            width:8px;
-                                            height:8px;
-                                            border-radius:50%;
-                                            background:{{ $color }};
-                                            display:inline-block;
-                                        ">
+                                                width:8px;
+                                                height:8px;
+                                                border-radius:50%;
+                                                background:{{ $color }};
+                                                display:inline-block;
+                                            ">
                             </span>
 
                         </div>
@@ -85,7 +85,8 @@
                             @php
 
                                 $diasRestantes = now()->diffInDays(
-                                    \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento), false
+                                    \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento),
+                                    false
                                 );
                                 $vencePronto = $diasRestantes >= 0 && $diasRestantes <= 30;
 
@@ -93,12 +94,12 @@
 
                             @if($vencePronto)
 
-                                    <span style="
-                                            border-bottom:2px dashed #e03131;
-                                            padding-bottom:1px;
-                                        ">
-                                        {{ \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)->format('d/m/Y') }}
-                                    </span>
+                                <span style="
+                                                        border-bottom:2px dashed #e03131;
+                                                        padding-bottom:1px;
+                                                    ">
+                                    {{ \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)->format('d/m/Y') }}
+                                </span>
 
                             @else
 
@@ -152,10 +153,10 @@
 
                     <td class="px-4 text-center">
 
-                        <button class="btn btn-sm rounded-circle"
+                        <a href="{{ route('inventario.detalle', $producto->idProducto) }}" class="btn btn-sm rounded-circle"
                             style="width:34px;height:34px;background:#e8f4fd;color:#0ea5e9;border:none;">
                             <i class="bi bi-eye"></i>
-                        </button>
+                        </a>
 
                     </td>
 
