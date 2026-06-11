@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
 
     // Odontólogos
     Route::resource('odontologos', OdontologoController::class);
+    Route::put('/odontologos/{odontologo}/activar', [OdontologoController::class, 'activar'])
+        ->name('odontologos.activar');
 
     // Citas
     Route::resource('citas', CitaController::class);
