@@ -108,8 +108,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('especialidades', EspecialidadController::class);
 
     // Inventario
-    Route::resource('inventario', InventarioController::class);
-
+    Route::get('inventario/reporte', [InventarioController::class, 'reporte'])
+        ->name('inventario.reporte');
+    
     Route::post('/inventario/ajuste', [InventarioController::class, 'ajuste'])
         ->name('inventario.ajuste');
 
@@ -118,6 +119,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('inventario/{id}/detalle', [InventarioController::class, 'detalle'])
         ->name('inventario.detalle');
+
+    Route::resource('inventario', InventarioController::class);
 
 });
 

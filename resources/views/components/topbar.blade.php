@@ -12,11 +12,11 @@
     }
 @endphp
 
+
 <nav class="topbar navbar navbar-expand navbar-light bg-white border-bottom sticky-top">
 
     <ul class="navbar-nav ms-auto align-items-center">
 
-        <!-- notificaciones -->
         <li class="nav-item me-3">
             <a class="topbar-icon-btn position-relative" href="#">
                 <i class="bi bi-bell"></i>
@@ -24,7 +24,7 @@
             </a>
         </li>
 
-        <!-- perfil del usuario -->
+
         <li class="nav-item dropdown">
             <a class="nav-link d-flex align-items-center" href="#" data-bs-toggle="dropdown">
 

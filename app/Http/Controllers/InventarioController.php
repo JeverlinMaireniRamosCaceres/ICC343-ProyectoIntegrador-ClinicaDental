@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\DetalleCompra;
 use App\Models\ProductoProcedimiento;
 use App\Models\Ajuste;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventarioController extends Controller
 {
@@ -211,6 +213,107 @@ class InventarioController extends Controller
         ])->findOrFail($id);
 
         return view('inventario.detalle', compact('producto'));
+    }
+
+    public function reporte()
+    {
+        $productos = Producto::with([
+            'detallesCompra' => function ($query) {
+                $query->orderBy('fechaVencimiento', 'asc');
+            }
+        ])
+            ->orderBy('nombre')
+            ->get();
+
+        foreach ($productos as $producto) {
+
+            // estado del stock
+            if ($producto->stockActual <= 0) {
+                $producto->estadoStock = 'Sin stock';
+            } elseif ($producto->stockActual <= $producto->stockMinimo) {
+                $producto->estadoStock = 'Stock bajo';
+            } else {
+                $producto->estadoStock = 'Normal';
+            }
+
+            // proximo vencimiento de los lotes 
+            $proximoLote = $producto->detallesCompra
+                ->filter(function ($lote) {
+                    return $lote->fechaVencimiento &&
+                        Carbon::parse($lote->fechaVencimiento)->isFuture();
+                })
+                ->sortBy('fechaVencimiento')
+                ->first();
+
+            $producto->proximoVencimiento = $proximoLote
+                ? Carbon::parse($proximoLote->fechaVencimiento)->format('d/m/Y')
+                : null;
+
+            // informacion de los lotes
+            foreach ($producto->detallesCompra as $lote) {
+
+                if (!$lote->fechaVencimiento) {
+
+                    $lote->fechaVencimientoFormateada = 'N/A';
+                    $lote->estadoLote = 'Sin fecha';
+                    $lote->diasRestantes = null;
+
+                    continue;
+                }
+
+                $fechaVencimiento = Carbon::parse($lote->fechaVencimiento);
+
+                $lote->fechaVencimientoFormateada =
+                    $fechaVencimiento->format('d/m/Y');
+
+                $dias = now()->diffInDays($fechaVencimiento, false);
+
+                $lote->diasRestantes = $dias;
+
+                if ($dias < 0) {
+
+                    $lote->estadoLote = 'Vencido';
+
+                } elseif ($dias <= 30) {
+
+                    $lote->estadoLote = 'Por vencer';
+
+                } else {
+
+                    $lote->estadoLote = 'Vigente';
+                }
+            }
+        }
+
+        $totalProductos = $productos->count();
+
+        $sinStock = $productos
+            ->where('stockActual', '<=', 0)
+            ->count();
+
+        $stockBajo = $productos
+            ->filter(function ($producto) {
+                return $producto->stockActual > 0
+                    && $producto->stockActual <= $producto->stockMinimo;
+            })
+            ->count();
+
+        $fechaReporte = now()->format('d/m/Y H:i');
+
+        $pdf = Pdf::loadView(
+            'inventario.reporte',
+            [
+                'productos' => $productos,
+                'totalProductos' => $totalProductos,
+                'sinStock' => $sinStock,
+                'stockBajo' => $stockBajo,
+                'fechaReporte' => $fechaReporte,
+            ]
+        )->setPaper('a4', 'portrait');
+
+        $nombreArchivo = 'inventario' . now()->format('d-m-Y') . '.pdf';
+
+        return $pdf->stream($nombreArchivo);
     }
 
 
