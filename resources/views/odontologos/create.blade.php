@@ -86,6 +86,32 @@
                             @enderror
                         </div>
 
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Sexo
+                            </label>
+
+                            <select name="sexo" class="form-select @error('sexo') is-invalid @enderror">
+
+                                <option value="">Seleccionar</option>
+
+                                <option value="Masculino" {{ old('sexo') == 'Masculino' ? 'selected' : '' }}>
+                                    Masculino
+                                </option>
+
+                                <option value="Femenino" {{ old('sexo') == 'Femenino' ? 'selected' : '' }}>
+                                    Femenino
+                                </option>
+
+                            </select>
+
+                            @error('sexo')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
                     </div>
 
                     {{-- Contacto --}}
@@ -99,7 +125,7 @@
                             </label>
 
                             <input type="text" name="telefono"
-                                class="form-control mask-telefono @error('telefono') is-invalid @enderror"
+                                class="form-control mask-telefono-rd @error('telefono') is-invalid @enderror"
                                 value="{{ old('telefono') }}" placeholder="809-555-1234">
 
                             @error('telefono')

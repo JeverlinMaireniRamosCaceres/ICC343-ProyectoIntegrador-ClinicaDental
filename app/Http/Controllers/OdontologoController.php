@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Persona;
 use App\Models\Odontologo;
 use App\Models\Especialidad;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class OdontologoController extends Controller
 {
@@ -43,7 +46,33 @@ class OdontologoController extends Controller
 
     public function store(Request $request)
     {
-        return redirect()->route('odontologos.index');
+        $data = $this->validarOdontologo($request);
+
+        DB::transaction(function () use ($data) {
+
+            $persona = Persona::create([
+                'cedula' => $data['cedula'],
+                'nombre' => $data['nombre'],
+                'apellido' => $data['apellido'],
+                'fechaNacimiento' => $data['fechaNacimiento'],
+                'sexo' => $data['sexo'],
+                'telefono' => $data['telefono'],
+                'correo' => $data['correo']
+            ]);
+
+            $odontologo = Odontologo::create([
+                'idPersona' => $persona->idPersona,
+                'exequatur' => $data['exequatur']
+            ]);
+
+            $odontologo->especialidades()->sync(
+                $data['especialidades']
+            );
+        });
+
+        return redirect()
+            ->route('odontologos.index')
+            ->with('success', 'Odontólogo registrado correctamente.');
     }
 
     public function show($id)
@@ -91,5 +120,72 @@ class OdontologoController extends Controller
         return redirect()
             ->route('odontologos.index')
             ->with('success', 'Odontólogo activado correctamente.');
+    }
+
+    private function validarOdontologo(Request $request, ?int $idPersona = null): array
+    {
+        return $request->validate(
+            [
+                'cedula' => [
+                    'required',
+                    Rule::unique('personas', 'cedula')->ignore($idPersona, 'idPersona')
+                ],
+
+                'nombre' => 'required|string|max:100',
+                'apellido' => 'required|string|max:100',
+
+                'fechaNacimiento' => 'required|date',
+
+                'sexo' => [
+                    'required',
+                    Rule::in(['Masculino', 'Femenino'])
+                ],
+
+                'telefono' => [
+                    'required',
+                    'regex:/^(809|829|849)-\d{3}-\d{4}$/'
+                ],
+
+                'correo' => [
+                    'nullable',
+                    'email',
+                    Rule::unique('personas', 'correo')->ignore($idPersona, 'idPersona')
+                ],
+
+                'exequatur' => 'required|string|max:50',
+
+                'especialidades' => 'required|array|min:1',
+                'especialidades.*' => 'exists:especialidades,idEspecialidad'
+            ],
+            [
+                'cedula.required' => 'La cédula es obligatoria.',
+                'cedula.unique' => 'Ya existe una persona con esta cédula.',
+
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.max' => 'El nombre no puede exceder los 100 caracteres.',
+
+                'apellido.required' => 'El apellido es obligatorio.',
+                'apellido.max' => 'El apellido no puede exceder los 100 caracteres.',
+
+                'fechaNacimiento.required' => 'La fecha de nacimiento es obligatoria.',
+                'fechaNacimiento.date' => 'La fecha de nacimiento no es válida.',
+
+                'sexo.required' => 'Debes seleccionar un sexo.',
+                'sexo.in' => 'El sexo seleccionado no es válido.',
+
+                'telefono.required' => 'El teléfono es obligatorio.',
+                'telefono.regex' => 'El teléfono debe tener un prefijo válido (809, 829 o 849).',
+
+                'correo.email' => 'El correo electrónico no es válido.',
+                'correo.unique' => 'Ya existe una persona con este correo electrónico.',
+
+                'exequatur.required' => 'El exequátur es obligatorio.',
+                'exequatur.max' => 'El exequátur no puede exceder los 50 caracteres.',
+
+                'especialidades.required' => 'Debes seleccionar al menos una especialidad.',
+                'especialidades.array' => 'Las especialidades seleccionadas no son válidas.',
+                'especialidades.*.exists' => 'Una de las especialidades seleccionadas no existe.'
+            ]
+        );
     }
 }
