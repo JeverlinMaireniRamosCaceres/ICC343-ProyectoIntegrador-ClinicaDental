@@ -24,6 +24,10 @@
         <!-- header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-dark mb-0">Inventario</h2>
+            <a href="{{ route('inventario.reporte') }}" target="_blank" class="btn btn-sm rounded-pill px-4"
+                style="background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+            </a>
         </div>
 
         <!-- cards con info rapida -->
@@ -296,7 +300,8 @@
                                 <input type="text" id="producto_nombre" class="form-control rounded-pill pe-5"
                                     placeholder="Buscar producto...">
 
-                                <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                                <i
+                                    class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
 
                             </div>
 
