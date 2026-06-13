@@ -14,7 +14,7 @@
         </div>
 
         {{-- Perfil --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-body p-4">
 
                 <div class="d-flex align-items-center">
@@ -60,7 +60,7 @@
         </div>
 
         {{-- Datos personales --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
             <div class="card-body p-4">
 
@@ -136,7 +136,7 @@
         </div>
 
         {{-- Contacto --}}
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
             <div class="card-body p-4">
 

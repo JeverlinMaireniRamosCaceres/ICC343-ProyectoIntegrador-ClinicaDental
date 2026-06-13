@@ -12,16 +12,15 @@
             <h2 class="fw-semibold mb-0">Nuevo odontólogo</h2>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-body p-4">
+        <form action="{{ route('odontologos.store') }}" method="POST">
+            @csrf
 
-                <form action="{{ route('odontologos.store') }}" method="POST">
-                    @csrf
-
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
                     {{-- Datos personales --}}
                     <h5 class="fw-semibold mb-3">Datos personales</h5>
 
-                    <div class="row g-3 mb-4">
+                    <div class="row g-3">
 
                         <div class="col-md-6">
                             <label class="form-label text-muted fw-semibold small">
@@ -113,11 +112,18 @@
                         </div>
 
                     </div>
+                </div>
+            </div>
 
-                    {{-- Contacto --}}
-                    <h5 class="fw-semibold mb-3">Información de contacto</h5>
+            {{-- Contacto --}}
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
 
-                    <div class="row g-3 mb-4">
+                    <h5 class="fw-semibold mb-3">
+                        Información de contacto
+                    </h5>
+
+                    <div class="row g-3">
 
                         <div class="col-md-6">
                             <label class="form-label text-muted fw-semibold small">
@@ -152,14 +158,22 @@
 
                     </div>
 
-                    {{-- Profesional --}}
-                    <h5 class="fw-semibold mb-3">Información profesional</h5>
+                </div>
+            </div>
+
+            {{-- Profesional --}}
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">
+                        Información profesional
+                    </h5>
 
                     <div class="row g-3">
 
                         <div class="col-md-6">
                             <label class="form-label text-muted fw-semibold small">
-                                Exequatur
+                                Exequátur
                             </label>
 
                             <input type="text" name="exequatur"
@@ -174,6 +188,7 @@
                         </div>
 
                         <div class="col-12">
+
                             <label class="form-label text-muted fw-semibold small">
                                 Especialidades
                             </label>
@@ -184,13 +199,14 @@
                                     <div class="col-md-4">
 
                                         <label for="especialidad{{ $especialidad->idEspecialidad }}"
-                                            class="border rounded p-3 d-block cursor-pointer">
+                                            class="border rounded p-3 d-block">
 
                                             <div class="form-check m-0">
 
                                                 <input class="form-check-input" type="checkbox" name="especialidades[]"
                                                     value="{{ $especialidad->idEspecialidad }}"
-                                                    id="especialidad{{ $especialidad->idEspecialidad }}">
+                                                    id="especialidad{{ $especialidad->idEspecialidad }}"
+                                                    @checked(in_array($especialidad->idEspecialidad, old('especialidades', [])))>
 
                                                 <span class="form-check-label fw-medium">
                                                     {{ $especialidad->nombre }}
@@ -210,27 +226,27 @@
                                     {{ $message }}
                                 </div>
                             @enderror
+
                         </div>
 
                     </div>
 
-                    <div class="d-flex gap-2 justify-content-end mt-4">
+                </div>
+            </div>
 
-                        <a href="{{ route('odontologos.index') }}" class="btn btn-light rounded-pill px-4">
-                            Cancelar
-                        </a>
+            <div class="d-flex gap-2 justify-content-end mt-4">
 
-                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
-                            <i class="bi bi-floppy"></i>
-                            Guardar
-                        </button>
+                <a href="{{ route('odontologos.index') }}" class="btn btn-light rounded-pill px-4">
+                    Cancelar
+                </a>
 
-                    </div>
-
-                </form>
+                <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                    <i class="bi bi-floppy"></i>
+                    Guardar
+                </button>
 
             </div>
-        </div>
 
+        </form>
     </div>
 @endsection
