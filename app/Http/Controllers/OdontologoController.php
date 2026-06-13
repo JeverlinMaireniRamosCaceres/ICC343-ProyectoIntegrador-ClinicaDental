@@ -179,7 +179,11 @@ class OdontologoController extends Controller
                 'nombre' => 'required|string|max:100',
                 'apellido' => 'required|string|max:100',
 
-                'fechaNacimiento' => 'required|date',
+                'fechaNacimiento' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . now()->subYears(18)->format('Y-m-d')
+                ],
 
                 'sexo' => [
                     'required',
@@ -214,6 +218,7 @@ class OdontologoController extends Controller
 
                 'fechaNacimiento.required' => 'La fecha de nacimiento es obligatoria.',
                 'fechaNacimiento.date' => 'La fecha de nacimiento no es válida.',
+                'fechaNacimiento.before_or_equal' => 'El odontólogo debe ser mayor de edad.',
 
                 'sexo.required' => 'Debes seleccionar un sexo.',
                 'sexo.in' => 'El sexo seleccionado no es válido.',
