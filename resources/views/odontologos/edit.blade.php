@@ -1,175 +1,229 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Odontólogo')
+@section('title', 'Editar odontólogo')
 
 @section('content')
-<div class="container-fluid py-4 px-5">
+    <div class="container py-4">
 
-    <!-- Header -->
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('odontologos.index') }}" class="btn btn-light btn-sm rounded-pill me-3">
-            <i class="bi bi-arrow-left"></i>
-        </a>
-
-        <h2 class="fw-bold text-dark mb-0">Editar odontólogo</h2>
-    </div>
-
-    <form action="{{ route('odontologos.update', 1) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <!-- Datos personales -->
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body p-4">
-
-                <h5 class="fw-bold mb-4">
-                    <i class="bi bi-person me-2 text-primary"></i>
-                    Datos personales
-                </h5>
-
-                <div class="row g-3">
-
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre</label>
-                        <input type="text"
-                               name="nombre"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="Juan">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Apellido</label>
-                        <input type="text"
-                               name="apellido"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="Pérez">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Cédula</label>
-                        <input type="text"
-                               name="cedula"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="001-1234567-8">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Fecha de nacimiento</label>
-                        <input type="date"
-                               name="fechaNacimiento"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="1990-05-12">
-                    </div>
-
-                </div>
-
-            </div>
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="{{ route('odontologos.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h2 class="fw-semibold mb-0">Editar odontólogo</h2>
         </div>
 
-        <!-- Contacto -->
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
+        @php
+            $especialidadesSeleccionadas = old(
+                'especialidades',
+                $odontologo->especialidades->pluck('idEspecialidad')->toArray(),
+            );
+        @endphp
+
+        <div class="card border-0 shadow-sm rounded-3">
             <div class="card-body p-4">
 
-                <h5 class="fw-bold mb-4">
-                    <i class="bi bi-telephone me-2 text-primary"></i>
-                    Información de contacto
-                </h5>
+                <form action="{{ route('odontologos.update', $odontologo->idOdontologo) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-                <div class="row g-3">
+                    {{-- Datos personales --}}
+                    <h5 class="fw-semibold mb-3">Datos personales</h5>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Teléfono</label>
-                        <input type="text"
-                               name="telefono"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="809-555-1234">
-                    </div>
+                    <div class="row g-3 mb-4">
 
-                    <div class="col-md-6">
-                        <label class="form-label">Correo electrónico</label>
-                        <input type="email"
-                               name="correo"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="juan.perez@email.com">
-                    </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Nombre
+                            </label>
 
-                </div>
+                            <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror"
+                                value="{{ old('nombre', $odontologo->persona->nombre) }}">
 
-            </div>
-        </div>
+                            @error('nombre')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <!-- Profesional -->
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body p-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Apellido
+                            </label>
 
-                <h5 class="fw-bold mb-4">
-                    <i class="bi bi-award me-2 text-primary"></i>
-                    Información profesional
-                </h5>
+                            <input type="text" name="apellido"
+                                class="form-control @error('apellido') is-invalid @enderror"
+                                value="{{ old('apellido', $odontologo->persona->apellido) }}">
 
-                <div class="row g-3">
+                            @error('apellido')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label">Exequatur</label>
-                        <input type="text"
-                               name="exequatur"
-                               class="form-control border-secondary-subtle bg-white"
-                               value="12345">
-                    </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Cédula
+                            </label>
 
-                    <div class="col-12">
-                        <label class="form-label">Especialidades</label>
+                            <input type="text" name="cedula"
+                                class="form-control mask-cedula @error('cedula') is-invalid @enderror"
+                                value="{{ old('cedula', $odontologo->persona->cedula) }}">
 
-                        <div class="row g-2">
+                            @error('cedula')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <div class="col-md-4">
-                                <div class="form-check border rounded-3 p-3 ps-5 bg-white">
-                                    <input class="form-check-input" type="checkbox" checked>
-                                    <label class="form-check-label">
-                                        Odontología general
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Fecha de nacimiento
+                            </label>
 
-                            <div class="col-md-4">
-                                <div class="form-check border rounded-3 p-3 ps-5 bg-white">
-                                    <input class="form-check-input" type="checkbox" checked>
-                                    <label class="form-check-label">
-                                        Ortodoncia
-                                    </label>
-                                </div>
-                            </div>
+                            <input type="date" name="fechaNacimiento"
+                                class="form-control @error('fechaNacimiento') is-invalid @enderror"
+                                value="{{ old('fechaNacimiento', $odontologo->persona->fechaNacimiento) }}">
 
-                            <div class="col-md-4">
-                                <div class="form-check border rounded-3 p-3 ps-5 bg-white">
-                                    <input class="form-check-input" type="checkbox">
-                                    <label class="form-check-label">
-                                        Endodoncia
-                                    </label>
-                                </div>
-                            </div>
+                            @error('fechaNacimiento')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Sexo
+                            </label>
+
+                            <select name="sexo" class="form-select @error('sexo') is-invalid @enderror">
+
+                                <option value="">Seleccionar</option>
+
+                                <option value="Masculino" @selected(old('sexo', $odontologo->persona->sexo) == 'Masculino')>
+                                    Masculino
+                                </option>
+
+                                <option value="Femenino" @selected(old('sexo', $odontologo->persona->sexo) == 'Femenino')>
+                                    Femenino
+                                </option>
+
+                            </select>
+
+                            @error('sexo')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
                         </div>
 
                     </div>
 
-                </div>
+                    {{-- Contacto --}}
+                    <h5 class="fw-semibold mb-3">Información de contacto</h5>
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Teléfono
+                            </label>
+
+                            <input type="text" name="telefono"
+                                class="form-control mask-telefono-rd @error('telefono') is-invalid @enderror"
+                                value="{{ old('telefono', $odontologo->persona->telefono) }}">
+
+                            @error('telefono')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Correo electrónico
+                            </label>
+
+                            <input type="email" name="correo" class="form-control @error('correo') is-invalid @enderror"
+                                value="{{ old('correo', $odontologo->persona->correo) }}">
+
+                            @error('correo')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    {{-- Profesional --}}
+                    <h5 class="fw-semibold mb-3">Información profesional</h5>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label text-muted fw-semibold small">
+                                Exequátur
+                            </label>
+
+                            <input type="text" name="exequatur"
+                                class="form-control @error('exequatur') is-invalid @enderror"
+                                value="{{ old('exequatur', $odontologo->exequatur) }}">
+
+                            @error('exequatur')
+                                <div class="invalid-feedback ps-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label text-muted fw-semibold small">
+                                Especialidades
+                            </label>
+
+                            <div class="row g-2">
+
+                                @foreach ($especialidades as $especialidad)
+                                    <div class="col-md-4">
+
+                                        <label for="especialidad{{ $especialidad->idEspecialidad }}"
+                                            class="border rounded p-3 d-block">
+
+                                            <div class="form-check m-0">
+
+                                                <input class="form-check-input" type="checkbox" name="especialidades[]"
+                                                    value="{{ $especialidad->idEspecialidad }}"
+                                                    id="especialidad{{ $especialidad->idEspecialidad }}"
+                                                    @checked(in_array($especialidad->idEspecialidad, $especialidadesSeleccionadas))>
+
+                                                <span class="form-check-label fw-medium">
+                                                    {{ $especialidad->nombre }}
+                                                </span>
+
+                                            </div>
+
+                                        </label>
+
+                                    </div>
+                                @endforeach
+
+                            </div>
+
+                            @error('especialidades')
+                                <div class="text-danger small mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+
+                        <a href="{{ route('odontologos.index') }}" class="btn btn-light rounded-pill px-4">
+                            Cancelar
+                        </a>
+
+                        <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Actualizar
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
         </div>
 
-        <!-- Botones -->
-        <div class="d-flex justify-content-end gap-2">
-            <a href="{{ route('odontologos.index') }}" class="btn btn-light rounded-pill px-4">
-                Cancelar
-            </a>
-
-            <button type="submit" class="btn btn-primary rounded-pill px-4">
-                Actualizar odontólogo
-            </button>
-        </div>
-
-    </form>
-
-</div>
+    </div>
 @endsection

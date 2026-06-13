@@ -82,12 +82,49 @@ class OdontologoController extends Controller
 
     public function edit($id)
     {
-        return view('odontologos.edit', compact('id'));
+        $odontologo = Odontologo::with([
+            'persona',
+            'especialidades'
+        ])->findOrFail($id);
+
+        $especialidades = Especialidad::orderBy('nombre')->get();
+
+        return view(
+            'odontologos.edit',
+            compact('odontologo', 'especialidades')
+        );
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('odontologos.index');
+        $odontologo = Odontologo::with('persona')->findOrFail($id);
+
+        $data = $this->validarOdontologo($request, $odontologo->idPersona);
+
+        DB::transaction(function () use ($odontologo, $data) {
+
+            $odontologo->persona->update([
+                'cedula' => $data['cedula'],
+                'nombre' => $data['nombre'],
+                'apellido' => $data['apellido'],
+                'fechaNacimiento' => $data['fechaNacimiento'],
+                'sexo' => $data['sexo'],
+                'telefono' => $data['telefono'],
+                'correo' => $data['correo']
+            ]);
+
+            $odontologo->update([
+                'exequatur' => $data['exequatur']
+            ]);
+
+            $odontologo->especialidades()->sync(
+                $data['especialidades']
+            );
+        });
+
+        return redirect()
+            ->route('odontologos.index')
+            ->with('success', 'Odontólogo actualizado correctamente.');
     }
 
     public function destroy($id)
