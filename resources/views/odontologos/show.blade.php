@@ -1,183 +1,221 @@
 @extends('layouts.app')
 
-@section('title', 'Detalle Odontólogo')
+@section('title', 'Detalle odontólogo')
 
 @section('content')
-<div class="container-fluid py-4 px-5">
+    <div class="container py-4">
 
-    <!-- Header -->
-    <div class="d-flex align-items-center mb-4">
-        <a href="{{ route('odontologos.index') }}" class="btn btn-light btn-sm rounded-pill me-3">
-            <i class="bi bi-arrow-left"></i>
-        </a>
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <a href="{{ route('odontologos.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
-        <h2 class="fw-bold text-dark mb-0">Detalle del odontólogo</h2>
-    </div>
+            <h2 class="fw-semibold mb-0">Detalle del odontólogo</h2>
+        </div>
 
-    <!-- Card perfil -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-4">
+        {{-- Perfil --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-body p-4">
 
-            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center">
 
-                <!-- Icono -->
-                <div class="patient-icon me-4">
-                    <i class="bi bi-person-badge"></i>
+                    @php
+                        $nombreCompleto = $odontologo->persona->nombre . ' ' . $odontologo->persona->apellido;
+                    @endphp
+
+                    <div class="me-4">
+
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($nombreCompleto) }}&background=0ea5e9&color=fff&size=128"
+                            class="rounded-circle shadow-sm" width="80" height="80" alt="Avatar">
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="fw-bold mb-1">
+                            {{ $odontologo->persona->sexo === 'Femenino' ? 'Dra.' : 'Dr.' }}
+                            {{ $odontologo->persona->nombre }}
+                            {{ $odontologo->persona->apellido }}
+                        </h3>
+
+                        <p class="text-muted mb-2">
+                            Exequátur: {{ $odontologo->exequatur }}
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            @foreach ($odontologo->especialidades as $especialidad)
+                                <span class="badge rounded-pill px-3 py-2" style="background-color:#EDE9FE; color:#6D28D9;">
+                                    {{ $especialidad->nombre }}
+                                </span>
+                            @endforeach
+
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <!-- Info -->
-                <div class="flex-grow-1">
-                    <h2 class="fw-bold text-dark mb-1">Dr. Juan Pérez</h2>
+            </div>
+        </div>
 
-                    <div class="d-flex flex-wrap gap-3">
+        {{-- Datos personales --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
 
-                        <span class="badge bg-light text-muted fw-normal">
-                            <i class="bi bi-award me-1 text-primary"></i>
-                            Exequatur: 12345
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Datos personales
+                </h5>
+
+                <div class="row g-4">
+
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Nombre
                         </span>
 
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->nombre }}
+                        </p>
                     </div>
-                </div>
 
-            </div>
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Apellido
+                        </span>
 
-        </div>
-    </div>
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->apellido }}
+                        </p>
+                    </div>
 
-    <!-- Tabs  -->
-    <div class="card border-0 shadow-sm rounded-4">
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Cédula
+                        </span>
 
-        <div class="card-header bg-white border-0 p-0">
-            <ul class="nav patient-tabs px-4" role="tablist">
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->cedula }}
+                        </p>
+                    </div>
 
-                <li class="nav-item">
-                    <button class="nav-link active"
-                            data-bs-toggle="tab"
-                            data-bs-target="#info">
-                        Información general
-                    </button>
-                </li>
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Sexo
+                        </span>
 
-                <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#contacto">
-                        Contacto
-                    </button>
-                </li>
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->sexo }}
+                        </p>
+                    </div>
 
-                <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#profesional">
-                        Información profesional
-                    </button>
-                </li>
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Fecha de nacimiento
+                        </span>
 
-            </ul>
-        </div>
+                        <p class="mb-0 fw-medium">
+                            {{ \Carbon\Carbon::parse($odontologo->persona->fechaNacimiento)->format('d/m/Y') }}
+                        </p>
+                    </div>
 
-        <div class="tab-content p-4">
+                    <div class="col-md-4">
+                        <span class="text-muted small fw-semibold">
+                            Edad
+                        </span>
+                        <p class="mb-0 fw-medium">
+                            {{ \Carbon\Carbon::parse($odontologo->persona->fechaNacimiento)->age }} años
+                        </p>
+                    </div>
 
-            <!-- Información General -->
-        <div class="tab-pane fade show active" id="info">
-
-            <div class="row g-4">
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Nombre</span>
-                    <p class="fw-semibold mb-0">Juan</p>
-                </div>
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Apellido</span>
-                    <p class="fw-semibold mb-0">Pérez</p>
-                </div>
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Cédula</span>
-                    <p class="fw-semibold mb-0">001-1234567-8</p>
-                </div>
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Fecha de nacimiento</span>
-                    <p class="fw-semibold mb-0">12/05/1990</p>
-                </div>
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Teléfono</span>
-                    <p class="fw-semibold mb-0">809-555-1234</p>
-                </div>
-
-                <div class="col-md-4">
-                    <span class="text-muted small fw-bold">Correo</span>
-                    <p class="fw-semibold mb-0">juan@email.com</p>
                 </div>
 
             </div>
 
         </div>
 
-            <!-- Contacto -->
-            <div class="tab-pane fade" id="contacto">
+        {{-- Contacto --}}
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Información de contacto
+                </h5>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <span class="text-muted small fw-semibold">
+                            Teléfono
+                        </span>
+
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->telefono }}
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <span class="text-muted small fw-semibold">
+                            Correo electrónico
+                        </span>
+
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->persona->correo ?: 'No registrado' }}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {{-- Profesional --}}
+        <div class="card border-0 shadow-sm rounded-3">
+
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-4">
+                    Información profesional
+                </h5>
 
                 <div class="row g-4">
 
                     <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Teléfono</span>
-                        <p class="fw-semibold mb-0">809-555-1234</p>
+                        <span class="text-muted small fw-semibold">
+                            Exequátur
+                        </span>
+
+                        <p class="mb-0 fw-medium">
+                            {{ $odontologo->exequatur }}
+                        </p>
                     </div>
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Correo electrónico</span>
-                        <p class="fw-semibold mb-0">juan.perez@email.com</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Profesional -->
-            <div class="tab-pane fade" id="profesional">
-
-                <div class="row g-4">
-
-                    <!-- Exequatur -->
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Exequatur</span>
-                        <p class="fw-semibold mb-0">12345</p>
-                    </div>
-
-                    <!-- Especialidades -->
                     <div class="col-12">
-                        <span class="text-muted small fw-bold">Especialidades</span>
+
+                        <span class="text-muted small fw-semibold">
+                            Especialidades
+                        </span>
 
                         <div class="mt-2 d-flex flex-wrap gap-2">
 
-                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                Ortodoncia
-                            </span>
-
-                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                Endodoncia
-                            </span>
-
-                            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                Odontología general
-                            </span>
+                            @foreach ($odontologo->especialidades as $especialidad)
+                                <span class="badge rounded-pill px-3 py-2" style="background-color:#EDE9FE; color:#6D28D9;">
+                                    {{ $especialidad->nombre }}
+                                </span>
+                            @endforeach
 
                         </div>
+
                     </div>
 
                 </div>
 
             </div>
 
-            </div>
-
         </div>
 
     </div>
-
-</div>
 @endsection
