@@ -310,6 +310,19 @@
                             <input type="hidden" name="idProducto" id="producto_id">
                         </div>
 
+                        <!-- lote -->
+                        <div class="mb-2" id="contenedorLote" style="display:none;">
+                            <label class="form-label small fw-semibold text-muted">Lote</label>
+                            <div class="position-relative">
+                                <input type="text" id="lote_descripcion" class="form-control rounded-pill pe-5"
+                                    placeholder="Buscar lote..." readonly>
+                                <i
+                                    class="bi bi-layers position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                            </div>
+                            <div id="resultadosLotes" class="list-group mt-1 shadow-sm"></div>
+                            <input type="hidden" name="idDetalleCompra" id="lote_id">
+                        </div>
+
                         <!-- stock actual -->
                         <div class="mb-2">
                             <label class="form-label small fw-semibold text-muted">Stock actual</label>
