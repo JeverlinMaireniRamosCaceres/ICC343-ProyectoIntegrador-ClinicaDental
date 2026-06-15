@@ -160,29 +160,67 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
-        resultadosProductosAjuste.addEventListener("click", function (e) {
 
-            const boton = e.target.closest(
-                ".list-group-item"
-            );
+    }
 
+    // lotes del producto seleccionado
+    const contenedorLote = document.getElementById('contenedorLote');
+    const inputLoteDescripcion = document.getElementById('lote_descripcion');
+    const resultadosLotes = document.getElementById('resultadosLotes');
+    const loteId = document.getElementById('lote_id');
+
+    // cuando se selecciona un producto, cargar sus lotes
+    resultadosProductosAjuste.addEventListener("click", async function (e) {
+        const boton = e.target.closest(".list-group-item");
+        if (!boton) return;
+
+        // rellenar datos del producto
+        inputProductoAjuste.value = boton.dataset.nombre;
+        productoIdAjuste.value = boton.dataset.id;
+        stockActualAjuste.value = `${boton.dataset.stock} ${boton.dataset.unidad}`;
+        unidadAjuste.textContent = boton.dataset.unidad;
+
+
+        // resetear lote
+        inputLoteDescripcion.value = '';
+        loteId.value = '';
+        resultadosLotes.innerHTML = '';
+        contenedorLote.style.display = 'none';
+
+        // cargar lotes del producto
+        const idProducto = boton.dataset.id;
+        const response = await fetch(`/inventario/${idProducto}/lotes`);
+        const lotes = await response.json();
+
+        if (lotes.length > 0) {
+            contenedorLote.style.display = 'block';
+            lotes.forEach(lote => {
+                resultadosLotes.innerHTML += `
+                <button type="button"
+                    class="list-group-item list-group-item-action"
+                    data-id="${lote.idDetalleCompra}"
+                    data-cantidad="${lote.cantidad}"
+                    data-descripcion="${lote.compra} | ${lote.cantidad} uds. | Vence: ${lote.fechaVencimiento}">
+                    <div class="fw-semibold">${lote.compra}</div>
+                    <small class="text-muted">
+                        ${lote.cantidad} uds. — Vence: ${lote.fechaVencimiento}
+                    </small>
+                </button>
+            `;
+            });
+        }
+    });
+
+    if (resultadosLotes) {
+        resultadosLotes.addEventListener("click", function (e) {
+            const boton = e.target.closest(".list-group-item");
             if (!boton) return;
 
-            inputProductoAjuste.value =
-                boton.dataset.nombre;
-
-            productoIdAjuste.value =
-                boton.dataset.id;
-
-            stockActualAjuste.value =
-                `${boton.dataset.stock} ${boton.dataset.unidad}`;
-
-            unidadAjuste.textContent =
-                boton.dataset.unidad;
-
-            resultadosProductosAjuste.innerHTML = "";
+            inputLoteDescripcion.value = boton.dataset.descripcion;
+            loteId.value = boton.dataset.id;
+            stockActualAjuste.value = `${boton.dataset.cantidad} ${unidadAjuste.textContent}`;
+            resultadosLotes.innerHTML = '';
         });
-
     }
 
 
