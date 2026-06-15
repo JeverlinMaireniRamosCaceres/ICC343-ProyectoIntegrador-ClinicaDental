@@ -203,6 +203,25 @@ class InventarioController extends Controller
         return response()->json($productos);
     }
 
+    public function lotes($id)
+    {
+        $lotes = DetalleCompra::where('idProducto', $id)
+            ->with('compra.proveedor')
+            ->orderBy('fechaVencimiento', 'asc')
+            ->get()
+            ->map(fn($d) => [
+                'idDetalleCompra' => $d->idDetalleCompra,
+                'cantidad' => $d->cantidad,
+                'fechaVencimiento' => $d->fechaVencimiento
+                    ? \Carbon\Carbon::parse($d->fechaVencimiento)->format('d/m/Y')
+                    : 'Sin fecha',
+                'compra' => '#' . str_pad($d->idCompras, 4, '0', STR_PAD_LEFT)
+                    . ' — ' . ($d->compra->proveedor->nombre ?? '—'),
+            ]);
+
+        return response()->json($lotes);
+    }
+
     public function detalle($id)
     {
         $producto = Producto::with([

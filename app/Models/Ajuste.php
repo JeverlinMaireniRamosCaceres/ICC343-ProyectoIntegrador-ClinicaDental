@@ -11,6 +11,7 @@ class Ajuste extends Model
 
     protected $fillable = [
         'idProducto',
+        'idDetalleCompra',
         'idUsuario',
         'stockAnterior',
         'stockNuevo',
@@ -27,4 +28,10 @@ class Ajuste extends Model
     {
         return $this->belongsTo(Usuario::class, 'idUsuario', 'idUsuario');
     }
+
+    public function detalleCompra()
+    {
+        return $this->belongsTo(DetalleCompra::class, 'idDetalleCompra', 'idDetalleCompra');
+    }
+
 }

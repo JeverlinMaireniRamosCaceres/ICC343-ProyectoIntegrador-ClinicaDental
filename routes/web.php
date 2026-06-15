@@ -110,15 +110,18 @@ Route::middleware('auth')->group(function () {
     // Inventario
     Route::get('inventario/reporte', [InventarioController::class, 'reporte'])
         ->name('inventario.reporte');
-    
+
     Route::post('/inventario/ajuste', [InventarioController::class, 'ajuste'])
         ->name('inventario.ajuste');
 
     Route::get('/buscar-productos', [InventarioController::class, 'buscarProductos'])
         ->name('inventario.buscar-productos');
-    
+
     Route::get('inventario/{id}/detalle', [InventarioController::class, 'detalle'])
         ->name('inventario.detalle');
+        
+    Route::get('inventario/{id}/lotes', [InventarioController::class, 'lotes'])
+        ->name('inventario.lotes');
 
     Route::resource('inventario', InventarioController::class);
 
