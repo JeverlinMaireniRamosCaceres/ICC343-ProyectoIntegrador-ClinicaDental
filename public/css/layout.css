@@ -317,7 +317,7 @@ body {
     background: var(--sidebar-bg);
     transition: width 0.3s ease;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 #sidebar-container .nav-link {
@@ -578,7 +578,7 @@ body {
 
 #sidebar-container:not(.sidebar-expanded) {
     width: 80px;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 /* input de fecha */

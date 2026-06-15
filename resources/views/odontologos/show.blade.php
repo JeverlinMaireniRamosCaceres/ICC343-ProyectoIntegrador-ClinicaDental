@@ -173,7 +173,7 @@
         </div>
 
         {{-- Profesional --}}
-        <div class="card border-0 shadow-sm rounded-3">
+        <div class="card border-0 shadow-sm rounded-4">
 
             <div class="card-body p-4">
 
