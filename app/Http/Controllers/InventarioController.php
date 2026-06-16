@@ -227,6 +227,10 @@ class InventarioController extends Controller
         $producto = Producto::with([
             'detallesCompra' => function ($q) {
                 $q->with('compra.proveedor')
+                    ->where(function ($query) {
+                        $query->whereNull('fechaVencimiento')
+                            ->orWhere('fechaVencimiento', '>=', now()->subMonth());
+                    })
                     ->orderBy('fechaVencimiento', 'asc');
             }
         ])->findOrFail($id);

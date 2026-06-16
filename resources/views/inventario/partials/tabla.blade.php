@@ -19,11 +19,11 @@
 
                 @php
 
-                    $proximoVencimiento =
-                        $producto->detallesCompra
-                            ->whereNotNull('fechaVencimiento')
-                            ->sortBy('fechaVencimiento')
-                            ->first();
+                    $proximoVencimiento = $producto->detallesCompra
+                        ->whereNotNull('fechaVencimiento')
+                        ->filter(fn($d) => \Carbon\Carbon::parse($d->fechaVencimiento)->gte(now()->subMonth()))
+                        ->sortBy('fechaVencimiento')
+                        ->first();
 
                 @endphp
 
@@ -58,12 +58,12 @@
                             </span>
 
                             <span style="
-                                                width:8px;
-                                                height:8px;
-                                                border-radius:50%;
-                                                background:{{ $color }};
-                                                display:inline-block;
-                                            ">
+                                                    width:8px;
+                                                    height:8px;
+                                                    border-radius:50%;
+                                                    background:{{ $color }};
+                                                    display:inline-block;
+                                                ">
                             </span>
 
                         </div>
@@ -95,9 +95,9 @@
                             @if($vencePronto)
 
                                 <span style="
-                                                        border-bottom:2px dashed #e03131;
-                                                        padding-bottom:1px;
-                                                    ">
+                                                                    border-bottom:2px dashed #e03131;
+                                                                    padding-bottom:1px;
+                                                                ">
                                     {{ \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)->format('d/m/Y') }}
                                 </span>
 
