@@ -27,7 +27,7 @@
                         {{ $odontologo->persona->telefono }}
                     </td>
 
-                    <!-- Si hay mas de una especialidad mostrar la primera en badges y ... en badges, la tabla se llama odontologo_especialidad, si no hay poner un guion - centrado en el medio-->
+                    
                     <td class="px-4 text-center">
                         @if ($odontologo->especialidades->count() > 0)
                             <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background-color:#EDE9FE; color:#6D28D9;">

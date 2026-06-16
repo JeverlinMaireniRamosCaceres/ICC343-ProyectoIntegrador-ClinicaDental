@@ -12,7 +12,8 @@ document
 
         const html = await response.text();
 
-        document.getElementById("contenedorTablaProcedimientos").innerHTML = html;
+        document.getElementById("contenedorTablaProcedimientos").innerHTML =
+            html;
     });
 
 // Paginación asíncrona con AJAX
@@ -30,6 +31,25 @@ document.addEventListener("click", async function (e) {
 
         const html = await response.text();
 
-        document.getElementById("contenedorTablaProcedimientos").innerHTML = html;
+        document.getElementById("contenedorTablaProcedimientos").innerHTML =
+            html;
     }
+});
+
+// Modal eliminar odontólogo
+document.addEventListener("click", function (e) {
+    const boton = e.target.closest(
+        '[data-bs-target="#modalEliminarProcedimiento"]',
+    );
+
+    if (!boton) return;
+
+    const id = boton.dataset.id;
+    const nombre = boton.dataset.nombre;
+
+    document.getElementById("nombreProcedimientoEliminar").textContent =
+        nombre;
+
+    document.getElementById("formEliminarProcedimiento").action =
+        `/procedimientos/${id}`;
 });

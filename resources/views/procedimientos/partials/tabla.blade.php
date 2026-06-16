@@ -2,7 +2,6 @@
     <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
             <tr>
-                <th class="px-4 py-3 text-muted fw-semibold small">ID</th>
                 <th class="px-4 py-3 text-muted fw-semibold small">Nombre</th>
                 <th class="px-4 py-3 text-muted fw-semibold small">Precio</th>
                 <th class="px-4 py-3 text-muted fw-semibold small">Acciones</th>
@@ -11,7 +10,6 @@
         <tbody>
             @forelse ($procedimientos as $procedimiento)
                 <tr>
-                    <td class="px-4 text-muted">{{ $procedimiento->idProcedimiento }}</td>
                     <td class="px-4 fw-medium">{{ $procedimiento->nombre }}</td>
                     <td class="px-4 fw-semibold">
                         RD$ {{ number_format($procedimiento->precio, 2) }}
@@ -19,13 +17,11 @@
                     <td class="px-4">
                         <div class="d-flex gap-2">
                             <a href="{{ route('procedimientos.edit', $procedimiento->idProcedimiento) }}"
-                                class="btn btn-sm btn-warning rounded-pill px-3"
-                                style="color:white;"
-                                title="Editar">
+                                class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;" title="Editar">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3"
-                                title="Eliminar" data-bs-toggle="modal" data-bs-target="#modalEliminar"
+                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" title="Eliminar"
+                                data-bs-toggle="modal" data-bs-target="#modalEliminarProcedimiento"
                                 data-id="{{ $procedimiento->idProcedimiento }}"
                                 data-nombre="{{ $procedimiento->nombre }}">
                                 <i class="bi bi-trash3-fill"></i>
