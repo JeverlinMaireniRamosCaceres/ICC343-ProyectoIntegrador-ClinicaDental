@@ -13,7 +13,7 @@
         <h2 class="fw-semibold mb-0">Editar Procedimiento</h2>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-3">
+    <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
 
             <form action="{{ route('procedimientos.update', $procedimiento->idProcedimiento) }}" method="POST">
@@ -48,13 +48,13 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-2 justify-coFntent-end">
+                <div class="d-flex gap-2 justify-content-end">
                     <a href="{{ route('procedimientos.index') }}"
                        class="btn btn-light rounded-pill px-4">
                         Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">
-                        <i class="bi bi-arrow-clockwise"></i> Guardar Cambios
+                    <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                        <i class="bi bi-arrow-clockwise"></i> Actualizar
                     </button>
                 </div>
 

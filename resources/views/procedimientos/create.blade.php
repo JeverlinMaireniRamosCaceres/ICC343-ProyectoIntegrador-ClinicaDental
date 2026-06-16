@@ -13,7 +13,7 @@
         <h2 class="fw-semibold mb-0">Nuevo Procedimiento</h2>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-3"">
+    <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
 
             <form action="{{ route('procedimientos.store') }}" method="POST">
@@ -52,7 +52,7 @@
                        class="btn btn-light rounded-pill px-4">
                         Cancelar
                     </a>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                    <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
                         <i class="bi bi-floppy"></i> Guardar
                     </button>
                 </div>
