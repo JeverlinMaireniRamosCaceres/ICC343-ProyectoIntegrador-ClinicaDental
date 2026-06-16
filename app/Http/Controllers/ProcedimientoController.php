@@ -4,25 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
+use App\Models\ProductoProcedimiento;
+use Illuminate\Support\Facades\DB;
+
 
 class ProcedimientoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        $buscar = $request->buscar;
+public function index(Request $request)
+{
+    $buscar = $request->buscar;
 
-        $procedimientos = Procedimiento::when($buscar, function ($query, $buscar) {
-            $query->where('nombre', 'like', "%{$buscar}%");
-        })
-            ->orderBy('idProcedimiento')
-            ->paginate(6)
-            ->withQueryString();
+    $procedimientos = Procedimiento::when($buscar, function ($query, $buscar) {
+        $query->where('nombre', 'like', "%{$buscar}%");
+    })
+        ->orderBy('idProcedimiento')
+        ->paginate(6)
+        ->withQueryString();
 
-        return view('procedimientos.index', compact('procedimientos'));
+    if ($request->ajax()) {
+        return view('procedimientos.partials.tabla', compact('procedimientos'));
     }
+
+    return view('procedimientos.index', compact('procedimientos'));
+}
 
     /**
      * Show the form for creating a new resource.
@@ -91,13 +98,23 @@ class ProcedimientoController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($id)
-    {
-        $procedimiento = Procedimiento::findOrFail($id);
+        {
+            $procedimiento = Procedimiento::findOrFail($id);
 
-        $procedimiento->delete();
+            $estaVinculadoAProducto = ProductoProcedimiento::where('idProcedimiento', $id)
+                ->whereHas('producto') 
+                ->exists();
 
-        return redirect()
-            ->route('procedimientos.index')
-            ->with('success', 'Procedimiento eliminado correctamente');
+            if ($estaVinculadoAProducto) {
+                return redirect()
+                    ->route('procedimientos.index')
+                    ->with('error', "No se puede eliminar el procedimiento '{$procedimiento->nombre}' porque está vinculado a uno o más productos de consumo.");
+            }
+
+            $procedimiento->delete();
+
+            return redirect()
+                ->route('procedimientos.index')
+                ->with('success', 'Procedimiento eliminado correctamente');
+        }
     }
-}
