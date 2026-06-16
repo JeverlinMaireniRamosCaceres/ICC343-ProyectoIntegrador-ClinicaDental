@@ -524,7 +524,7 @@ body {
 
 #sidebar-container.sidebar-collapsed .submenu .nav-link:hover,
 #sidebar-container.sidebar-collapsed .submenu .nav-link.active {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 #sidebar-container.sidebar-collapsed .submenu .nav-link i {
@@ -536,7 +536,7 @@ body {
     display: flex;
     align-items: center;
     padding: 13px 16px;
-    min-height: 50px;
+    min-height: 58px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -644,4 +644,3 @@ body {
 .sidebar-toggle-btn i {
     font-size: 1rem;
 }
-
