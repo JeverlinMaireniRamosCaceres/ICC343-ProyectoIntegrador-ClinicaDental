@@ -3,15 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Paciente;
 
 class PacientesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('pacientes.index');
+        $buscar = $request->input('buscar');
+        $porPagina = $request->input('porPagina', 10);
+
+        $pacientes = Paciente::query()
+        ->with('persona')
+        ->when($buscar, function ($query, $buscar){
+            $query->whereHas('persona', function ($q) use ($buscar){
+                $q->where('nombre', 'like', "%{$buscar}%")
+                        ->orWhere('apellido', 'like', "%{$buscar}%")
+                        ->orWhere('cedula', 'like', "%{$buscar}%");
+            });
+        })
+        ->orderBy('idPaciente', 'asc')
+        ->paginate($porPagina)
+        ->withQueryString();
+
+        if($request->ajax()){
+            return view('pacientes.partials.tabla', compact ('pacientes', 'porPagina'))->render();
+        }
+        return view('pacientes.index', compact('pacientes', 'buscar', 'porPagina'));
     }
 
     /**
