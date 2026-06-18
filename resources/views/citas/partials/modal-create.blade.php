@@ -39,43 +39,37 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Hora</label>
-                            <input type="time"
-                                   name="hora"
-                                   class="form-control border-secondary-subtle bg-white">
+                            <input type="time" name="hora" class="form-control border-secondary-subtle bg-white">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Odontólogo</label>
                             <select name="idOdontologo" class="form-select border-secondary-subtle bg-white">
                                 <option selected disabled>Seleccionar odontólogo</option>
-                                <option value="1">Dr. Juan Pérez</option>
-                                <option value="2">Dra. Laura Gómez</option>
-                                <option value="3">Dr. Carlos Ramírez</option>
+                                @foreach($odontologos as $odontologo)
+                                    <option value="{{ $odontologo->idOdontologo }}">
+                                        {{ $odontologo->persona->nombre }} {{ $odontologo->persona->apellido }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="col-12">
                             <label class="form-label">Nombre de la persona</label>
-                            <input type="text"
-                                   name="nombrePersona"
-                                   class="form-control border-secondary-subtle bg-white"
-                                   placeholder="Ej: Ana Martínez">
+                            <input type="text" name="nombrePersona"
+                                class="form-control border-secondary-subtle bg-white" placeholder="Ej: Ana Martínez">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
-                            <input type="text"
-                                   name="telefono"
-                                   class="form-control border-secondary-subtle bg-white"
-                                   placeholder="Ej: 809-555-1234">
+                            <input type="text" name="telefono" class="form-control border-secondary-subtle bg-white"
+                                placeholder="Ej: 809-555-1234">
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Correo</label>
-                            <input type="email"
-                                   name="correo"
-                                   class="form-control border-secondary-subtle bg-white"
-                                   placeholder="Ej: paciente@email.com">
+                            <input type="email" name="correo" class="form-control border-secondary-subtle bg-white"
+                                placeholder="Ej: paciente@email.com">
                         </div>
 
                     </div>

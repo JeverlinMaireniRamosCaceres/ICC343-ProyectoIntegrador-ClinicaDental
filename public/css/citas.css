@@ -126,33 +126,6 @@
     }
 }
 
-.calendar-view-btn {
-    border: 0;
-    background-color: #eef4ff;
-    color: #0d6efd;
-    border-radius: 50rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 3px 9px;
-    transition: all 0.2s ease;
-}
-
-.calendar-view-btn:hover {
-    background-color: #0d6efd;
-    color: #fff;
-}
-
-.calendar-day.active .calendar-add-btn,
-.calendar-day.active .calendar-view-btn {
-    background-color: #0d6efd;
-    color: #fff;
-}
-
-.calendar-day.active .calendar-add-btn:hover {
-    background-color: #0b5ed7;
-    color: #fff;
-}
-
 .appointment-summary {
     background-color: #f8fafc;
     border: 1px solid #e5e7eb;
