@@ -48,4 +48,11 @@ class Odontologo extends Model
             'idEspecialidad'
         );
     }
+
+    // relacion con citas
+    public function citas()
+    {
+        return $this->hasMany(Cita::class, 'idOdontologo', 'idOdontologo');
+    }
+
 }

@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!calendarGrid || !calendarTitle) return;
 
-    let currentDate = new Date(2026, 4, 1);
-    let selectedDate = new Date(2026, 4, 2);
+    const today = new Date();
+
+    let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    let selectedDate = new Date(today);
 
     const months = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -18,13 +20,15 @@ document.addEventListener('DOMContentLoaded', function () {
         'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'
     ];
 
-    const fakeAppointments = {
-        '2026-05-01': 2,
-        '2026-05-06': 4,
-        '2026-05-12': 1,
-        '2026-05-18': 3,
-        '2026-05-25': 2
-    };
+    let citasPorDia = {};
+
+    async function cargarCitasMes(year, month) {
+        const response = await fetch(`/citas/por-mes?year=${year}&month=${month + 1}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        citasPorDia = await response.json();
+        renderCalendar();
+    }
 
     function formatDateKey(date) {
         const y = date.getFullYear();
@@ -70,15 +74,81 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.show();
     }
 
-    function openDayAppointmentsModal(date) {
+    async function openDayAppointmentsModal(date) {
         const modalFecha = document.getElementById('modalCitasDiaFecha');
+        const modalCuerpo = document.getElementById('modalCitasDiaContenido');
 
         if (modalFecha) {
             modalFecha.textContent = formatSelectedDate(date);
         }
 
+        if (modalCuerpo) {
+            modalCuerpo.innerHTML = `
+            <div class="text-center py-4 text-muted">
+                <div class="spinner-border spinner-border-sm me-2"></div>
+                Cargando citas...
+            </div>
+        `;
+        }
+
         const modal = new bootstrap.Modal(document.getElementById('modalCitasDia'));
         modal.show();
+
+        const dateKey = formatDateKey(date);
+        const response = await fetch(`/citas/por-fecha?fecha=${dateKey}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const citas = await response.json();
+
+        if (modalCuerpo) {
+            if (citas.length === 0) {
+                modalCuerpo.innerHTML = `
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+                    No hay citas para este día.
+                </div>
+            `;
+            } else {
+
+                modalCuerpo.innerHTML = citas.map(cita => `
+                    <div class="appointment-modal-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="appointment-time-pill">
+                                ${cita.hora.substring(0, 5)}
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-dark">${cita.nombrePersona}</div>
+                                <small class="text-muted">
+                                    ${cita.odontologo?.persona?.nombre ?? '—'} ${cita.odontologo?.persona?.apellido ?? ''}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="appointment-status
+                                ${cita.estado === 'Pendiente' ? 'appointment-status-pending' : ''}
+                                ${cita.estado === 'Confirmada' ? 'appointment-status-confirmed' : ''}
+                                ${cita.estado === 'Cancelada' ? 'appointment-status-cancelled' : ''}">
+                                ${cita.estado}
+                            </span>
+
+                            <a href="/citas/${cita.idCita}/edit"
+                                class="btn btn-sm btn-warning rounded-pill px-3 text-white">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <button type="button"
+                                class="btn btn-sm btn-danger rounded-pill px-3 btn-eliminar-cita"
+                                data-id="${cita.idCita}"
+                                data-nombre="${cita.nombrePersona}">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            }
+        }
     }
 
     function renderCalendar() {
@@ -99,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isSelected = dateKey === formatDateKey(selectedDate);
                 const today = new Date();
                 const isToday = dateKey === formatDateKey(today);
-                const appointmentCount = fakeAppointments[dateKey] || 0;
+                const appointmentCount = citasPorDia[dateKey] || 0;
 
                 const dayButton = document.createElement('div');
                 dayButton.className = 'calendar-day';
@@ -118,22 +188,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
 
                     <div class="calendar-day-info">
-                        ${
-                            appointmentCount > 0
-                                ? `<span class="calendar-dot"></span><span>${appointmentCount} cita${appointmentCount > 1 ? 's' : ''}</span>`
-                                : `<span>Sin citas</span>`
-                        }
+                        ${appointmentCount > 0
+                        ? `<span class="calendar-dot"></span><span>${appointmentCount} cita${appointmentCount > 1 ? 's' : ''}</span>`
+                        : `<span>Sin citas</span>`
+                    }
                     </div>
 
-                    ${
-                        appointmentCount > 0
-                            ? `<div class="mt-3">
-                                   <button type="button" class="calendar-view-btn">
-                                       Ver citas
-                                   </button>
-                               </div>`
-                            : ''
-                    }
                 `;
 
                 const clickedDate = new Date(date);
@@ -141,6 +201,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 dayButton.addEventListener('click', function () {
                     selectedDate = clickedDate;
                     renderCalendar();
+
+                    if (appointmentCount > 0) {
+                        openDayAppointmentsModal(clickedDate);
+                    }
                 });
 
                 const addButton = dayButton.querySelector('.calendar-add-btn');
@@ -148,15 +212,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     event.stopPropagation();
                     openCreateModal(clickedDate);
                 });
-
-                const viewButton = dayButton.querySelector('.calendar-view-btn');
-
-                if (viewButton) {
-                    viewButton.addEventListener('click', function (event) {
-                        event.stopPropagation();
-                        openDayAppointmentsModal(clickedDate);
-                    });
-                }
 
                 calendarGrid.appendChild(dayButton);
                 renderedDays++;
@@ -168,26 +223,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('prevMonth')?.addEventListener('click', function () {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
     });
 
     document.getElementById('nextMonth')?.addEventListener('click', function () {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+        cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
     });
 
     document.getElementById('todayBtn')?.addEventListener('click', function () {
         const today = new Date();
-
         currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
         selectedDate = today;
-
-        renderCalendar();
+        cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
     });
 
     document.getElementById('btnNuevaCitaGeneral')?.addEventListener('click', function () {
         openCreateModal(selectedDate);
     });
 
-    renderCalendar();
+    cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
+
 });
