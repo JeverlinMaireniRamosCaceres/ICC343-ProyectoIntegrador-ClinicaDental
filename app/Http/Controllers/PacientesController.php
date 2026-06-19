@@ -109,7 +109,14 @@ class PacientesController extends Controller
      */
     public function edit(string $id)
     {
-        return view('pacientes.edit');
+        $paciente = Paciente::with([
+            'persona',
+            'alergias'
+        ])->findOrFail($id);
+
+        $alergias = Alergia::orderBy('nombre')->get();
+
+        return view('pacientes.edit', compact('paciente', 'alergias'));
     }
 
     /**
@@ -117,7 +124,29 @@ class PacientesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $paciente = Paciente::with('persona')->findOrFail($id);
+
+        $datos = $this->validarPaciente($request, $paciente);
+
+        $paciente->persona->update([
+            'cedula' => $datos['cedula'] ?? null,
+            'nombre' => $datos['nombre'],
+            'apellido' => $datos['apellido'],
+            'fechaNacimiento' => $datos['fechaNacimiento'],
+            'sexo' => $datos['sexo'],
+            'telefono' => $datos['telefono'],
+            'correo' => $datos['correo'] ?? null,
+        ]);
+
+        $paciente->update([
+            'antecedentes' => $datos['antecedentesMedicos'] ?? null,
+        ]);
+
+        $paciente->alergias()->sync(
+            $datos['alergias'] ?? []
+        );
+
+        return redirect()->route('pacientes.index')->with('success', 'Paciente actualizado correctamente.');
     }
 
     /**
@@ -128,13 +157,13 @@ class PacientesController extends Controller
         //
     }
 
-    private function validarPaciente(Request $request): array
+    private function validarPaciente(Request $request, ?Paciente $paciente = null): array
     {
         return $request->validate(
             [
                 'cedula' => [
                     'nullable',
-                    function ($attribute, $value, $fail) {
+                    function ($attribute, $value, $fail) use ($paciente) {
 
                         if (blank($value)) {
                             return;
@@ -143,6 +172,10 @@ class PacientesController extends Controller
                         $persona = Persona::where('cedula', $value)->first();
 
                         if (!$persona) {
+                            return;
+                        }
+
+                        if ($paciente && $persona->idPersona === $paciente->idPersona) {
                             return;
                         }
 
@@ -169,7 +202,10 @@ class PacientesController extends Controller
                     Rule::in(['Masculino', 'Femenino'])
                 ],
 
-                'telefono' => 'required|string|max:12',
+                'telefono' => [
+                    'required',
+                    'regex:/^(809|829|849)-\d{3}-\d{4}$/'
+                ],
 
                 'correo' => 'nullable|email|max:100',
 
@@ -190,10 +226,10 @@ class PacientesController extends Controller
 
                 'sexo.required' => 'Debe seleccionar un sexo.',
 
-                'telefono.max' => 'El teléfono no puede exceder 12 caracteres.',
+                'telefono.required' => 'El teléfono es obligatorio.',
+                'telefono.regex' => 'El teléfono debe tener el formato 809-555-1234.',
 
                 'correo.email' => 'El correo electrónico no es válido.',
-                'correo.unique' => 'Ya existe una persona registrada con este correo.',
 
                 'alergias.array' => 'Las alergias seleccionadas no son válidas.',
                 'alergias.*.exists' => 'Una de las alergias seleccionadas no existe.',
