@@ -262,7 +262,7 @@
                 </a>
 
                 <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
-                    <i class="bi bi-floppy"></i>
+                    <i class="bi bi-arrow-clockwise"></i>
                     Actualizar
                 </button>
 
