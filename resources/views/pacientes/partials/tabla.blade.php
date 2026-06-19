@@ -25,12 +25,6 @@
                                 class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;" title="Editar">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                            <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" title="Eliminar"
-                                data-bs-toggle="modal" data-bs-target="#modalEliminarProcedimiento"
-                                data-id="{{ $paciente->idPaciente }}"
-                                data-nombre="{{ $paciente->persona->nombre . ' ' . $paciente->persona->apellido }}">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
                         </div>
                     </td>
                 </tr>
