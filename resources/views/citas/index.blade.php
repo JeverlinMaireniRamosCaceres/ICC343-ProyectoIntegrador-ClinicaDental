@@ -4,22 +4,18 @@
 
 @section('content')
 
-<div class="container-fluid py-3 px-5">
+<div class="container-fluid p-3">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h2 class="fw-bold text-dark mb-0">Citas</h2>
-        </div>
-    </div>
+
 
     <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
+        <div class="card-body p-3">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
+
                 <div>
-                    <h4 class="fw-bold mb-0" id="calendarTitle">Mayo 2026</h4>
-                    <small class="text-muted">Selecciona un día para registrar o ver citas</small>
+                    <h4 class="fw-semibold mb-1">Calendario de citas</h4>
+                    <h4 class="fw-semibold mb-0" id="calendarTitle">Junio 2026</h4>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -37,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="calendar-weekdays mb-2">
+            <div class="calendar-weekdays mb-2 mt-2">
                 <div>Lun</div>
                 <div>Mar</div>
                 <div>Mié</div>

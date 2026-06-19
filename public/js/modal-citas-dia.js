@@ -9,33 +9,25 @@ document.addEventListener('DOMContentLoaded', function () {
         keyboard: true
     });
 
-    document.querySelectorAll('.btn-eliminar-cita').forEach(function (button) {
+    document.addEventListener('click', function (e) {
+        const button = e.target.closest('.btn-eliminar-cita');
+        if (!button) return;
 
-        button.addEventListener('click', function () {
+        const id = button.getAttribute('data-id');
+        const nombre = button.getAttribute('data-nombre');
 
-            const id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-nombre');
+        document.getElementById('nombreCitaEliminar').textContent = nombre;
+        document.getElementById('formEliminarCita').action = `/citas/${id}`;
 
-            document.getElementById('nombreCitaEliminar').textContent = nombre;
+        modalEliminarCita.show();
 
-            const form = document.getElementById('formEliminarCita');
-            form.action = `/citas/${id}`;
-
-            modalEliminarCita.show();
-
-            setTimeout(function () {
-
-                const backdrops = document.querySelectorAll('.modal-backdrop');
-                const lastBackdrop = backdrops[backdrops.length - 1];
-
-                if (lastBackdrop) {
-                    lastBackdrop.classList.add('backdrop-eliminar-cita');
-                }
-
-            }, 10);
-
-        });
-
+        setTimeout(function () {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            const lastBackdrop = backdrops[backdrops.length - 1];
+            if (lastBackdrop) {
+                lastBackdrop.classList.add('backdrop-eliminar-cita');
+            }
+        }, 10);
     });
 
     modalEliminarCitaElement.addEventListener('hidden.bs.modal', function () {

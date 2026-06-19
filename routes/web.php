@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
         ->name('odontologos.activar');
 
     // Citas
+    Route::get('citas/por-fecha', [CitaController::class, 'citasPorFecha'])->name('citas.porFecha');
+    Route::get('citas/por-mes', [CitaController::class, 'citasPorMes'])->name('citas.porMes');
     Route::resource('citas', CitaController::class);
 
     // Caja chica
@@ -119,7 +121,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('inventario/{id}/detalle', [InventarioController::class, 'detalle'])
         ->name('inventario.detalle');
-        
+
     Route::get('inventario/{id}/lotes', [InventarioController::class, 'lotes'])
         ->name('inventario.lotes');
 
