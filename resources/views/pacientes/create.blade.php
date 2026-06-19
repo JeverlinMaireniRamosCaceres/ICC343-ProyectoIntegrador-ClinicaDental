@@ -6,7 +6,7 @@
     <div class="container-fluid px-2 py-2">
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <a href="{{ route('pacientes.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+            <a href="{{ request('return', route('pacientes.index')) }}" class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
 
@@ -17,6 +17,8 @@
 
         <form action="{{ route('pacientes.store') }}" method="POST">
             @csrf
+
+            <input type="hidden" name="return" value="{{ request('return') }}">
 
             {{-- DATOS PERSONALES --}}
             <div class="card border-0 shadow-sm rounded-4 mb-4">
@@ -247,7 +249,7 @@
 
             <div class="d-flex gap-2 justify-content-end mt-4">
 
-                <a href="{{ route('pacientes.index') }}" class="btn btn-light rounded-pill px-4">
+                <a href="{{ request('return', route('pacientes.index')) }}" class="btn btn-light rounded-pill px-4">
                     Cancelar
                 </a>
 

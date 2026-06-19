@@ -6,7 +6,8 @@
     <div class="container-fluid py-2 px-2">
 
         <div class="d-flex align-items-center mb-4">
-            <a href="{{ route('pacientes.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+            <a href="{{ request('return', route('pacientes.index')) }}" class="btn btn-sm btn-light rounded-pill px-3"
+                class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
 

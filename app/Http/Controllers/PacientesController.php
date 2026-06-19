@@ -91,8 +91,7 @@ class PacientesController extends Controller
             $datos['alergias'] ?? []
         );
 
-        return redirect()
-            ->route('pacientes.index')
+        return redirect($request->return ?: route('pacientes.index'))
             ->with('success', 'Paciente registrado correctamente.');
     }
 
@@ -148,7 +147,8 @@ class PacientesController extends Controller
             $datos['alergias'] ?? []
         );
 
-        return redirect()->route('pacientes.index')->with('success', 'Paciente actualizado correctamente.');
+        return redirect($request->return ?: route('pacientes.index'))
+            ->with('success', 'Paciente actualizado correctamente.');
     }
 
     /**

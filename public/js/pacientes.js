@@ -4,7 +4,9 @@ document
     .addEventListener("keyup", async function () {
         const texto = this.value;
 
-        const response = await fetch(`/pacientes?buscar=${texto}`, {
+        const url = `/pacientes?buscar=${encodeURIComponent(texto)}`;
+
+        const response = await fetch(url, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
             },
@@ -13,6 +15,8 @@ document
         const html = await response.text();
 
         document.getElementById("contenedorTablaPacientes").innerHTML = html;
+
+        window.history.pushState({}, "", url);
     });
 
 // Paginacion con ajax
@@ -32,6 +36,8 @@ document.addEventListener("click", async function (e) {
     const html = await response.text();
 
     document.getElementById("contenedorTablaPacientes").innerHTML = html;
+
+    window.history.pushState({}, "", enlace.href);
 });
 
 // Cantidad de paginado con ajax
@@ -42,7 +48,9 @@ document.addEventListener("change", async function (e) {
 
     const params = new URLSearchParams(new FormData(form));
 
-    const response = await fetch(`${form.action}?${params.toString()}`, {
+    const url = `${form.action}?${params.toString()}`;
+
+    const response = await fetch(url, {
         headers: {
             "X-Requested-With": "XMLHttpRequest",
         },
@@ -51,4 +59,6 @@ document.addEventListener("change", async function (e) {
     const html = await response.text();
 
     document.getElementById("contenedorTablaPacientes").innerHTML = html;
+
+    window.history.pushState({}, "", url);
 });

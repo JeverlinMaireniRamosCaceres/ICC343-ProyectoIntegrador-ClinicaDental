@@ -6,7 +6,8 @@
     <div class="container-fluid px-2 py-2">
 
         <div class="d-flex align-items-center gap-3 mb-4">
-            <a href="{{ route('pacientes.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+            <a href="{{ request('return', route('pacientes.index')) }}" class="btn btn-light rounded-pill px-4"
+                class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
 
@@ -18,6 +19,8 @@
         <form action="{{ route('pacientes.update', $paciente->idPaciente) }}" method="POST">
             @csrf
             @method('PUT')
+
+            <input type="hidden" name="return" value="{{ request('return') }}">
 
             {{-- DATOS PERSONALES --}}
             <div class="card border-0 shadow-sm rounded-4 mb-4">
@@ -36,8 +39,7 @@
 
                             <input type="text" name="nombre" id="nombre"
                                 class="form-control @error('nombre') is-invalid @enderror"
-                                value="{{ old('nombre', $paciente->persona->nombre) }}"
-                                placeholder="Ej: Juan">
+                                value="{{ old('nombre', $paciente->persona->nombre) }}" placeholder="Ej: Juan">
 
                             @error('nombre')
                                 <div class="invalid-feedback ps-2">
@@ -53,8 +55,8 @@
 
                             <input type="text" name="apellido"
                                 class="form-control @error('apellido') is-invalid @enderror"
-                                value="{{ old('apellido', $paciente->persona->apellido) }}"
-                                id="apellido" placeholder="Ej: Pérez">
+                                value="{{ old('apellido', $paciente->persona->apellido) }}" id="apellido"
+                                placeholder="Ej: Pérez">
 
                             @error('apellido')
                                 <div class="invalid-feedback ps-2">
@@ -70,8 +72,8 @@
 
                             <input type="text" name="cedula"
                                 class="form-control mask-cedula @error('cedula') is-invalid @enderror"
-                                value="{{ old('cedula', $paciente->persona->cedula) }}"
-                                placeholder="001-1234567-8" id="cedula">
+                                value="{{ old('cedula', $paciente->persona->cedula) }}" placeholder="001-1234567-8"
+                                id="cedula">
 
                             @error('cedula')
                                 <div class="invalid-feedback ps-2">
@@ -102,8 +104,7 @@
                                 Sexo
                             </label>
 
-                            <select name="sexo" id="sexo"
-                                class="form-select @error('sexo') is-invalid @enderror">
+                            <select name="sexo" id="sexo" class="form-select @error('sexo') is-invalid @enderror">
 
                                 <option value="">Seleccionar</option>
 
@@ -148,8 +149,7 @@
 
                             <input type="text" name="telefono" id="telefono"
                                 class="form-control mask-telefono-rd @error('telefono') is-invalid @enderror"
-                                value="{{ old('telefono', $paciente->persona->telefono) }}"
-                                placeholder="809-555-1234">
+                                value="{{ old('telefono', $paciente->persona->telefono) }}" placeholder="809-555-1234">
 
                             @error('telefono')
                                 <div class="invalid-feedback ps-2">
@@ -165,8 +165,7 @@
 
                             <input type="email" name="correo" id="correo"
                                 class="form-control @error('correo') is-invalid @enderror"
-                                value="{{ old('correo', $paciente->persona->correo) }}"
-                                placeholder="paciente@mail.com">
+                                value="{{ old('correo', $paciente->persona->correo) }}" placeholder="paciente@mail.com">
 
                             @error('correo')
                                 <div class="invalid-feedback ps-2">
@@ -207,19 +206,9 @@
 
                                             <div class="form-check m-0">
 
-                                                <input class="form-check-input" type="checkbox"
-                                                    name="alergias[]"
+                                                <input class="form-check-input" type="checkbox" name="alergias[]"
                                                     value="{{ $alergia->idAlergia }}"
-                                                    id="alergia{{ $alergia->idAlergia }}"
-                                                    @checked(
-                                                        in_array(
-                                                            $alergia->idAlergia,
-                                                            old(
-                                                                'alergias',
-                                                                $paciente->alergias->pluck('idAlergia')->toArray()
-                                                            )
-                                                        )
-                                                    )>
+                                                    id="alergia{{ $alergia->idAlergia }}" @checked(in_array($alergia->idAlergia, old('alergias', $paciente->alergias->pluck('idAlergia')->toArray())))>
 
                                                 <span class="form-check-label fw-medium">
                                                     {{ $alergia->nombre }}
@@ -267,12 +256,12 @@
 
             <div class="d-flex gap-2 justify-content-end mt-4">
 
-                <a href="{{ route('pacientes.index') }}" class="btn btn-light rounded-pill px-4">
+                <a href="{{ request('return', route('pacientes.index')) }}" class="btn btn-light rounded-pill px-4"
+                    class="btn btn-light rounded-pill px-4">
                     Cancelar
                 </a>
 
-                <button type="submit" class="btn rounded-pill px-4 text-white"
-                    style="background-color: #0ea5e9;">
+                <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
                     <i class="bi bi-floppy"></i>
                     Actualizar
                 </button>
