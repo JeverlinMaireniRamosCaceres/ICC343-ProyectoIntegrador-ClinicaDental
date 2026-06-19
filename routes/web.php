@@ -55,7 +55,10 @@ Route::middleware('auth')->group(function () {
         ->name('compras.pagar');
 
     // Pacientes
+    Route::get('/pacientes/buscar-persona', [PacientesController::class, 'buscarPersona'])
+        ->name('pacientes.buscar-persona');
     Route::resource('pacientes', PacientesController::class);
+
 
     // Proveedores
     Route::resource('proveedores', ProveedorController::class)
@@ -126,6 +129,4 @@ Route::middleware('auth')->group(function () {
         ->name('inventario.lotes');
 
     Route::resource('inventario', InventarioController::class);
-
 });
-
