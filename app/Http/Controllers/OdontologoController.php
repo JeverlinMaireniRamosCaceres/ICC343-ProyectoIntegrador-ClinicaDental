@@ -77,15 +77,9 @@ class OdontologoController extends Controller
 
     public function show($id)
     {
-        $odontologo = Odontologo::with([
-            'persona',
-            'especialidades'
-        ])->findOrFail($id);
+        $odontologo = Odontologo::with(['persona', 'especialidades'])->findOrFail($id);
 
-        return view(
-            'odontologos.show',
-            compact('odontologo')
-        );
+        return view('odontologos.show', compact('odontologo'));
     }
 
     public function edit($id)

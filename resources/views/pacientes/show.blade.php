@@ -3,136 +3,447 @@
 @section('title', 'Detalle Paciente')
 
 @section('content')
-<div class="container-fluid py-4 px-5">
+    <div class="container-fluid py-2 px-2">
 
-<div class="d-flex align-items-center mb-4">
-    <a href="{{ route('pacientes.index') }}" class="btn btn-light btn-sm rounded-pill me-3">
-        <i class="bi bi-arrow-left"></i>
-    </a>
+        <div class="d-flex align-items-center mb-4">
+            <a href="{{ route('pacientes.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
 
-    <h2 class="fw-bold text-dark mb-0">Detalle del paciente</h2>
-</div>
+            <h2 class="fw-bold text-dark mb-0 ms-3">
+                Detalle del paciente
+            </h2>
+        </div>
 
-    <!-- perfil -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-4">
-            <div class="d-flex align-items-center">
+        {{-- Perfil --}}
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                <div class="patient-icon me-4">
-                    <i class="bi bi-person-vcard"></i>
-                </div>
+            <div class="card-body p-4">
 
-                <div class="flex-grow-1">
-                    <h2 class="fw-bold text-dark mb-1">Juan Martínez</h2>
+                <div class="d-flex align-items-center">
 
-                    <div class="d-flex flex-wrap gap-3">
-                        <span class="badge bg-light text-muted fw-normal">
-                            <i class="bi bi-card-text me-1 text-primary"></i> 402-0000000-1
-                        </span>
-                        <span class="badge bg-light text-muted fw-normal">
-                            <i class="bi bi-telephone me-1 text-primary"></i> 809-555-0123
-                        </span>
-                        <span class="badge bg-light text-muted fw-normal">
-                            <i class="bi bi-envelope me-1 text-primary"></i> juan.m@email.com
-                        </span>
-                        <span class="badge bg-light text-muted fw-normal">
-                            <i class="bi bi-calendar-event me-1 text-primary"></i> 28 años
-                        </span>
+                    @php
+                        $nombreCompleto = $paciente->persona->nombre . ' ' . $paciente->persona->apellido;
+                    @endphp
+
+                    <div class="me-4">
+
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($nombreCompleto) }}&background=0ea5e9&color=fff&size=128"
+                            class="rounded-circle shadow-sm" width="80" height="80" alt="Avatar">
+
                     </div>
+
+                    <div>
+
+                        <h3 class="fw-bold mb-1">
+                            {{ $nombreCompleto }}
+                        </h3>
+
+                        <span class="text-muted">
+                            Edad:
+                            @php
+                                $edad = \Carbon\Carbon::parse($paciente->persona->fechaNacimiento)->age;
+                            @endphp
+
+                            {{ $edad }} años
+
+                        </span>
+
+                    </div>
+
                 </div>
 
             </div>
+
+        </div>
+
+        {{-- Tabs --}}
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-header bg-white border-0 p-0 rounded-4">
+
+                <ul class="nav patient-tabs px-4" id="pacienteTab" role="tablist">
+
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info" type="button">
+                            Información general
+                        </button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historial" type="button">
+                            Historial clínico
+                        </button>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="tab-content p-4">
+
+                {{-- INFORMACIÓN --}}
+                <div class="tab-pane fade show active" id="info">
+
+                    <div class="row g-4 mb-4">
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Nombre completo
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ $nombreCompleto }}
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Cédula
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ $paciente->persona->cedula ?: 'No registrada' }}
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Teléfono
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ $paciente->persona->telefono }}
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Correo electrónico
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ $paciente->persona->correo ?: 'No registrado' }}
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Fecha de nacimiento
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ \Carbon\Carbon::parse($paciente->persona->fechaNacimiento)->format('d/m/Y') }}
+                            </p>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span class="text-muted small fw-bold">
+                                Sexo
+                            </span>
+
+                            <p class="fw-semibold mb-0">
+                                {{ $paciente->persona->sexo }}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="row g-4 mt-1">
+
+                        {{-- Alergias --}}
+                        <div class="col-md-6">
+
+                            <div
+                                class="border rounded-4 p-4 h-100 {{ $paciente->alergias->count() ? 'border-danger bg-danger bg-opacity-10' : 'bg-white' }}">
+
+                                <h6 class="fw-bold mb-3 {{ $paciente->alergias->count() ? 'text-danger' : 'text-dark' }}">
+
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Alergias
+
+                                </h6>
+
+                                @if ($paciente->alergias->count())
+
+                                    <ul class="mb-0">
+
+                                        @foreach ($paciente->alergias as $alergia)
+                                            <li>{{ $alergia->nombre }}</li>
+                                        @endforeach
+
+                                    </ul>
+                                @else
+                                    <p class="text-muted mb-0">
+                                        No hay alergias registradas.
+                                    </p>
+
+                                @endif
+
+                            </div>
+
+                        </div>
+
+                        {{-- ANTECEDENTES --}}
+                        <div class="col-md-6">
+
+                            <div class="border rounded-4 p-4 h-100 bg-white">
+
+                                <h6 class="fw-bold mb-3">
+
+                                    <i class="bi bi-file-medical me-2"></i>
+                                    Antecedentes médicos
+
+                                </h6>
+
+                                <p class="text-muted mb-0">
+
+                                    {{ $paciente->antecedentes ?: 'No hay antecedentes registrados.' }}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- Historial Clínico --}}
+                <div class="tab-pane fade" id="historial">
+
+                    @php
+                        $consultas = [
+                            [
+                                'id' => 1,
+                                'fecha' => '12/05/2026',
+                                'motivo' => 'Limpieza dental y revisión general',
+                                'doctor' => 'Dra. Carmen Reyes',
+                                'tratamientos' => ['Profilaxis dental', 'Aplicación de flúor'],
+                                'diagnostico' =>
+                                    'Paciente presenta buena higiene oral. Se recomienda control en 6 meses.',
+                            ],
+                            [
+                                'id' => 2,
+                                'fecha' => '03/02/2026',
+                                'motivo' => 'Dolor en molar inferior derecho',
+                                'doctor' => 'Dr. Manuel Pérez',
+                                'tratamientos' => ['Endodoncia parcial', 'Radiografía periapical'],
+                                'diagnostico' =>
+                                    'Se inició tratamiento de conducto. Próxima cita para finalizar procedimiento.',
+                            ],
+                            [
+                                'id' => 3,
+                                'fecha' => '18/11/2025',
+                                'motivo' => 'Consulta de valoración',
+                                'doctor' => 'Dra. Carmen Reyes',
+                                'tratamientos' => ['Examen clínico', 'Toma de impresiones'],
+                                'diagnostico' =>
+                                    'Primera visita del paciente. Se elabora plan de tratamiento integral.',
+                            ],
+                        ];
+
+                        $doctores = collect($consultas)->pluck('doctor')->unique()->values();
+                    @endphp
+
+                    {{-- Filtros --}}
+                    <div class="border rounded-4 p-3 mb-4 bg-light bg-opacity-50">
+
+                        <div class="row g-2 align-items-end">
+
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold text-muted mb-1">Buscar</label>
+                                <input type="text" id="filtroBusqueda" class="form-control"
+                                    placeholder="Motivo o diagnostico...">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-muted mb-1">Doctor</label>
+                                <select id="filtroDoctor" class="form-select">
+                                    <option value="">Todos</option>
+                                    @foreach ($doctores as $doctor)
+                                        <option value="{{ $doctor }}">{{ $doctor }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold text-muted mb-1">Desde</label>
+                                <input type="date" id="filtroDesde" class="form-control">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label small fw-bold text-muted mb-1">Hasta</label>
+                                <input type="date" id="filtroHasta" class="form-control">
+                            </div>
+
+                            <div class="col-md-1">
+                                <button type="button" id="filtroLimpiar" class="btn btn-light w-100 rounded-4"
+                                    title="Limpiar filtros">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    @if (count($consultas))
+
+                        <div class="d-flex flex-column gap-3" id="listaConsultas">
+
+                            @foreach ($consultas as $consulta)
+                                <a href="{{ route('consultas.show', $consulta['id']) }}"
+                                    class="consulta-item border rounded-4 p-4 bg-white text-decoration-none text-reset d-block"
+                                    data-doctor="{{ $consulta['doctor'] }}" data-fecha="{{ $consulta['fecha'] }}"
+                                    data-texto="{{ strtolower($consulta['motivo'] . ' ' . $consulta['diagnostico']) }}">
+
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+
+                                        <div>
+                                            <h6 class="fw-bold mb-1">
+                                                {{ $consulta['motivo'] }}
+                                            </h6>
+
+                                            <span class="text-muted small">
+                                                {{ $consulta['doctor'] }}
+                                            </span>
+                                        </div>
+
+                                        <span class="badge rounded-pill px-3 py-2"
+                                            style="background-color: rgba(14, 165, 233, 0.1); color: #0ea5e9;">
+                                            {{ $consulta['fecha'] }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="mt-3">
+
+                                        <span class="text-muted small fw-bold">
+                                            Diagnóstico
+                                        </span>
+
+                                        <p class="mb-0 mt-1">
+                                            {{ $consulta['diagnostico'] }}
+                                        </p>
+
+                                    </div>
+
+                                    <div class="mt-3">
+
+                                        <span class="text-muted small fw-bold">
+                                            Tratamientos realizados
+                                        </span>
+
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+
+                                            @foreach ($consulta['tratamientos'] as $tratamiento)
+                                                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
+                                                    <i class="bi bi-clipboard2-pulse me-1"></i>
+                                                    {{ $tratamiento }}
+                                                </span>
+                                            @endforeach
+
+                                        </div>
+
+                                    </div>
+
+                                </a>
+                            @endforeach
+
+                        </div>
+
+                        <div id="sinResultados" class="text-center py-5 d-none">
+                            <i class="bi bi-search display-5 text-muted"></i>
+                            <h5 class="mt-3">Sin resultados</h5>
+                            <p class="text-muted mb-0">No se encontraron consultas con esos filtros.</p>
+                        </div>
+                    @else
+                        <div class="text-center py-5">
+
+                            <i class="bi bi-journal-medical display-5 text-muted"></i>
+
+                            <h5 class="mt-3">
+                                Historial clínico
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                No hay consultas registradas para este paciente.
+                            </p>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
+            </div>
+
         </div>
     </div>
 
-    <!-- pestañas -->
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-header bg-white border-0 p-0">
-            <ul class="nav patient-tabs px-4" id="pacienteTab" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info">
-                        Información general
-                    </button>
-                </li>
+@endsection
 
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historia">
-                        Alergias y antecedentes
-                    </button>
-                </li>
+@section('scripts')
+    <script>
+        (function() {
+            const busqueda = document.getElementById('filtroBusqueda');
+            const doctor = document.getElementById('filtroDoctor');
+            const desde = document.getElementById('filtroDesde');
+            const hasta = document.getElementById('filtroHasta');
+            const limpiar = document.getElementById('filtroLimpiar');
+            const items = document.querySelectorAll('.consulta-item');
+            const sinResultados = document.getElementById('sinResultados');
 
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fichaClinica">
-                        Ficha clínica
-                    </button>
-                </li>
-            </ul>
-        </div>
+            function fechaComparable(ddmmyyyy) {
+                const [d, m, y] = ddmmyyyy.split('/');
+                return `${y}${m}${d}`;
+            }
 
-        <div class="tab-content p-4">
-            <!-- informacion general -->
-            <div class="tab-pane fade show active" id="info">
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Nombre completo</span>
-                        <p class="fw-semibold mb-0">Juan Martínez Espinal</p>
-                    </div>
+            function inputComparable(yyyymmdd) {
+                return yyyymmdd.replace(/-/g, '');
+            }
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Cédula</span>
-                        <p class="fw-semibold mb-0">402-0000000-1</p>
-                    </div>
+            function aplicarFiltros() {
+                const texto = (busqueda.value || '').toLowerCase().trim();
+                const doctorSel = doctor.value;
+                const fechaDesde = desde.value ? inputComparable(desde.value) : null;
+                const fechaHasta = hasta.value ? inputComparable(hasta.value) : null;
+                let visibles = 0;
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Teléfono</span>
-                        <p class="fw-semibold mb-0">809-555-0123</p>
-                    </div>
+                items.forEach(item => {
+                    const fechaItem = fechaComparable(item.dataset.fecha);
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Correo</span>
-                        <p class="fw-semibold mb-0">juan.m@email.com</p>
-                    </div>
+                    const coincideTexto = !texto || item.dataset.texto.includes(texto);
+                    const coincideDoctor = !doctorSel || item.dataset.doctor === doctorSel;
+                    const coincideDesde = !fechaDesde || fechaItem >= fechaDesde;
+                    const coincideHasta = !fechaHasta || fechaItem <= fechaHasta;
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Fecha de nacimiento</span>
-                        <p class="fw-semibold mb-0">01/05/1998</p>
-                    </div>
+                    const visible = coincideTexto && coincideDoctor && coincideDesde && coincideHasta;
+                    item.classList.toggle('d-none', !visible);
+                    if (visible) visibles++;
+                });
 
-                    <div class="col-md-4">
-                        <span class="text-muted small fw-bold">Edad</span>
-                        <p class="fw-semibold mb-0">28 años</p>
-                    </div>
-                </div>
-            </div>
+                if (sinResultados) {
+                    sinResultados.classList.toggle('d-none', visibles !== 0);
+                }
+            }
 
-            <!-- Alergias y antecedentes -->
-            <div class="tab-pane fade" id="historia">
-                <div class="d-flex flex-column gap-3">
+            busqueda.addEventListener('input', aplicarFiltros);
+            doctor.addEventListener('change', aplicarFiltros);
+            desde.addEventListener('change', aplicarFiltros);
+            hasta.addEventListener('change', aplicarFiltros);
 
-                    <!-- Alergias -->
-                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 border-start border-danger border-4">
-                        <h6 class="text-danger fw-bold mb-2">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Alergias
-                        </h6>
-                        <p class="mb-0">Penicilina, Látex.</p>
-                    </div>
-
-                    <!-- Antecedentes médicos -->
-                    <div class="p-3 bg-light rounded-3 border">
-                        <h6 class="fw-bold mb-2">
-                            <i class="bi bi-file-medical me-2 text-primary"></i>Antecedentes médicos
-                        </h6>
-                        <p class="mb-0 text-muted">Diabetes, Hipertensión.</p>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Ficha clinica -->
-            <div class="tab-pane fade" id="fichaClinica">
-                <p class="text-muted mb-0">No hay ficha clínica registrada para este paciente.</p>
-            </div>
-        </div>
-    </div>
-</div>
+            limpiar.addEventListener('click', () => {
+                busqueda.value = '';
+                doctor.value = '';
+                desde.value = '';
+                hasta.value = '';
+                aplicarFiltros();
+            });
+        })();
+    </script>
 @endsection
