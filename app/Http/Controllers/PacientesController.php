@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alergia;
 use Illuminate\Http\Request;
 use App\Models\Paciente;
+use App\Models\Persona;
+use Illuminate\Validation\Rule;
 
 class PacientesController extends Controller
 {
@@ -16,20 +19,20 @@ class PacientesController extends Controller
         $porPagina = $request->input('porPagina', 10);
 
         $pacientes = Paciente::query()
-        ->with('persona')
-        ->when($buscar, function ($query, $buscar){
-            $query->whereHas('persona', function ($q) use ($buscar){
-                $q->where('nombre', 'like', "%{$buscar}%")
+            ->with('persona')
+            ->when($buscar, function ($query, $buscar) {
+                $query->whereHas('persona', function ($q) use ($buscar) {
+                    $q->where('nombre', 'like', "%{$buscar}%")
                         ->orWhere('apellido', 'like', "%{$buscar}%")
                         ->orWhere('cedula', 'like', "%{$buscar}%");
-            });
-        })
-        ->orderBy('idPaciente', 'asc')
-        ->paginate($porPagina)
-        ->withQueryString();
+                });
+            })
+            ->orderBy('idPaciente', 'asc')
+            ->paginate($porPagina)
+            ->withQueryString();
 
-        if($request->ajax()){
-            return view('pacientes.partials.tabla', compact ('pacientes', 'porPagina'))->render();
+        if ($request->ajax()) {
+            return view('pacientes.partials.tabla', compact('pacientes', 'porPagina'))->render();
         }
         return view('pacientes.index', compact('pacientes', 'buscar', 'porPagina'));
     }
@@ -39,7 +42,8 @@ class PacientesController extends Controller
      */
     public function create()
     {
-        return view('pacientes.create');
+        $alergias = Alergia::orderBy('nombre')->get();
+        return view('pacientes.create', compact('alergias'));
     }
 
     /**
@@ -47,7 +51,49 @@ class PacientesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $datos = $this->validarPaciente($request);
+
+        $persona = null;
+
+        if (!empty($datos['cedula'])) {
+            $persona = Persona::where('cedula', $datos['cedula'])->first();
+        }
+
+        if ($persona) {
+
+            $persona->update([
+                'nombre' => $datos['nombre'],
+                'apellido' => $datos['apellido'],
+                'fechaNacimiento' => $datos['fechaNacimiento'],
+                'sexo' => $datos['sexo'],
+                'telefono' => $datos['telefono'] ?? null,
+                'correo' => $datos['correo'] ?? null,
+            ]);
+        } else {
+
+            $persona = Persona::create([
+                'cedula' => $datos['cedula'] ?? null,
+                'nombre' => $datos['nombre'],
+                'apellido' => $datos['apellido'],
+                'fechaNacimiento' => $datos['fechaNacimiento'],
+                'sexo' => $datos['sexo'],
+                'telefono' => $datos['telefono'] ?? null,
+                'correo' => $datos['correo'] ?? null,
+            ]);
+        }
+
+        $paciente = Paciente::create([
+            'idPersona' => $persona->idPersona,
+            'antecedentes' => $datos['antecedentesMedicos'] ?? null,
+        ]);
+
+        $paciente->alergias()->sync(
+            $datos['alergias'] ?? []
+        );
+
+        return redirect()
+            ->route('pacientes.index')
+            ->with('success', 'Paciente registrado correctamente.');
     }
 
     /**
@@ -80,5 +126,103 @@ class PacientesController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function validarPaciente(Request $request): array
+    {
+        return $request->validate(
+            [
+                'cedula' => [
+                    'nullable',
+                    function ($attribute, $value, $fail) {
+
+                        if (blank($value)) {
+                            return;
+                        }
+
+                        $persona = Persona::where('cedula', $value)->first();
+
+                        if (!$persona) {
+                            return;
+                        }
+
+                        if ($persona->paciente) {
+                            $fail('Ya existe un paciente registrado con esta cédula.');
+                            return;
+                        }
+
+                        if ($persona->odontologo) {
+                            return;
+                        }
+
+                        $fail('Ya existe una persona registrada con esta cédula.');
+                    }
+                ],
+
+                'nombre' => 'required|string|max:100',
+                'apellido' => 'required|string|max:100',
+
+                'fechaNacimiento' => 'required|date',
+
+                'sexo' => [
+                    'required',
+                    Rule::in(['Masculino', 'Femenino'])
+                ],
+
+                'telefono' => 'required|string|max:12',
+
+                'correo' => 'nullable|email|max:100',
+
+                'antecedentesMedicos' => 'nullable|string',
+
+                'alergias' => 'nullable|array',
+                'alergias.*' => 'exists:alergias,idAlergia',
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.max' => 'El nombre no puede exceder 100 caracteres.',
+
+                'apellido.required' => 'El apellido es obligatorio.',
+                'apellido.max' => 'El apellido no puede exceder 100 caracteres.',
+
+                'fechaNacimiento.required' => 'La fecha de nacimiento es obligatoria.',
+                'fechaNacimiento.date' => 'La fecha de nacimiento no es válida.',
+
+                'sexo.required' => 'Debe seleccionar un sexo.',
+
+                'telefono.max' => 'El teléfono no puede exceder 12 caracteres.',
+
+                'correo.email' => 'El correo electrónico no es válido.',
+                'correo.unique' => 'Ya existe una persona registrada con este correo.',
+
+                'alergias.array' => 'Las alergias seleccionadas no son válidas.',
+                'alergias.*.exists' => 'Una de las alergias seleccionadas no existe.',
+            ]
+        );
+    }
+
+    public function buscarPersona(Request $request)
+    {
+        $persona = Persona::where('cedula', $request->cedula)
+            ->first();
+
+        if (!$persona) {
+            return response()->json([
+                'existe' => false
+            ]);
+        }
+
+        return response()->json([
+            'existe' => true,
+            'persona' => [
+                'idPersona' => $persona->idPersona,
+                'nombre' => $persona->nombre,
+                'apellido' => $persona->apellido,
+                'fechaNacimiento' => $persona->fechaNacimiento,
+                'sexo' => $persona->sexo,
+                'telefono' => $persona->telefono,
+                'correo' => $persona->correo,
+            ]
+        ]);
     }
 }

@@ -27,4 +27,15 @@ class Paciente extends Model
             'idPersona'
         );
     }
+
+    //relacion con alergias
+    public function alergias()
+    {
+        return $this->belongsToMany(
+            Alergia::class,
+            'paciente_alergia',
+            'idPaciente',
+            'idAlergia'
+        )->withTimestamps();
+    }
 }
