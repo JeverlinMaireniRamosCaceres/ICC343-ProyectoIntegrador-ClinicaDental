@@ -97,16 +97,46 @@ class CitaController extends Controller
 
     public function edit($id)
     {
-        return view('citas.edit', compact('id'));
+        $cita = Cita::with('odontologo.persona')->findOrFail($id);
+        $odontologos = Odontologo::with('persona')->get();
+
+        return view('citas.edit', compact('cita', 'odontologos'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('citas.index');
+        $request->validate([
+            'idOdontologo' => 'required|exists:odontologos,idOdontologo',
+            'fecha' => 'required|date',
+            'hora' => 'required',
+            'nombrePersona' => 'required|string|max:100',
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'nullable|email|max:100',
+            'estado' => 'required|string',
+        ]);
+
+        $cita = Cita::findOrFail($id);
+        $cita->update([
+            'idOdontologo' => $request->idOdontologo,
+            'fecha' => $request->fecha,
+            'hora' => $request->hora,
+            'nombrePersona' => $request->nombrePersona,
+            'telefono' => $request->telefono,
+            'correo' => $request->correo,
+            'estado' => $request->estado,
+        ]);
+
+        return redirect()->route('citas.index')
+            ->with('success', 'Cita actualizada correctamente.');
     }
 
     public function destroy($id)
     {
-        return redirect()->route('citas.index');
+        $cita = Cita::findOrFail($id);
+        $cita->update(['estado' => 'Cancelada']);
+        $cita->delete();
+
+        return redirect()->route('citas.index')
+            ->with('success', 'Cita cancelada correctamente.');
     }
 }

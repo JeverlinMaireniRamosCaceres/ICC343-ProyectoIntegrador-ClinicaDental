@@ -62,6 +62,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function openCreateModal(date) {
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        date.setHours(0, 0, 0, 0);
+
+        if (date < today) {
+            return;
+        }
+
         selectedDate = date;
 
         const dateKey = formatDateKey(date);
@@ -170,6 +179,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const today = new Date();
                 const isToday = dateKey === formatDateKey(today);
                 const appointmentCount = citasPorDia[dateKey] || 0;
+                const esPasado = (() => {
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
+                    const d = new Date(date);
+                    d.setHours(0, 0, 0, 0);
+                    return d < hoy;
+                })();
 
                 const dayButton = document.createElement('div');
                 dayButton.className = 'calendar-day';
@@ -182,9 +198,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="d-flex justify-content-between align-items-start">
                         <span class="calendar-day-number">${date.getDate()}</span>
 
-                        <button type="button" class="calendar-add-btn" title="Registrar cita">
-                            <i class="bi bi-plus-lg"></i>
-                        </button>
+                        ${!esPasado ? `
+                            <button type="button" class="calendar-add-btn" title="Registrar cita">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        ` : ''}
                     </div>
 
                     <div class="calendar-day-info">
@@ -193,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         : `<span>Sin citas</span>`
                     }
                     </div>
-
                 `;
 
                 const clickedDate = new Date(date);
@@ -208,10 +225,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 const addButton = dayButton.querySelector('.calendar-add-btn');
-                addButton.addEventListener('click', function (event) {
-                    event.stopPropagation();
-                    openCreateModal(clickedDate);
-                });
+                if (addButton) {
+                    addButton.addEventListener('click', function (event) {
+                        event.stopPropagation();
+                        openCreateModal(clickedDate);
+                    });
+                }
 
                 calendarGrid.appendChild(dayButton);
                 renderedDays++;
