@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Procedimiento;
+use App\Models\Producto;
 use App\Models\ProductoProcedimiento;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class ProcedimientoController extends Controller
 {
@@ -35,7 +37,11 @@ class ProcedimientoController extends Controller
      */
     public function create()
     {
-        return view('procedimientos.create');
+        $productos = Producto::select('idProducto', 'nombre', 'unidadMedida')
+            ->orderBy('idProducto')
+            ->get();
+
+        return view('procedimientos.create', compact('productos'));
     }
 
     /**
@@ -45,7 +51,15 @@ class ProcedimientoController extends Controller
     {
         $data = $this->validarProcedimiento($request);
 
-        Procedimiento::create($data);
+        DB::transaction(function () use ($request, $data) {
+            
+            $procedimiento = Procedimiento::create([
+                'nombre' => $data['nombre'],
+                'precio' => $data['precio']
+            ]);
+
+            $this->guardarProductos($request, $procedimiento);
+        });
 
         return redirect()
             ->route('procedimientos.index')
@@ -53,20 +67,17 @@ class ProcedimientoController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        $procedimiento = Procedimiento::findOrFail($id);
-        return view('procedimientos.edit', compact('procedimiento'));
+        $procedimiento = Procedimiento::with('productos.producto')->findOrFail($id);
+        
+        $productos = Producto::select('idProducto', 'nombre', 'unidadMedida')
+            ->orderBy('idProducto')
+            ->get();
+
+        return view('procedimientos.edit', compact('procedimiento', 'productos'));
     }
 
     /**
@@ -75,10 +86,19 @@ class ProcedimientoController extends Controller
     public function update(Request $request, string $id)
     {
         $procedimiento = Procedimiento::findOrFail($id);
-
         $data = $this->validarProcedimiento($request, $procedimiento->idProcedimiento);
 
-        $procedimiento->update($data);
+        DB::transaction(function () use ($request, $data, $procedimiento) {
+            
+            $procedimiento->update([
+                'nombre' => $data['nombre'],
+                'precio' => $data['precio']
+            ]);
+
+            ProductoProcedimiento::where('idProcedimiento', $procedimiento->idProcedimiento)->delete();
+
+            $this->guardarProductos($request, $procedimiento);
+        });
 
         return redirect()
             ->route('procedimientos.index')
@@ -109,6 +129,21 @@ class ProcedimientoController extends Controller
             ->with('success', 'Procedimiento eliminado correctamente');
     }
 
+    private function guardarProductos(Request $request, Procedimiento $procedimiento)
+    {
+        if ($request->has('idProducto')) {
+            foreach ($request->idProducto as $i => $idProducto) {
+                if (!empty($idProducto)) {
+                    ProductoProcedimiento::create([
+                        'idProcedimiento' => $procedimiento->idProcedimiento,
+                        'idProducto' => $idProducto,
+                        'cantidad' => (int) $request->cantidad[$i]
+                    ]);
+                }
+            }
+        }
+    }
+
     private function validarProcedimiento(Request $request, ?int $idProcedimiento = null): array
     {
         return $request->validate(
@@ -120,17 +155,21 @@ class ProcedimientoController extends Controller
                     Rule::unique('procedimientos', 'nombre')
                         ->ignore($idProcedimiento, 'idProcedimiento')
                 ],
-
-                'precio' => 'required|numeric|gt:0'
+                'precio' => 'required|numeric|gt:0',
+                
+                'idProducto' => 'nullable|array',
+                'idProducto.*' => 'exists:productos,idProducto',
+                'cantidad' => 'required_with:idProducto|array',
+                'cantidad.*' => 'required|integer|min:1'
             ],
             [
                 'nombre.required' => 'El nombre del procedimiento es obligatorio.',
                 'nombre.unique' => 'Ya existe un procedimiento con este nombre.',
                 'nombre.max' => 'El nombre del procedimiento no puede exceder los 100 caracteres.',
-
                 'precio.required' => 'El precio es obligatorio.',
                 'precio.numeric' => 'El precio debe ser un valor numérico.',
-                'precio.gt' => 'El precio debe ser mayor que 0.'
+                'precio.gt' => 'El precio debe ser mayor que 0.',
+                'cantidad.*.min' => 'La cantidad debe ser al menos 1.'
             ]
         );
     }

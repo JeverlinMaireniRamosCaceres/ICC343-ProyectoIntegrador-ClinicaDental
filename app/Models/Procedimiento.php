@@ -21,4 +21,14 @@ class Procedimiento extends Model
         'nombre',
         'precio'
     ];
+
+    public function productos()
+    {
+        return $this->hasMany(
+            ProductoProcedimiento::class,
+            'idProcedimiento',
+            'idProcedimiento'
+        );
+    }
+    
 }
