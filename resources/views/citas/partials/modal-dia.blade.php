@@ -69,7 +69,7 @@
                     @method('DELETE')
 
                     <button type="submit" class="btn btn-danger rounded-pill px-4">
-                        Cancelar
+                        Confirmar cancelación
                     </button>
                 </form>
             </div>
