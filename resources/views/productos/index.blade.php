@@ -3,7 +3,7 @@
 @section('title', 'Productos')
 
 @section('content')
-    <div class="container py-4 px-5">
+    <div class="container py-2 px-2">
 
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
