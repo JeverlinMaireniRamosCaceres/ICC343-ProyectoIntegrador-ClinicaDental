@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="container-fluid py-4 px-5">
+<div class="container-fluid py-2 px-2">
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
