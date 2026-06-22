@@ -16,10 +16,16 @@
                     </td>
                     <td class="px-4">
                         <div class="d-flex gap-2">
+                            <a href="{{ route('procedimientos.show', $procedimiento->idProcedimiento) }}"
+                               class="btn btn-sm btn-secondary rounded-pill px-3" title="Ver">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+
                             <a href="{{ route('procedimientos.edit', $procedimiento->idProcedimiento) }}"
                                 class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;" title="Editar">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
+
                             <button type="button" class="btn btn-sm btn-danger rounded-pill px-3" title="Eliminar"
                                 data-bs-toggle="modal" data-bs-target="#modalEliminarProcedimiento"
                                 data-id="{{ $procedimiento->idProcedimiento }}"
