@@ -32,6 +32,13 @@ class ProcedimientoController extends Controller
         return view('procedimientos.index', compact('procedimientos'));
     }
 
+    public function show($id)
+    {
+        $procedimiento = Procedimiento::with('productos.producto')->findOrFail($id);
+
+        return view('procedimientos.show', compact('procedimiento'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
