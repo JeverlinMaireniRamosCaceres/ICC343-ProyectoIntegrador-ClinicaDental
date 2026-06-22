@@ -16,6 +16,14 @@
                 <div class="modal-body pt-4">
 
                     <div class="appointment-summary rounded-4 p-3 mb-4">
+
+                        @if ($errors->has('hora'))
+                            <div class="alert alert-danger rounded-3 py-2 px-3 mb-3" style="font-size:13px;">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                {{ $errors->first('hora') }}
+                            </div>
+                        @endif
+
                         <div class="row g-3">
 
                             <div class="col-md-6">
@@ -44,14 +52,19 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Odontólogo</label>
-                            <select name="idOdontologo" class="form-select border-secondary-subtle bg-white">
-                                <option selected disabled>Seleccionar odontólogo</option>
-                                @foreach($odontologos as $odontologo)
-                                    <option value="{{ $odontologo->idOdontologo }}">
-                                        {{ $odontologo->persona->nombre }} {{ $odontologo->persona->apellido }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div class="position-relative">
+                                <input type="text" id="odontologo_nombre" class="form-control pe-5"
+                                    placeholder="Buscar odontólogo..." autocomplete="off">
+
+                                <i
+                                    class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                            </div>
+
+                            <div id="resultadosOdontologos" class="list-group mt-1 shadow-sm">
+                            </div>
+
+                            <input type="hidden" name="idOdontologo" id="odontologo_id">
                         </div>
 
                         <div class="col-12">
@@ -62,7 +75,8 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
-                            <input type="text" name="telefono" class="form-control border-secondary-subtle bg-white"
+                            <input type="text" name="telefono"
+                                class="form-control border-secondary-subtle bg-white mask-telefono-rd"
                                 placeholder="Ej: 809-555-1234">
                         </div>
 
@@ -81,9 +95,11 @@
                         Cancelar
                     </button>
 
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">
-                        Guardar cita
+                    <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                        <i class="bi bi-floppy"></i>
+                        Guardar
                     </button>
+
                 </div>
 
             </form>

@@ -89,7 +89,9 @@ Route::middleware('auth')->group(function () {
     // Citas
     Route::get('citas/por-fecha', [CitaController::class, 'citasPorFecha'])->name('citas.porFecha');
     Route::get('citas/por-mes', [CitaController::class, 'citasPorMes'])->name('citas.porMes');
+    Route::get('/buscar-odontologos', [CitaController::class, 'buscarOdontologos']);
     Route::resource('citas', CitaController::class);
+    
 
     // Caja chica
     Route::resource('caja-chica', CajaChicaController::class);
