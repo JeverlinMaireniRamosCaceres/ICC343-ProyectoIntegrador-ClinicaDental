@@ -58,4 +58,14 @@
 @include('citas.partials.modal-create')
 @include('citas.partials.modal-dia')
 <script src="{{ asset('js/modal-citas-dia.js') }}"></script>
+
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = new bootstrap.Modal(document.getElementById('modalNuevaCita'));
+            modal.show();
+        });
+    </script>
+@endif
+
 @endsection

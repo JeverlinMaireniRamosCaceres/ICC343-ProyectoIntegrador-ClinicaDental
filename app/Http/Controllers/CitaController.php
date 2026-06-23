@@ -41,6 +41,20 @@ class CitaController extends Controller
             'correo' => 'nullable|email|max:100',
         ]);
 
+        $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
+            ->where('fecha', $request->fecha)
+            ->where('hora', $request->hora)
+            ->whereNotIn('estado', ['Cancelada'])
+            ->first();
+
+        if ($citaExistente) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'hora' => 'El odontólogo ya tiene una cita programada para esa fecha y hora.'
+                ]);
+        }
+
         Cita::create([
             'idUsuarioRegistro' => auth()->user()->idUsuario,
             'idOdontologo' => $request->idOdontologo,
@@ -115,6 +129,21 @@ class CitaController extends Controller
             'estado' => 'required|string',
         ]);
 
+        $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
+            ->where('fecha', $request->fecha)
+            ->where('hora', $request->hora)
+            ->where('idCita', '!=', $id)
+            ->whereNotIn('estado', ['Cancelada'])
+            ->first();
+
+        if ($citaExistente) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'hora' => 'El odontólogo ya tiene una cita programada para esa fecha y hora.'
+                ]);
+        }
+
         $cita = Cita::findOrFail($id);
         $cita->update([
             'idOdontologo' => $request->idOdontologo,
@@ -139,4 +168,21 @@ class CitaController extends Controller
         return redirect()->route('citas.index')
             ->with('success', 'Cita cancelada correctamente.');
     }
+
+    public function buscarOdontologos(Request $request)
+    {
+        $texto = $request->texto;
+
+        $odontologos = Odontologo::with('persona')
+            ->whereHas('persona', function ($q) use ($texto) {
+
+                $q->where('nombre', 'like', "%{$texto}%")
+                    ->orWhere('apellido', 'like', "%{$texto}%");
+            })
+            ->limit(10)
+            ->get();
+
+        return response()->json($odontologos);
+    }
+
 }

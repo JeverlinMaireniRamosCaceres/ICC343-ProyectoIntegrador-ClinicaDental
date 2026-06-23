@@ -5,9 +5,17 @@
 @section('content')
     <div class="container-fluid py-4 px-5">
 
+        @error('hora')
+            <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:13px;">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                {{ $message }}
+            </div>
+        @enderror
+
         <!-- Header -->
         <div class="d-flex align-items-center mb-4">
-            <a href="{{ route('citas.index') }}" class="btn btn-light btn-sm rounded-pill me-3">
+
+            <a href="{{ route('citas.index') }}" class="btn btn-sm btn-light rounded-pill px-3 me-2">
                 <i class="bi bi-arrow-left"></i>
             </a>
 
@@ -45,13 +53,19 @@
 
                         <div class="col-md-4">
                             <label class="form-label">Odontólogo</label>
-                            <select name="idOdontologo" class="form-select border-secondary-subtle bg-white">
-                                @foreach($odontologos as $o)
-                                    <option value="{{ $o->idOdontologo }}" {{ $cita->idOdontologo == $o->idOdontologo ? 'selected' : '' }}>
-                                        {{ $o->persona->nombre }} {{ $o->persona->apellido }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div class="position-relative">
+                                <input type="text" id="odontologo_nombre" class="form-control"
+                                    value="{{ $cita->odontologo->persona->nombre }} {{ $cita->odontologo->persona->apellido }}">
+
+                                <i
+                                    class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                            </div>
+
+                            <div id="resultadosOdontologos" class="list-group mt-1 shadow-sm">
+                            </div>
+
+                            <input type="hidden" name="idOdontologo" id="odontologo_id" value="{{ $cita->idOdontologo }}">
                         </div>
 
                         <div class="col-md-4">
@@ -89,7 +103,8 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
-                            <input type="text" name="telefono" class="form-control border-secondary-subtle bg-white"
+                            <input type="text" name="telefono"
+                                class="form-control border-secondary-subtle bg-white mask-telefono-rd"
                                 value="{{ $cita->telefono }}">
                         </div>
 
@@ -110,12 +125,19 @@
                     Cancelar
                 </a>
 
-                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                    <i class="bi bi-arrow-clockwise"></i>
                     Actualizar
                 </button>
+
             </div>
 
         </form>
 
     </div>
+
+    @section('scripts')
+        <script src="{{ asset('js/citas.js') }}"></script>
+    @endsection
+
 @endsection

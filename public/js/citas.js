@@ -1,8 +1,58 @@
 document.addEventListener('DOMContentLoaded', function () {
+
     const calendarGrid = document.getElementById('calendarGrid');
     const calendarTitle = document.getElementById('calendarTitle');
     const modalFechaTexto = document.getElementById('modalFechaTexto');
     const modalFechaInput = document.getElementById('modalFechaInput');
+
+    // buscar odontologo
+    const inputOdontologo = document.getElementById('odontologo_nombre');
+    const resultadosOdontologos = document.getElementById('resultadosOdontologos');
+    const odontologoId = document.getElementById('odontologo_id');
+
+    if (inputOdontologo) {
+        inputOdontologo.addEventListener('keyup', async function () {
+
+            let texto = this.value;
+
+            if (texto.length < 2) {
+                resultadosOdontologos.innerHTML = '';
+                return;
+            }
+
+            const response = await fetch(
+                `/buscar-odontologos?texto=${texto}`
+            );
+
+            const odontologos = await response.json();
+
+            resultadosOdontologos.innerHTML = '';
+
+            odontologos.forEach(odontologo => {
+
+                resultadosOdontologos.innerHTML += `
+            <button
+                type="button"
+                class="list-group-item list-group-item-action"
+                onclick="seleccionarOdontologo(
+                    ${odontologo.idPersona},
+                    '${odontologo.persona.nombre} ${odontologo.persona.apellido}'
+                )">
+
+                ${odontologo.persona.nombre}
+                ${odontologo.persona.apellido}
+
+            </button>
+        `;
+            });
+        });
+    }
+
+    window.seleccionarOdontologo = function (id, nombre) {
+        inputOdontologo.value = nombre;
+        odontologoId.value = id;
+        resultadosOdontologos.innerHTML = '';
+    };
 
     if (!calendarGrid || !calendarTitle) return;
 
@@ -21,6 +71,18 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     let citasPorDia = {};
+
+    function formatearHora12(hora) {
+        const [h, m] = hora.split(':');
+
+        let horas = parseInt(h, 10);
+        const periodo = horas >= 12 ? 'PM' : 'AM';
+
+        horas = horas % 12;
+        horas = horas === 0 ? 12 : horas;
+
+        return `${horas}:${m} ${periodo}`;
+    }
 
     async function cargarCitasMes(year, month) {
         const response = await fetch(`/citas/por-mes?year=${year}&month=${month + 1}`, {
@@ -123,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="appointment-modal-card">
                         <div class="d-flex align-items-center gap-3">
                             <div class="appointment-time-pill">
-                                ${cita.hora.substring(0, 5)}
+                                ${formatearHora12(cita.hora)}
                             </div>
                             <div>
                                 <div class="fw-semibold text-dark">${cita.nombrePersona}</div>
@@ -262,5 +324,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
+
 
 });
