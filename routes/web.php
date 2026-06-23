@@ -131,4 +131,5 @@ Route::middleware('auth')->group(function () {
         ->name('inventario.lotes');
 
     Route::resource('inventario', InventarioController::class);
+
 });
