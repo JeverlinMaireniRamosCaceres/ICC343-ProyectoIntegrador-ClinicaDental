@@ -38,4 +38,13 @@ class Paciente extends Model
             'idAlergia'
         )->withTimestamps();
     }
+
+    public function tratamientos()
+    {
+        return $this->hasMany(
+            Tratamiento::class,
+            'idPaciente',
+            'idPaciente'
+        );
+    }
 }

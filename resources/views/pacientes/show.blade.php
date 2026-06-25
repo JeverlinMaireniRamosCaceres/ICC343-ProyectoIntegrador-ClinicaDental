@@ -250,134 +250,179 @@
                         $doctores = collect($consultas)->pluck('doctor')->unique()->values();
                     @endphp
 
-                    {{-- Filtros --}}
-                    <div class="border rounded-4 p-3 mb-4 bg-light bg-opacity-50">
+                    <div class="row g-4">
 
-                        <div class="row g-2 align-items-end">
+                        {{-- Columna izquierda: filtros + consultas --}}
+                        <div class="col-lg-7 col-xl-8">
 
-                            <div class="col-md-4">
-                                <label class="form-label small fw-bold text-muted mb-1">Buscar</label>
-                                <input type="text" id="filtroBusqueda" class="form-control"
-                                    placeholder="Motivo o diagnostico...">
+                            {{-- Filtros --}}
+                            <div class="border rounded-4 p-3 mb-3 bg-light bg-opacity-50">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-muted mb-1">Buscar</label>
+                                        <input type="text" id="filtroBusqueda" class="form-control form-control-sm"
+                                            placeholder="Motivo o diagnóstico...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-bold text-muted mb-1">Doctor</label>
+                                        <select id="filtroDoctor" class="form-select form-select-sm">
+                                            <option value="">Todos</option>
+                                            @foreach ($doctores as $doctor)
+                                                <option value="{{ $doctor }}">{{ $doctor }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label small fw-bold text-muted mb-1">Desde</label>
+                                        <input type="date" id="filtroDesde" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label small fw-bold text-muted mb-1">Hasta</label>
+                                        <input type="date" id="filtroHasta" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" id="filtroLimpiar"
+                                            class="btn btn-light btn-sm w-100 rounded-4" title="Limpiar filtros">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-muted mb-1">Doctor</label>
-                                <select id="filtroDoctor" class="form-select">
-                                    <option value="">Todos</option>
-                                    @foreach ($doctores as $doctor)
-                                        <option value="{{ $doctor }}">{{ $doctor }}</option>
+                            {{-- Lista consultas --}}
+                            @if (count($consultas))
+                                <div class="d-flex flex-column gap-3" id="listaConsultas">
+                                    @foreach ($consultas as $consulta)
+                                        <a href="{{ route('consultas.show', $consulta['id']) }}"
+                                            class="consulta-item border rounded-4 p-3 bg-white text-decoration-none text-reset d-block"
+                                            data-doctor="{{ $consulta['doctor'] }}"
+                                            data-fecha="{{ $consulta['fecha'] }}"
+                                            data-texto="{{ strtolower($consulta['motivo'] . ' ' . $consulta['diagnostico']) }}">
+
+                                            <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">{{ $consulta['motivo'] }}</h6>
+                                                    <span class="text-muted small">{{ $consulta['doctor'] }}</span>
+                                                </div>
+                                                <span class="badge rounded-pill px-3 py-2"
+                                                    style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
+                                                    {{ $consulta['fecha'] }}
+                                                </span>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <span class="text-muted small fw-bold">Diagnóstico</span>
+                                                <p class="mb-0 mt-1 small">{{ $consulta['diagnostico'] }}</p>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <span class="text-muted small fw-bold">Procedimientos</span>
+                                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                                    @foreach ($consulta['tratamientos'] as $t)
+                                                        <span
+                                                            class="badge rounded-pill bg-light text-dark border px-2 py-1"
+                                                            style="font-size: 0.72rem;">
+                                                            <i class="bi bi-clipboard2-pulse me-1"></i>{{ $t }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+
+                                        </a>
                                     @endforeach
-                                </select>
-                            </div>
+                                </div>
 
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold text-muted mb-1">Desde</label>
-                                <input type="date" id="filtroDesde" class="form-control">
-                            </div>
+                                <div id="sinResultados" class="text-center py-5 d-none">
+                                    <i class="bi bi-search display-5 text-muted"></i>
+                                    <h5 class="mt-3">Sin resultados</h5>
+                                    <p class="text-muted mb-0">No se encontraron consultas con esos filtros.</p>
+                                </div>
+                            @else
+                                <div class="text-center py-5">
+                                    <i class="bi bi-journal-medical display-5 text-muted"></i>
+                                    <h5 class="mt-3">Historial clínico</h5>
+                                    <p class="text-muted mb-0">No hay consultas registradas para este paciente.</p>
+                                </div>
+                            @endif
 
-                            <div class="col-md-2">
-                                <label class="form-label small fw-bold text-muted mb-1">Hasta</label>
-                                <input type="date" id="filtroHasta" class="form-control">
-                            </div>
+                        </div>
 
-                            <div class="col-md-1">
-                                <button type="button" id="filtroLimpiar" class="btn btn-light w-100 rounded-4"
-                                    title="Limpiar filtros">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </div>
+                        {{-- Barra lateral: Tratamientos --}}
+                        <div class="col-lg-5 col-xl-4">
+                            <div class="border rounded-4 p-3 sticky-top" style="top: 1rem; background-color: #f8fafc;">
 
+
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="fw-bold mb-0">
+                                        Tratamientos
+                                    </h6>
+                                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-2">
+                                        {{ $paciente->tratamientos->count() }}
+                                    </span>
+                                </div>
+
+                                <div class="d-flex flex-column gap-2">
+
+                                    @if ($paciente->tratamientos->count())
+
+                                        @foreach ($paciente->tratamientos as $tratamiento)
+                                            <div class="border rounded-3 bg-white p-3 tratamiento-card">
+
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <span class="fw-semibold" style="font-size: 0.875rem;">
+                                                        {{ $tratamiento->nombre }}
+                                                    </span>
+
+                                                    @if ($tratamiento->estado == 'Completado')
+                                                        <span
+                                                            class="badge rounded-pill px-2 py-1 text-success bg-success-subtle">
+                                                            {{ $tratamiento->estado }}
+                                                        </span>
+                                                    @elseif ($tratamiento->estado == 'En Proceso')
+                                                        <span class="badge rounded-pill px-2 py-1 bg-warning-subtle"
+                                                            style="color: rgb(181, 151, 43)">
+                                                            {{ $tratamiento->estado }}
+                                                        </span>
+                                                    @else
+                                                        <span
+                                                            class="badge rounded-pill px-2 py-1 text-secondary bg-secondary-subtle">
+                                                            {{ $tratamiento->estado }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <div class="d-flex flex-column gap-1">
+                                                    @foreach ($tratamiento->detalles as $detalle)
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <i class="bi bi-dot text-muted"></i>
+                                                            <span class="text-muted" style="font-size: 0.78rem;">
+                                                                {{ $detalle->procedimiento->nombre }}
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="text-center py-4">
+
+                                            <i class="bi bi-clipboard2-x text-muted fs-1"></i>
+
+                                            <p class="text-muted mb-0 mt-2">
+                                                No hay tratamientos registrados.
+                                            </p>
+
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
                         </div>
 
                     </div>
-
-                    @if (count($consultas))
-
-                        <div class="d-flex flex-column gap-3" id="listaConsultas">
-
-                            @foreach ($consultas as $consulta)
-                                <a href="{{ route('consultas.show', $consulta['id']) }}"
-                                    class="consulta-item border rounded-4 p-4 bg-white text-decoration-none text-reset d-block"
-                                    data-doctor="{{ $consulta['doctor'] }}" data-fecha="{{ $consulta['fecha'] }}"
-                                    data-texto="{{ strtolower($consulta['motivo'] . ' ' . $consulta['diagnostico']) }}">
-
-                                    <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
-
-                                        <div>
-                                            <h6 class="fw-bold mb-1">
-                                                {{ $consulta['motivo'] }}
-                                            </h6>
-
-                                            <span class="text-muted small">
-                                                {{ $consulta['doctor'] }}
-                                            </span>
-                                        </div>
-
-                                        <span class="badge rounded-pill px-3 py-2"
-                                            style="background-color: rgba(14, 165, 233, 0.1); color: #0ea5e9;">
-                                            {{ $consulta['fecha'] }}
-                                        </span>
-
-                                    </div>
-
-                                    <div class="mt-3">
-
-                                        <span class="text-muted small fw-bold">
-                                            Diagnóstico
-                                        </span>
-
-                                        <p class="mb-0 mt-1">
-                                            {{ $consulta['diagnostico'] }}
-                                        </p>
-
-                                    </div>
-
-                                    <div class="mt-3">
-
-                                        <span class="text-muted small fw-bold">
-                                            Tratamientos realizados
-                                        </span>
-
-                                        <div class="d-flex flex-wrap gap-2 mt-2">
-
-                                            @foreach ($consulta['tratamientos'] as $tratamiento)
-                                                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
-                                                    <i class="bi bi-clipboard2-pulse me-1"></i>
-                                                    {{ $tratamiento }}
-                                                </span>
-                                            @endforeach
-
-                                        </div>
-
-                                    </div>
-
-                                </a>
-                            @endforeach
-
-                        </div>
-
-                        <div id="sinResultados" class="text-center py-5 d-none">
-                            <i class="bi bi-search display-5 text-muted"></i>
-                            <h5 class="mt-3">Sin resultados</h5>
-                            <p class="text-muted mb-0">No se encontraron consultas con esos filtros.</p>
-                        </div>
-                    @else
-                        <div class="text-center py-5">
-
-                            <i class="bi bi-journal-medical display-5 text-muted"></i>
-
-                            <h5 class="mt-3">
-                                Historial clínico
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                No hay consultas registradas para este paciente.
-                            </p>
-
-                        </div>
-
-                    @endif
 
                 </div>
 
@@ -385,6 +430,27 @@
 
         </div>
     </div>
+
+    <div class="modal fade" id="modalDetalleTratamiento" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content" id="contenidoModalTratamiento">
+
+                <div class="text-center p-5">
+
+                    <div class="spinner-border"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{{ asset('js/pacientes.js') }}"></script>
+
 
 @endsection
 
