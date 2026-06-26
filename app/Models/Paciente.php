@@ -47,4 +47,13 @@ class Paciente extends Model
             'idPaciente'
         );
     }
+
+    public function consultas()
+    {
+        return $this->hasMany(
+            Consulta::class,
+            'idPaciente',
+            'idPaciente'
+        );
+    }
 }
