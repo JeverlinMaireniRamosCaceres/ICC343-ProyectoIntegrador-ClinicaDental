@@ -17,7 +17,7 @@ use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\AlergiaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\EspecialidadController;
-
+use App\Http\Controllers\TratamientoController;
 
 // Rutas para invitados
 Route::middleware('guest')->group(function () {
@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
     Route::get('citas/por-mes', [CitaController::class, 'citasPorMes'])->name('citas.porMes');
     Route::get('/buscar-odontologos', [CitaController::class, 'buscarOdontologos']);
     Route::resource('citas', CitaController::class);
-    
+
 
     // Caja chica
     Route::resource('caja-chica', CajaChicaController::class);
@@ -132,4 +132,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('inventario', InventarioController::class);
 
+    // Tratamientos
+    Route::resource('tratamientos', TratamientoController::class);
 });

@@ -32,8 +32,12 @@ class Consulta extends Model
         return $this->belongsTo(Odontologo::class, 'idOdontologo', 'idOdontologo');
     }
 
-    public function detallesTratamiento()
+    public function detalles()
     {
-        return $this->hasMany(DetalleTratamiento::class, 'idConsulta', 'idConsulta');
+        return $this->hasMany(
+            DetalleConsulta::class,
+            'idConsulta',
+            'idConsulta'
+        );
     }
 }

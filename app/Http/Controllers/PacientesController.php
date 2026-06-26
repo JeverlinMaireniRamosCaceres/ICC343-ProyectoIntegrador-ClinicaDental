@@ -100,7 +100,12 @@ class PacientesController extends Controller
      */
     public function show(string $id)
     {
-        $paciente = Paciente::with(['persona', 'alergias'])->findOrFail($id);
+        $paciente = Paciente::with([
+            'persona',
+            'alergias',
+            'tratamientos.detalles.procedimiento',
+            'consultas.odontologo.persona'
+        ])->findOrFail($id);
 
         return view('pacientes.show', compact('paciente'));
     }
