@@ -356,7 +356,7 @@
                                     <h6 class="fw-bold mb-0">
                                         Tratamientos
                                     </h6>
-                                    <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-2">
+                                    <span class="badge rounded-pill  bg-opacity-10  px-2" style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
                                         {{ $paciente->tratamientos->count() }}
                                     </span>
                                 </div>
@@ -366,43 +366,51 @@
                                     @if ($paciente->tratamientos->count())
 
                                         @foreach ($paciente->tratamientos as $tratamiento)
-                                            <div class="border rounded-3 bg-white p-3 tratamiento-card">
+                                            <a href="{{ route('tratamientos.show', $tratamiento->idTratamiento) }}"
+                                                class="text-decoration-none text-dark d-block tratamiento-link">
+                                                <div class="card mb-2 shadow-sm">
 
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <span class="fw-semibold" style="font-size: 0.875rem;">
-                                                        {{ $tratamiento->nombre }}
-                                                    </span>
+                                                    <div class="card-body">
 
-                                                    @if ($tratamiento->estado == 'Completado')
-                                                        <span
-                                                            class="badge rounded-pill px-2 py-1 text-success bg-success-subtle">
-                                                            {{ $tratamiento->estado }}
-                                                        </span>
-                                                    @elseif ($tratamiento->estado == 'En Proceso')
-                                                        <span class="badge rounded-pill px-2 py-1 bg-warning-subtle"
-                                                            style="color: rgb(181, 151, 43)">
-                                                            {{ $tratamiento->estado }}
-                                                        </span>
-                                                    @else
-                                                        <span
-                                                            class="badge rounded-pill px-2 py-1 text-secondary bg-secondary-subtle">
-                                                            {{ $tratamiento->estado }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-
-                                                <div class="d-flex flex-column gap-1">
-                                                    @foreach ($tratamiento->detalles as $detalle)
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <i class="bi bi-dot text-muted"></i>
-                                                            <span class="text-muted" style="font-size: 0.78rem;">
-                                                                {{ $detalle->procedimiento->nombre }}
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <span class="fw-semibold" style="font-size: 0.875rem;">
+                                                                {{ $tratamiento->nombre }}
                                                             </span>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
 
-                                            </div>
+                                                            @if ($tratamiento->estado == 'Completado')
+                                                                <span
+                                                                    class="badge rounded-pill px-2 py-1 text-success bg-success-subtle">
+                                                                    {{ $tratamiento->estado }}
+                                                                </span>
+                                                            @elseif ($tratamiento->estado == 'En Proceso')
+                                                                <span
+                                                                    class="badge rounded-pill px-2 py-1 bg-warning-subtle"
+                                                                    style="color: rgb(181, 151, 43)">
+                                                                    {{ $tratamiento->estado }}
+                                                                </span>
+                                                            @else
+                                                                <span
+                                                                    class="badge rounded-pill px-2 py-1 text-secondary bg-secondary-subtle">
+                                                                    {{ $tratamiento->estado }}
+                                                                </span>
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="d-flex flex-column gap-1">
+                                                            @foreach ($tratamiento->detalles as $detalle)
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <i class="bi bi-dot text-muted"></i>
+                                                                    <span class="text-muted" style="font-size: 0.78rem;">
+                                                                        {{ $detalle->procedimiento->nombre }}
+                                                                    </span>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </a>
                                         @endforeach
                                     @else
                                         <div class="text-center py-4">
@@ -512,5 +520,52 @@
                 aplicarFiltros();
             });
         })();
+
+        // Restaurar pestaña según el hash de la URL
+        document.addEventListener('DOMContentLoaded', function() {
+
+            if (window.location.hash) {
+
+                const trigger = document.querySelector(
+                    `button[data-bs-target="${window.location.hash}"]`
+                );
+
+                if (trigger) {
+                    bootstrap.Tab.getOrCreateInstance(trigger).show();
+                }
+            }
+
+        });
+
+        // Guardar la pestaña activa en el hash de la URL
+        document.querySelectorAll('#pacienteTab button').forEach(tab => {
+
+            tab.addEventListener('shown.bs.tab', function(e) {
+
+                history.replaceState(
+                    null,
+                    null,
+                    e.target.dataset.bsTarget
+                );
+
+            });
+
+        });
+
+        document.querySelectorAll('.tratamiento-link').forEach(link => {
+
+            link.addEventListener('click', function(e) {
+
+                e.preventDefault();
+
+                const url = new URL(this.href);
+
+                url.searchParams.set('return', window.location.href);
+
+                window.location.href = url.toString();
+
+            });
+
+        });
     </script>
 @endsection

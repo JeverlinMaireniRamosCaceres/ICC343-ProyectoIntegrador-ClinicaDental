@@ -38,7 +38,10 @@ class TratamientoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $tratamiento = Tratamiento::with(['paciente.persona', 'detalles.procedimiento'])
+            ->findOrFail($id);
+
+        return view('tratamientos.show', compact('tratamiento'));
     }
 
     /**
