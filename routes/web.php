@@ -59,7 +59,6 @@ Route::middleware('auth')->group(function () {
         ->name('pacientes.buscar-persona');
     Route::resource('pacientes', PacientesController::class);
 
-
     // Proveedores
     Route::resource('proveedores', ProveedorController::class)
         ->parameters([
@@ -106,7 +105,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('facturacion', FacturacionController::class);
 
     // Consultas
+    Route::get('/consultas/buscar-odontologos', [ConsultaController::class, 'buscarOdontologos'])
+        ->name('consultas.buscarOdontologos');
+    Route::get('/consultas/buscar-pacientes', [ConsultaController::class, 'buscarPacientes'])
+        ->name('consultas.buscarPacientes');
+    Route::get('/consultas/paciente-alergias/{id}', [ConsultaController::class, 'alergiasPaciente'])
+        ->name('consultas.alergiasPaciente');
     Route::resource('consultas', ConsultaController::class);
+
 
     // Alergias
     Route::resource('alergias', AlergiaController::class);
@@ -134,4 +140,5 @@ Route::middleware('auth')->group(function () {
 
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
+
 });

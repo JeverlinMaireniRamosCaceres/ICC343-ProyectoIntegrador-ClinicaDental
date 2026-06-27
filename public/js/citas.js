@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type="button"
                 class="list-group-item list-group-item-action"
                 onclick="seleccionarOdontologo(
-                    ${odontologo.idPersona},
+                    ${odontologo.idOdontologo},
                     '${odontologo.persona.nombre} ${odontologo.persona.apellido}'
                 )">
 
