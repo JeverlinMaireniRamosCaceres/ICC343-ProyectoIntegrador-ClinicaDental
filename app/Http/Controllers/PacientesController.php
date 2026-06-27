@@ -6,6 +6,7 @@ use App\Models\Alergia;
 use Illuminate\Http\Request;
 use App\Models\Paciente;
 use App\Models\Persona;
+use App\Models\Consulta;
 use Illuminate\Validation\Rule;
 
 class PacientesController extends Controller
@@ -98,16 +99,65 @@ class PacientesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
+        $buscar = $request->input('buscar');
+        $doctor = $request->input('doctor');
+        $desde = $request->input('desde');
+        $hasta = $request->input('hasta');
+        $porPagina = $request->input('porPagina', 10);
+
         $paciente = Paciente::with([
             'persona',
             'alergias',
-            'tratamientos.detalles.procedimiento',
-            'consultas.odontologo.persona'
+            'tratamientos.detalles.procedimiento'
         ])->findOrFail($id);
 
-        return view('pacientes.show', compact('paciente'));
+        $consultas = Consulta::with('odontologo.persona')
+            ->where('idPaciente', $paciente->idPaciente);
+
+        $doctores = (clone $consultas)
+            ->get()
+            ->map(function ($consulta) {
+                return $consulta->odontologo->persona->nombre . ' ' .
+                    $consulta->odontologo->persona->apellido;
+            })
+            ->unique()
+            ->values();
+
+        if ($buscar) {
+            $consultas->where(function ($query) use ($buscar) {
+                $query->where('motivo', 'like', "%{$buscar}%")
+                    ->orWhere('diagnostico', 'like', "%{$buscar}%");
+            });
+        }
+
+        if ($doctor) {
+            $consultas->whereHas('odontologo.persona', function ($query) use ($doctor) {
+                $query->whereRaw(
+                    "CONCAT(nombre, ' ', apellido) = ?",
+                    [$doctor]
+                );
+            });
+        }
+
+        if ($desde) {
+            $consultas->whereDate('fecha', '>=', $desde);
+        }
+
+        if ($hasta) {
+            $consultas->whereDate('fecha', '<=', $hasta);
+        }
+
+        $consultas = $consultas
+            ->orderByDesc('fecha')->paginate($porPagina)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('pacientes.partials.consultas', compact('consultas', 'porPagina'))
+                ->render();
+        }
+
+        return view('pacientes.show', compact('paciente', 'consultas', 'doctores', 'porPagina'));
     }
 
     /**
