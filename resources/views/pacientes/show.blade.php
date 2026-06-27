@@ -218,7 +218,7 @@
 
                     <div class="row g-4">
 
-                        {{-- Columna izquierda: filtros + consultas --}}
+                        {{--  filtros y consultas --}}
                         <div class="col-lg-7 col-xl-8">
 
                             {{-- Filtros --}}
@@ -314,7 +314,7 @@
                                             class="btn bg-white border w-100 form-control form-control-sm d-flex align-items-center justify-content-center"
                                             title="Limpiar filtros">
 
-                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                            <i class="bi bi-brush"></i>
 
                                         </button>
 
@@ -330,7 +330,7 @@
 
                         </div>
 
-                        {{-- Barra lateral: Tratamientos --}}
+                        {{-- Tratamientos --}}
                         <div class="col-lg-5 col-xl-4">
                             <div class="border rounded-4 p-3 sticky-top" style="top: 1rem; background-color: #f8fafc;">
 
