@@ -216,40 +216,6 @@
                 {{-- Historial Clínico --}}
                 <div class="tab-pane fade" id="historial">
 
-                    @php
-                        $consultas = [
-                            [
-                                'id' => 1,
-                                'fecha' => '12/05/2026',
-                                'motivo' => 'Limpieza dental y revisión general',
-                                'doctor' => 'Dra. Carmen Reyes',
-                                'tratamientos' => ['Profilaxis dental', 'Aplicación de flúor'],
-                                'diagnostico' =>
-                                    'Paciente presenta buena higiene oral. Se recomienda control en 6 meses.',
-                            ],
-                            [
-                                'id' => 2,
-                                'fecha' => '03/02/2026',
-                                'motivo' => 'Dolor en molar inferior derecho',
-                                'doctor' => 'Dr. Manuel Pérez',
-                                'tratamientos' => ['Endodoncia parcial', 'Radiografía periapical'],
-                                'diagnostico' =>
-                                    'Se inició tratamiento de conducto. Próxima cita para finalizar procedimiento.',
-                            ],
-                            [
-                                'id' => 3,
-                                'fecha' => '18/11/2025',
-                                'motivo' => 'Consulta de valoración',
-                                'doctor' => 'Dra. Carmen Reyes',
-                                'tratamientos' => ['Examen clínico', 'Toma de impresiones'],
-                                'diagnostico' =>
-                                    'Primera visita del paciente. Se elabora plan de tratamiento integral.',
-                            ],
-                        ];
-
-                        $doctores = collect($consultas)->pluck('doctor')->unique()->values();
-                    @endphp
-
                     <div class="row g-4">
 
                         {{-- Columna izquierda: filtros + consultas --}}
@@ -257,93 +223,110 @@
 
                             {{-- Filtros --}}
                             <div class="border rounded-4 p-3 mb-3 bg-light bg-opacity-50">
-                                <div class="row g-2 align-items-end">
-                                    <div class="col-md-4">
-                                        <label class="form-label small fw-bold text-muted mb-1">Buscar</label>
-                                        <input type="text" id="filtroBusqueda" class="form-control form-control-sm"
-                                            placeholder="Motivo o diagnóstico...">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small fw-bold text-muted mb-1">Doctor</label>
-                                        <select id="filtroDoctor" class="form-select form-select-sm">
-                                            <option value="">Todos</option>
-                                            @foreach ($doctores as $doctor)
-                                                <option value="{{ $doctor }}">{{ $doctor }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label small fw-bold text-muted mb-1">Desde</label>
-                                        <input type="date" id="filtroDesde" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label small fw-bold text-muted mb-1">Hasta</label>
-                                        <input type="date" id="filtroHasta" class="form-control form-control-sm">
-                                    </div>
-                                    <div class="col-md-1">
-                                        <button type="button" id="filtroLimpiar"
-                                            class="btn btn-light btn-sm w-100 rounded-4" title="Limpiar filtros">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </div>
+
+                                {{-- Buscador --}}
+                                <div class="position-relative mb-3">
+
+                                    <i
+                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                                    <input type="text" id="filtroBusqueda" class="form-control ps-5"
+                                        placeholder="Buscar por motivo o diagnóstico...">
+
                                 </div>
+
+                                {{-- Filtros secundarios --}}
+                                <div class="row g-2 align-items-end">
+
+                                    <div class="col-md-5">
+
+                                        <label class="form-label small fw-bold text-muted mb-1">
+                                            Doctor
+                                        </label>
+
+                                        <select id="filtroDoctor" class="form-select form-select-sm">
+
+                                            <option value="">
+                                                Todos
+                                            </option>
+
+                                            @foreach ($doctores as $doctor)
+                                                <option value="{{ $doctor }}">
+                                                    {{ $doctor }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <label class="form-label small fw-bold text-muted mb-1">
+                                            Desde
+                                        </label>
+
+                                        <input type="date" id="filtroDesde" class="form-control form-control-sm">
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <label class="form-label small fw-bold text-muted mb-1">
+                                            Hasta
+                                        </label>
+
+                                        <input type="date" id="filtroHasta" class="form-control form-control-sm">
+
+                                    </div>
+
+                                    <div class="col-md-2">
+
+                                        <label class="form-label small fw-bold text-muted mb-1">
+                                            Mostrar
+                                        </label>
+
+                                        <select id="porPagina" class="form-select form-select-sm">
+
+                                            <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>
+                                                10
+                                            </option>
+
+                                            <option value="15" {{ $porPagina == 15 ? 'selected' : '' }}>
+                                                15
+                                            </option>
+
+                                            <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
+                                                20
+                                            </option>
+
+                                            <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
+                                                25
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="col-md-1 d-flex align-items-end">
+
+                                        <button type="button" id="filtroLimpiar"
+                                            class="btn bg-white border w-100 form-control form-control-sm d-flex align-items-center justify-content-center"
+                                            title="Limpiar filtros">
+
+                                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
                             </div>
 
-                            {{-- Lista consultas --}}
-                            @if (count($consultas))
-                                <div class="d-flex flex-column gap-3" id="listaConsultas">
-                                    @foreach ($consultas as $consulta)
-                                        <a href="{{ route('consultas.show', $consulta['id']) }}"
-                                            class="consulta-item border rounded-4 p-3 bg-white text-decoration-none text-reset d-block"
-                                            data-doctor="{{ $consulta['doctor'] }}"
-                                            data-fecha="{{ $consulta['fecha'] }}"
-                                            data-texto="{{ strtolower($consulta['motivo'] . ' ' . $consulta['diagnostico']) }}">
-
-                                            <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
-                                                <div>
-                                                    <h6 class="fw-bold mb-1">{{ $consulta['motivo'] }}</h6>
-                                                    <span class="text-muted small">{{ $consulta['doctor'] }}</span>
-                                                </div>
-                                                <span class="badge rounded-pill px-3 py-2"
-                                                    style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
-                                                    {{ $consulta['fecha'] }}
-                                                </span>
-                                            </div>
-
-                                            <div class="mt-2">
-                                                <span class="text-muted small fw-bold">Diagnóstico</span>
-                                                <p class="mb-0 mt-1 small">{{ $consulta['diagnostico'] }}</p>
-                                            </div>
-
-                                            <div class="mt-2">
-                                                <span class="text-muted small fw-bold">Procedimientos</span>
-                                                <div class="d-flex flex-wrap gap-1 mt-1">
-                                                    @foreach ($consulta['tratamientos'] as $t)
-                                                        <span
-                                                            class="badge rounded-pill bg-light text-dark border px-2 py-1"
-                                                            style="font-size: 0.72rem;">
-                                                            <i class="bi bi-clipboard2-pulse me-1"></i>{{ $t }}
-                                                        </span>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-
-                                        </a>
-                                    @endforeach
-                                </div>
-
-                                <div id="sinResultados" class="text-center py-5 d-none">
-                                    <i class="bi bi-search display-5 text-muted"></i>
-                                    <h5 class="mt-3">Sin resultados</h5>
-                                    <p class="text-muted mb-0">No se encontraron consultas con esos filtros.</p>
-                                </div>
-                            @else
-                                <div class="text-center py-5">
-                                    <i class="bi bi-journal-medical display-5 text-muted"></i>
-                                    <h5 class="mt-3">Historial clínico</h5>
-                                    <p class="text-muted mb-0">No hay consultas registradas para este paciente.</p>
-                                </div>
-                            @endif
+                            <div id="contenedorConsultas">
+                                @include('pacientes.partials.consultas')
+                            </div>
 
                         </div>
 
@@ -356,7 +339,8 @@
                                     <h6 class="fw-bold mb-0">
                                         Tratamientos
                                     </h6>
-                                    <span class="badge rounded-pill  bg-opacity-10  px-2" style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
+                                    <span class="badge rounded-pill  bg-opacity-10  px-2"
+                                        style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
                                         {{ $paciente->tratamientos->count() }}
                                     </span>
                                 </div>
@@ -368,12 +352,14 @@
                                         @foreach ($paciente->tratamientos as $tratamiento)
                                             <a href="{{ route('tratamientos.show', $tratamiento->idTratamiento) }}"
                                                 class="text-decoration-none text-dark d-block tratamiento-link">
+
                                                 <div class="card mb-2 shadow-sm">
 
                                                     <div class="card-body">
 
-                                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                                            <span class="fw-semibold" style="font-size: 0.875rem;">
+                                                        <div class="d-flex justify-content-between align-items-start mb-3">
+
+                                                            <span class="fw-semibold">
                                                                 {{ $tratamiento->nombre }}
                                                             </span>
 
@@ -394,22 +380,22 @@
                                                                     {{ $tratamiento->estado }}
                                                                 </span>
                                                             @endif
+
                                                         </div>
 
-                                                        <div class="d-flex flex-column gap-1">
-                                                            @foreach ($tratamiento->detalles as $detalle)
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <i class="bi bi-dot text-muted"></i>
-                                                                    <span class="text-muted" style="font-size: 0.78rem;">
-                                                                        {{ $detalle->procedimiento->nombre }}
-                                                                    </span>
-                                                                </div>
-                                                            @endforeach
+                                                        <div class="text-muted small">
+
+                                                            <i class="bi bi-calendar-event me-1"></i>
+
+                                                            Fecha de inicio:
+                                                            {{ \Carbon\Carbon::parse($tratamiento->fechaInicio)->format('d/m/Y') }}
+
                                                         </div>
 
                                                     </div>
 
                                                 </div>
+
                                             </a>
                                         @endforeach
                                     @else
@@ -457,115 +443,6 @@
 
     </div>
 
-    <script src="{{ asset('js/pacientes.js') }}"></script>
+    <script src="{{ asset('js/pacientes-show.js') }}"></script>
 
-
-@endsection
-
-@section('scripts')
-    <script>
-        (function() {
-            const busqueda = document.getElementById('filtroBusqueda');
-            const doctor = document.getElementById('filtroDoctor');
-            const desde = document.getElementById('filtroDesde');
-            const hasta = document.getElementById('filtroHasta');
-            const limpiar = document.getElementById('filtroLimpiar');
-            const items = document.querySelectorAll('.consulta-item');
-            const sinResultados = document.getElementById('sinResultados');
-
-            function fechaComparable(ddmmyyyy) {
-                const [d, m, y] = ddmmyyyy.split('/');
-                return `${y}${m}${d}`;
-            }
-
-            function inputComparable(yyyymmdd) {
-                return yyyymmdd.replace(/-/g, '');
-            }
-
-            function aplicarFiltros() {
-                const texto = (busqueda.value || '').toLowerCase().trim();
-                const doctorSel = doctor.value;
-                const fechaDesde = desde.value ? inputComparable(desde.value) : null;
-                const fechaHasta = hasta.value ? inputComparable(hasta.value) : null;
-                let visibles = 0;
-
-                items.forEach(item => {
-                    const fechaItem = fechaComparable(item.dataset.fecha);
-
-                    const coincideTexto = !texto || item.dataset.texto.includes(texto);
-                    const coincideDoctor = !doctorSel || item.dataset.doctor === doctorSel;
-                    const coincideDesde = !fechaDesde || fechaItem >= fechaDesde;
-                    const coincideHasta = !fechaHasta || fechaItem <= fechaHasta;
-
-                    const visible = coincideTexto && coincideDoctor && coincideDesde && coincideHasta;
-                    item.classList.toggle('d-none', !visible);
-                    if (visible) visibles++;
-                });
-
-                if (sinResultados) {
-                    sinResultados.classList.toggle('d-none', visibles !== 0);
-                }
-            }
-
-            busqueda.addEventListener('input', aplicarFiltros);
-            doctor.addEventListener('change', aplicarFiltros);
-            desde.addEventListener('change', aplicarFiltros);
-            hasta.addEventListener('change', aplicarFiltros);
-
-            limpiar.addEventListener('click', () => {
-                busqueda.value = '';
-                doctor.value = '';
-                desde.value = '';
-                hasta.value = '';
-                aplicarFiltros();
-            });
-        })();
-
-        // Restaurar pestaña según el hash de la URL
-        document.addEventListener('DOMContentLoaded', function() {
-
-            if (window.location.hash) {
-
-                const trigger = document.querySelector(
-                    `button[data-bs-target="${window.location.hash}"]`
-                );
-
-                if (trigger) {
-                    bootstrap.Tab.getOrCreateInstance(trigger).show();
-                }
-            }
-
-        });
-
-        // Guardar la pestaña activa en el hash de la URL
-        document.querySelectorAll('#pacienteTab button').forEach(tab => {
-
-            tab.addEventListener('shown.bs.tab', function(e) {
-
-                history.replaceState(
-                    null,
-                    null,
-                    e.target.dataset.bsTarget
-                );
-
-            });
-
-        });
-
-        document.querySelectorAll('.tratamiento-link').forEach(link => {
-
-            link.addEventListener('click', function(e) {
-
-                e.preventDefault();
-
-                const url = new URL(this.href);
-
-                url.searchParams.set('return', window.location.href);
-
-                window.location.href = url.toString();
-
-            });
-
-        });
-    </script>
 @endsection
