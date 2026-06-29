@@ -45,3 +45,5 @@ services:
     ports:
       - "8080:80"
 
+volumes:
+  mysql_data:
