@@ -18,6 +18,7 @@ use App\Http\Controllers\AlergiaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\EspecialidadController;
 use App\Http\Controllers\TratamientoController;
+use App\Http\Controllers\DashboardController;
 
 // Rutas para invitados
 Route::middleware('guest')->group(function () {
@@ -38,9 +39,7 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 
     // Dashboard
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Procedimientos
     Route::resource('procedimientos', ProcedimientoController::class);
