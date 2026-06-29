@@ -18,6 +18,7 @@ use App\Http\Controllers\AlergiaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\EspecialidadController;
 use App\Http\Controllers\TratamientoController;
+use App\Http\Controllers\DashboardController;
 
 // Rutas para invitados
 Route::middleware('guest')->group(function () {
@@ -38,9 +39,7 @@ Route::middleware('auth')->group(function () {
         ->name('logout');
 
     // Dashboard
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Procedimientos
     Route::resource('procedimientos', ProcedimientoController::class);
@@ -58,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/pacientes/buscar-persona', [PacientesController::class, 'buscarPersona'])
         ->name('pacientes.buscar-persona');
     Route::resource('pacientes', PacientesController::class);
-
 
     // Proveedores
     Route::resource('proveedores', ProveedorController::class)
@@ -106,7 +104,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('facturacion', FacturacionController::class);
 
     // Consultas
+    Route::get('/consultas/buscar-odontologos', [ConsultaController::class, 'buscarOdontologos'])
+        ->name('consultas.buscarOdontologos');
+    Route::get('/consultas/buscar-pacientes', [ConsultaController::class, 'buscarPacientes'])
+        ->name('consultas.buscarPacientes');
+    Route::get('/consultas/paciente-alergias/{id}', [ConsultaController::class, 'alergiasPaciente'])
+        ->name('consultas.alergiasPaciente');
     Route::resource('consultas', ConsultaController::class);
+
 
     // Alergias
     Route::resource('alergias', AlergiaController::class);
@@ -134,4 +139,5 @@ Route::middleware('auth')->group(function () {
 
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
+
 });

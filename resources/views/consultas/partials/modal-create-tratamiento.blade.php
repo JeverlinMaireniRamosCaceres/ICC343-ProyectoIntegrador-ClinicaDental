@@ -6,7 +6,7 @@
             <div class="modal-header border-0 pb-0">
                 <div>
                     <h5 class="fw-bold mb-0">Crear tratamiento</h5>
-                    <small class="text-muted">Agrega un tratamiento asociado a esta consulta</small>
+
                 </div>
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
