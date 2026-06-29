@@ -32,5 +32,5 @@ class Cita extends Model
     {
         return $this->belongsTo(Usuario::class, 'idUsuarioRegistro', 'idUsuario');
     }
-    
+
 }
