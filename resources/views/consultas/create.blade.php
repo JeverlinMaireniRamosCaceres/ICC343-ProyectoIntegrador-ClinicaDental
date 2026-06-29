@@ -240,7 +240,6 @@
                                 <div>
                                     <h5 class="consulta-section-title mb-1">Tratamiento</h5>
                                 </div>
-
                                 <button type="button" class="btn btn-outline-primary rounded-pill px-4"
                                     data-bs-toggle="modal" data-bs-target="#modalCrearTratamiento">
                                     <i class="bi bi-plus-lg me-1"></i>
@@ -248,16 +247,36 @@
                                 </button>
                             </div>
 
-                            <div class="consulta-empty-state rounded-4 p-4 text-center">
+                            <!-- estado inicial sin paciente -->
+                            <div id="tratamientoSinPaciente" class="consulta-empty-state rounded-4 p-4 text-center">
                                 <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
                                     style="width: 56px; height: 56px;">
-                                    <i class="bi bi-clipboard2-pulse fs-4"></i>
+                                    <i class="bi bi-person fs-4"></i>
+                                </div>
+                                <h6 class="fw-bold mb-1">Selecciona un paciente primero</h6>
+                                <p class="text-muted mb-0">Los tratamientos aparecerán aquí una vez selecciones el paciente.
+                                </p>
+                            </div>
+
+                            <!-- tratamientos del paciente -->
+                            <div id="tratamientoContenido" style="display:none;">
+
+                                <!-- sin tratamientos -->
+                                <div id="tratamientoVacio" class="consulta-empty-state rounded-4 p-4 text-center"
+                                    style="display:none;">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style="width: 56px; height: 56px;">
+                                        <i class="bi bi-clipboard2-pulse fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">No hay tratamientos activos</h6>
+                                    <p class="text-muted mb-0">Puedes crear un tratamiento nuevo para este paciente.</p>
                                 </div>
 
-                                <h6 class="fw-bold mb-1">No hay tratamiento asociado</h6>
-                                <p class="text-muted mb-0">
-                                    Puedes crear un tratamiento si la consulta requiere seguimiento.
-                                </p>
+                                <!-- lista de tratamientos -->
+                                <div id="listaTratamientos" class="d-flex flex-column gap-2"></div>
+
+                                <input type="hidden" name="idTratamiento" id="tratamiento_id">
+
                             </div>
 
                         </div>
@@ -344,5 +363,5 @@
 
     <script src="{{ asset('js/consulta.js') }}"></script>
     @include('consultas.partials.modal-agregar-procedimiento')
-
+    @include('consultas.partials.modal-create-tratamiento')
 @endsection

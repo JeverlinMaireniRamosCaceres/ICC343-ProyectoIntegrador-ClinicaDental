@@ -128,6 +128,40 @@ document.addEventListener('DOMContentLoaded', function () {
             contenedorAnt.style.display = 'block';
             textoAnt.textContent = data.antecedentes ?? 'Sin antecedentes registrados';
         }
+
+        // cargar tratamientos
+        const respTrat = await fetch(`/consultas/paciente-tratamientos/${id}`);
+        const tratamientos = await respTrat.json();
+
+        const sinPaciente = document.getElementById('tratamientoSinPaciente');
+        const contenidoTrat = document.getElementById('tratamientoContenido');
+        const vacioTrat = document.getElementById('tratamientoVacio');
+        const listaTrat = document.getElementById('listaTratamientos');
+
+        sinPaciente.style.display = 'none';
+        contenidoTrat.style.display = 'block';
+
+        if (tratamientos.length === 0) {
+            vacioTrat.style.display = 'block';
+            listaTrat.innerHTML = '';
+        } else {
+            vacioTrat.style.display = 'none';
+            listaTrat.innerHTML = tratamientos.map(t => `
+        <div class="d-flex align-items-center justify-content-between p-3 rounded-4 tratamiento-item"
+            style="border: 2px solid #e2e8f0; cursor:pointer; transition: all 0.2s;"
+            data-id="${t.idTratamiento}"
+            onclick="seleccionarTratamiento(this, ${t.idTratamiento})">
+            <div>
+                <p class="fw-semibold mb-0">${t.nombre}</p>
+                <small class="text-muted">Desde: ${t.fechaInicio}</small>
+            </div>
+            <span class="badge rounded-pill px-3 py-2 bg-success-subtle text-success">
+                ${t.estado}
+            </span>
+        </div>
+    `).join('');
+        }
+
     };
 
     // buscador dentro del modal de procedimientos
@@ -242,5 +276,86 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // cuando se abre el modal de tratamiento, cargar el nombre del paciente
+    document.getElementById('modalCrearTratamiento')?.addEventListener('show.bs.modal', function () {
+        const nombrePaciente = document.getElementById('paciente_nombre').value;
+        document.getElementById('tratamientoPacienteNombre').value = nombrePaciente || '';
+    });
+
+    // guardar tratamiento via AJAX
+    document.getElementById('btnGuardarTratamiento')?.addEventListener('click', async function () {
+        const idPaciente = document.getElementById('paciente_id').value;
+        const nombre = document.getElementById('tratamientoNombre').value.trim();
+        const fechaInicio = document.getElementById('tratamientoFechaInicio').value;
+        const estado = document.getElementById('tratamientoEstado').value;
+
+        if (!idPaciente) {
+            alert('Debes seleccionar un paciente primero.');
+            return;
+        }
+
+        if (!nombre) {
+            alert('El nombre del tratamiento es obligatorio.');
+            return;
+        }
+
+        const response = await fetch('/tratamientos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ idPaciente, nombre, fechaInicio, estado })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // cerrar modal
+            bootstrap.Modal.getInstance(
+                document.getElementById('modalCrearTratamiento')
+            ).hide();
+
+            // agregar el nuevo tratamiento a la lista sin recargar
+            const listaTrat = document.getElementById('listaTratamientos');
+            const vacioTrat = document.getElementById('tratamientoVacio');
+
+            if (vacioTrat) vacioTrat.style.display = 'none';
+
+            listaTrat.innerHTML += `
+            <div class="d-flex align-items-center justify-content-between p-3 rounded-4 tratamiento-item"
+                style="border: 2px solid #e2e8f0; cursor:pointer; transition: all 0.2s;"
+                data-id="${data.tratamiento.idTratamiento}"
+                onclick="seleccionarTratamiento(this, ${data.tratamiento.idTratamiento})">
+                <div>
+                    <p class="fw-semibold mb-0">${data.tratamiento.nombre}</p>
+                    <small class="text-muted">Desde: ${data.tratamiento.fechaInicio}</small>
+                </div>
+                <span class="badge rounded-pill px-3 py-2 bg-success-subtle text-success">
+                    ${data.tratamiento.estado}
+                </span>
+            </div>
+        `;
+
+            // limpiar campos
+            document.getElementById('tratamientoNombre').value = '';
+        }
+    });
+
 
 });
+
+window.seleccionarTratamiento = function (el, id) {
+    // quitar selección anterior
+    document.querySelectorAll('.tratamiento-item').forEach(item => {
+        item.style.border = '2px solid #e2e8f0';
+        item.style.background = '';
+    });
+
+    // marcar el seleccionado
+    el.style.border = '2px solid #0ea5e9';
+    el.style.background = '#f0f9ff';
+
+    document.getElementById('tratamiento_id').value = id;
+};

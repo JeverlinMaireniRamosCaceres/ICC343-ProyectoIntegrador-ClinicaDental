@@ -7,6 +7,7 @@ use App\Models\Consulta;
 use App\Models\Odontologo;
 use App\Models\Paciente;
 use App\Models\Procedimiento;
+use App\Models\Tratamiento;
 use Illuminate\Support\Facades\Auth;
 
 class ConsultaController extends Controller
@@ -97,5 +98,16 @@ class ConsultaController extends Controller
             'antecedentes' => $paciente->antecedentes,
         ]);
     }
+
+    public function tratamientosPaciente($id)
+    {
+        $tratamientos = Tratamiento::where('idPaciente', $id)
+            ->whereIn('estado', ['Activo', 'En proceso'])
+            ->orderBy('fechaInicio', 'desc')
+            ->get();
+
+        return response()->json($tratamientos);
+    }
+
 
 }
