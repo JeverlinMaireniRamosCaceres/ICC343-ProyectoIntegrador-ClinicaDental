@@ -11,19 +11,35 @@ class EspecialidadController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
         $especialidades = Especialidad::query()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%");
             })
             ->orderBy('idEspecialidad', 'asc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('especialidades.partials.tabla', compact('especialidades'))->render();
+            return view(
+                'especialidades.partials.tabla',
+                compact('especialidades', 'porPagina')
+            )->render();
         }
 
-        return view('especialidades.index', compact('especialidades', 'buscar'));
+        return view(
+            'especialidades.index',
+            compact(
+                'especialidades',
+                'buscar',
+                'porPagina'
+            )
+        );
     }
 
     public function create()
@@ -73,13 +89,15 @@ class EspecialidadController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:100|unique:especialidades,nombre,' . $id . ',idEspecialidad'
-        ],
-        [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.unique' => 'Esta especialidad ya existe.'
-        ]);
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:100|unique:especialidades,nombre,' . $id . ',idEspecialidad'
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.unique' => 'Esta especialidad ya existe.'
+            ]
+        );
 
         $especialidad = Especialidad::findOrFail($id);
         $especialidad->update($request->all());
