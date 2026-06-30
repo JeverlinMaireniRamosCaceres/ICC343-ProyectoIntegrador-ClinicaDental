@@ -16,20 +16,36 @@ class ProcedimientoController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->buscar;
+        $buscar = $request->input('buscar');
+
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
 
         $procedimientos = Procedimiento::when($buscar, function ($query, $buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
         })
             ->orderBy('idProcedimiento')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('procedimientos.partials.tabla', compact('procedimientos'));
+            return view(
+                'procedimientos.partials.tabla',
+                compact('procedimientos', 'porPagina')
+            )->render();
         }
 
-        return view('procedimientos.index', compact('procedimientos'));
+        return view(
+            'procedimientos.index',
+            compact(
+                'procedimientos',
+                'buscar',
+                'porPagina'
+            )
+        );
     }
 
     public function show($id)
@@ -59,7 +75,7 @@ class ProcedimientoController extends Controller
         $data = $this->validarProcedimiento($request);
 
         DB::transaction(function () use ($request, $data) {
-            
+
             $procedimiento = Procedimiento::create([
                 'nombre' => $data['nombre'],
                 'precio' => $data['precio']
@@ -79,7 +95,7 @@ class ProcedimientoController extends Controller
     public function edit(string $id)
     {
         $procedimiento = Procedimiento::with('productos.producto')->findOrFail($id);
-        
+
         $productos = Producto::select('idProducto', 'nombre', 'unidadMedida')
             ->orderBy('idProducto')
             ->get();
@@ -96,7 +112,7 @@ class ProcedimientoController extends Controller
         $data = $this->validarProcedimiento($request, $procedimiento->idProcedimiento);
 
         DB::transaction(function () use ($request, $data, $procedimiento) {
-            
+
             $procedimiento->update([
                 'nombre' => $data['nombre'],
                 'precio' => $data['precio']
@@ -163,7 +179,7 @@ class ProcedimientoController extends Controller
                         ->ignore($idProcedimiento, 'idProcedimiento')
                 ],
                 'precio' => 'required|numeric|gt:0',
-                
+
                 'idProducto' => 'nullable|array',
                 'idProducto.*' => 'exists:productos,idProducto',
                 'cantidad' => 'required_with:idProducto|array',

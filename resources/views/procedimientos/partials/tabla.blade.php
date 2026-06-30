@@ -17,7 +17,7 @@
                     <td class="px-4">
                         <div class="d-flex gap-2">
                             <a href="{{ route('procedimientos.show', $procedimiento->idProcedimiento) }}"
-                               class="btn btn-sm btn-secondary rounded-pill px-3" title="Ver">
+                                class="btn btn-sm btn-secondary rounded-pill px-3" title="Ver">
                                 <i class="bi bi-eye-fill"></i>
                             </a>
 
@@ -51,5 +51,25 @@
         Mostrando {{ $procedimientos->firstItem() }}–{{ $procedimientos->lastItem() }}
         de {{ $procedimientos->total() }} resultados
     </small>
-    {{ $procedimientos->links() }}
+    <div class="d-flex align-items-center">
+        <small class="text-muted" style="margin-right: 5px;">Filas</small>
+        <form method="GET" action="{{ route('procedimientos.index') }}" class="m-0 me-4">
+
+            <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
+            <select name="porPagina" id="porPagina" class="form-select form-select-sm"
+                style="width: 65px; height: 33px; min-height: 33px; padding-right: 1.5rem;">
+                <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ $porPagina == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ $porPagina == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ $porPagina == 100 ? 'selected' : '' }}>100</option>
+            </select>
+
+        </form>
+
+        <div class="pagination-wrapper pt-3">
+            {{ $procedimientos->links() }}
+        </div>
+
+    </div>
 </div>
