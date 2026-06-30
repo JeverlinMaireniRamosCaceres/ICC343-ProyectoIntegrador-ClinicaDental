@@ -1,13 +1,20 @@
+const params = new URLSearchParams(window.location.search);
+let filtroEstadoActual = params.get("estado") ?? "";
 
-// para manejar los botones de filtro
-let filtroEstadoActual = "";
+// Para manejar los botones de filtro
+document.querySelectorAll(".btn-filtro").forEach((btn) => {
+    if (btn.dataset.filtro === filtroEstadoActual) {
+        btn.classList.add("active");
+    }
 
-document.querySelectorAll(".btn-filtro").forEach(btn => {
     btn.addEventListener("click", function () {
-        document.querySelectorAll(".btn-filtro")
-            .forEach(b => b.classList.remove("active"));
+        document
+            .querySelectorAll(".btn-filtro")
+            .forEach((b) => b.classList.remove("active"));
+
         this.classList.add("active");
         filtroEstadoActual = this.dataset.filtro;
+
         filtrarCompras();
     });
 });
@@ -20,50 +27,77 @@ document
     .getElementById("filtroFecha")
     .addEventListener("change", filtrarCompras);
 
-// Paginacion AJAX
+// Paginación AJAX
 document.addEventListener("click", async function (e) {
-    if (e.target.closest(".pagination a")) {
-        e.preventDefault();
+    if (!e.target.closest(".pagination a")) return;
 
-        const url = e.target.closest("a").href;
+    e.preventDefault();
 
-        const response = await fetch(url, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-            },
-        });
+    const url = e.target.closest("a").href;
 
-        const html = await response.text();
-
-        document.getElementById("contenedorTablaCompras").innerHTML = html;
-    }
-});
-
-// Función para filtrar compras
-
-async function filtrarCompras() {
-    const buscar = document.getElementById("buscarCompra").value;
-    const estado = filtroEstadoActual;
-    const fecha = document.getElementById("filtroFecha").value;
-
-    const response = await fetch(
-        `/compras?buscar=${buscar}&estado=${estado}&fecha=${fecha}`,
-        {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-            },
+    const response = await fetch(url, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
         },
-    );
+    });
 
     const html = await response.text();
 
     document.getElementById("contenedorTablaCompras").innerHTML = html;
+
+    window.history.pushState({}, "", url);
+});
+
+// Cambio de cantidad de filas con AJAX
+document.addEventListener("change", async function (e) {
+    if (e.target.id !== "porPagina") return;
+
+    const form = e.target.form;
+
+    const params = new URLSearchParams(new FormData(form));
+
+    const url = `${form.action}?${params.toString()}`;
+
+    const response = await fetch(url, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
+
+    const html = await response.text();
+
+    document.getElementById("contenedorTablaCompras").innerHTML = html;
+
+    window.history.pushState({}, "", url);
+});
+
+// Función para filtrar compras
+async function filtrarCompras() {
+    const buscar = document.getElementById("buscarCompra").value;
+    const estado = filtroEstadoActual;
+    const fecha = document.getElementById("filtroFecha").value;
+    const porPagina = document.getElementById("porPagina")?.value ?? 6;
+
+    const url = `/compras?buscar=${encodeURIComponent(
+        buscar,
+    )}&estado=${encodeURIComponent(estado)}&fecha=${encodeURIComponent(
+        fecha,
+    )}&porPagina=${porPagina}`;
+
+    const response = await fetch(url, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
+
+    const html = await response.text();
+
+    document.getElementById("contenedorTablaCompras").innerHTML = html;
+
+    window.history.pushState({}, "", url);
 }
 
 // Modal eliminar compra
-
-const modalEliminarCompra = document.getElementById("modalEliminarCompra");
-
 document.addEventListener("click", function (e) {
     const btn = e.target.closest(".btnAnularCompra");
 

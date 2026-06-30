@@ -1,22 +1,28 @@
 let filtroActual = "";
 
 document.addEventListener("DOMContentLoaded", function () {
-
     const buscarProducto = document.getElementById("buscarProducto");
 
     async function cargarProductos(url = null) {
-
         const texto = buscarProducto ? buscarProducto.value : "";
+        const porPagina = document.getElementById("porPagina")?.value ?? 5;
 
         let ruta =
             url ||
-            `/inventario?buscar=${encodeURIComponent(texto)}&filtro=${filtroActual}`;
+            `/inventario?buscar=${encodeURIComponent(
+                texto,
+            )}&filtro=${encodeURIComponent(
+                filtroActual,
+            )}&porPagina=${porPagina}`;
 
         if (url) {
-
             const separador = ruta.includes("?") ? "&" : "?";
 
-            ruta += `${separador}buscar=${encodeURIComponent(texto)}&filtro=${filtroActual}`;
+            ruta += `${separador}buscar=${encodeURIComponent(
+                texto,
+            )}&filtro=${encodeURIComponent(
+                filtroActual,
+            )}&porPagina=${porPagina}`;
         }
 
         const response = await fetch(ruta, {
@@ -27,9 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const html = await response.text();
 
-        document.getElementById(
-            "contenedorTablaProductos"
-        ).innerHTML = html;
+        document.getElementById("contenedorTablaProductos").innerHTML = html;
+
+        window.history.pushState({}, "", ruta);
     }
 
     // cargar movimientos
@@ -42,31 +48,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const response = await fetch(ruta, {
-            headers: { "X-Requested-With": "XMLHttpRequest" },
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
         });
 
-        document.getElementById("contenedorTablaMovimientos").innerHTML = await response.text();
+        document.getElementById("contenedorTablaMovimientos").innerHTML =
+            await response.text();
     }
 
-    // busqueda AJAX
-
+    // búsqueda AJAX
     if (buscarProducto) {
-
         buscarProducto.addEventListener("keyup", function () {
             cargarProductos();
         });
-
     }
 
     // filtros
-
-    document.querySelectorAll(".btn-filtro").forEach(btn => {
-
+    document.querySelectorAll(".btn-filtro").forEach((btn) => {
         btn.addEventListener("click", function () {
-
             document
                 .querySelectorAll(".btn-filtro")
-                .forEach(b => b.classList.remove("active"));
+                .forEach((b) => b.classList.remove("active"));
 
             this.classList.add("active");
 
@@ -74,32 +77,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
             cargarProductos();
         });
-
     });
 
-    // paginacion AJAX
-
+    // paginación AJAX
     document.addEventListener("click", function (e) {
-
         const link = e.target.closest(".pagination a");
+
         if (!link) return;
+
         e.preventDefault();
 
-        const tabActivoBtn = document.querySelector(".nav-link.active[data-bs-target]");
-        const tabActivo = tabActivoBtn ? tabActivoBtn.getAttribute("data-bs-target") : null;
-        console.log('Tab activo:', tabActivo);
+        const tabActivoBtn = document.querySelector(
+            ".nav-link.active[data-bs-target]",
+        );
+
+        const tabActivo = tabActivoBtn
+            ? tabActivoBtn.getAttribute("data-bs-target")
+            : null;
 
         if (tabActivo === "#tab-productos") {
             cargarProductos(link.href);
         } else if (tabActivo === "#tab-movimientos") {
             cargarMovimientos(link.href);
         }
+    });
 
+    // cambio de cantidad de filas (solo productos)
+    document.addEventListener("change", function (e) {
+        if (e.target.id !== "porPagina") return;
+
+        cargarProductos();
     });
 
     const hash = window.location.hash;
+
     if (hash) {
         const tabBtn = document.querySelector(`[data-bs-target="${hash}"]`);
+
         if (tabBtn) {
             bootstrap.Tab.getOrCreateInstance(tabBtn).show();
         }
@@ -108,7 +122,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // buscar producto en el modal de ajuste
     const inputProductoAjuste = document.getElementById("producto_nombre");
 
-    const resultadosProductosAjuste = document.getElementById("resultadosProductos");
+    const resultadosProductosAjuste = document.getElementById(
+        "resultadosProductos",
+    );
 
     const productoIdAjuste = document.getElementById("producto_id");
 
@@ -117,9 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const unidadAjuste = document.getElementById("unidadAjuste");
 
     if (inputProductoAjuste) {
-
         inputProductoAjuste.addEventListener("keyup", async function () {
-
             const texto = this.value;
 
             if (texto.length < 2) {
@@ -128,15 +142,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const response = await fetch(
-                `/buscar-productos?texto=${encodeURIComponent(texto)}`
+                `/buscar-productos?texto=${encodeURIComponent(texto)}`,
             );
 
             const productos = await response.json();
 
             resultadosProductosAjuste.innerHTML = "";
 
-            productos.forEach(producto => {
-
+            productos.forEach((producto) => {
                 resultadosProductosAjuste.innerHTML += `
                 <button
                     type="button"
@@ -157,21 +170,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 </button>
             `;
             });
-
         });
-
-
     }
 
     // lotes del producto seleccionado
-    const contenedorLote = document.getElementById('contenedorLote');
-    const inputLoteDescripcion = document.getElementById('lote_descripcion');
-    const resultadosLotes = document.getElementById('resultadosLotes');
-    const loteId = document.getElementById('lote_id');
+    const contenedorLote = document.getElementById("contenedorLote");
+    const inputLoteDescripcion = document.getElementById("lote_descripcion");
+    const resultadosLotes = document.getElementById("resultadosLotes");
+    const loteId = document.getElementById("lote_id");
 
     // cuando se selecciona un producto, cargar sus lotes
     resultadosProductosAjuste.addEventListener("click", async function (e) {
         const boton = e.target.closest(".list-group-item");
+
         if (!boton) return;
 
         // rellenar datos del producto
@@ -180,33 +191,41 @@ document.addEventListener("DOMContentLoaded", function () {
         stockActualAjuste.value = `${boton.dataset.stock} ${boton.dataset.unidad}`;
         unidadAjuste.textContent = boton.dataset.unidad;
 
-
         // resetear lote
-        inputLoteDescripcion.value = '';
-        loteId.value = '';
-        resultadosLotes.innerHTML = '';
-        contenedorLote.style.display = 'none';
+        inputLoteDescripcion.value = "";
+        loteId.value = "";
+        resultadosLotes.innerHTML = "";
+        contenedorLote.style.display = "none";
 
         // cargar lotes del producto
         const idProducto = boton.dataset.id;
+
         const response = await fetch(`/inventario/${idProducto}/lotes`);
+
         const lotes = await response.json();
 
         if (lotes.length > 0) {
-            contenedorLote.style.display = 'block';
-            lotes.forEach(lote => {
+            contenedorLote.style.display = "block";
+
+            lotes.forEach((lote) => {
                 resultadosLotes.innerHTML += `
-                <button type="button"
+                <button
+                    type="button"
                     class="list-group-item list-group-item-action"
                     data-id="${lote.idDetalleCompra}"
                     data-cantidad="${lote.cantidad}"
                     data-descripcion="${lote.compra} | ${lote.cantidad} uds. | Vence: ${lote.fechaVencimiento}">
-                    <div class="fw-semibold">${lote.compra}</div>
+
+                    <div class="fw-semibold">
+                        ${lote.compra}
+                    </div>
+
                     <small class="text-muted">
                         ${lote.cantidad} uds. — Vence: ${lote.fechaVencimiento}
                     </small>
+
                 </button>
-            `;
+                `;
             });
         }
     });
@@ -214,14 +233,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (resultadosLotes) {
         resultadosLotes.addEventListener("click", function (e) {
             const boton = e.target.closest(".list-group-item");
+
             if (!boton) return;
 
             inputLoteDescripcion.value = boton.dataset.descripcion;
+
             loteId.value = boton.dataset.id;
+
             stockActualAjuste.value = `${boton.dataset.cantidad} ${unidadAjuste.textContent}`;
-            resultadosLotes.innerHTML = '';
+
+            resultadosLotes.innerHTML = "";
         });
     }
-
-
 });

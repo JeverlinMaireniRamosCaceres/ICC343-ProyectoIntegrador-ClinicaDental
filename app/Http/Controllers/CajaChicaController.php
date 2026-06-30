@@ -16,27 +16,35 @@ class CajaChicaController extends Controller
      */
     public function index(Request $request)
     {
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
         $cajas = CajaChica::query();
 
         if ($request->filled('fecha')) {
-
             $cajas->whereDate('fecha', $request->fecha);
         }
 
         $cajas = $cajas
             ->orderByDesc('fecha')
             ->orderByDesc('horaApertura')
-            ->paginate(6);
+            ->paginate($porPagina)
+            ->withQueryString();
 
         if ($request->ajax()) {
-
             return view(
                 'caja_chica.partials.tabla',
-                compact('cajas')
+                compact('cajas', 'porPagina')
             )->render();
         }
 
-        return view('caja_chica.index', compact('cajas'));
+        return view(
+            'caja_chica.index',
+            compact('cajas', 'porPagina')
+        );
     }
 
     /**
@@ -57,7 +65,7 @@ class CajaChicaController extends Controller
         $this->validarDatos($request);
 
         CajaChica::create([
-            'idUsuarioApertura' => 1,
+            'idUsuarioApertura' => auth()->user()->idUsuario,
             'fecha' => $request->fecha,
             'horaApertura' => $request->horaApertura,
             'saldoInicial' => $request->saldoInicial,

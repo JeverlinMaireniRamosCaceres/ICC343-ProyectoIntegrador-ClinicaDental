@@ -74,7 +74,8 @@
                                 </button>
                                 @if ($compra->estado === 'Pendiente')
                                     <button type="button" class="btn btn-success btn-sm rounded-pill px-3"
-                                        onclick="abrirModalMarcarPagada('{{ route('compras.pagar', $compra->idCompras) }}')" title="Marcar como pagada">
+                                        onclick="abrirModalMarcarPagada('{{ route('compras.pagar', $compra->idCompras) }}')"
+                                        title="Marcar como pagada">
 
                                         <i class="bi bi-cash-stack"></i>
 
@@ -114,6 +115,26 @@
         de {{ $compras->total() }} resultados
     </span>
 
-    {{ $compras->links() }}
+    <div class="d-flex align-items-center">
+        <small class="text-muted" style="margin-right: 5px;">Filas</small>
+        <form method="GET" action="{{ route('compras.index') }}" class="m-0 me-4">
+
+            <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
+            <select name="porPagina" id="porPagina" class="form-select form-select-sm"
+                style="width: 65px; height: 33px; min-height: 33px; padding-right: 1.5rem;">
+                <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ $porPagina == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ $porPagina == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ $porPagina == 100 ? 'selected' : '' }}>100</option>
+            </select>
+
+        </form>
+
+        <div class="pagination-wrapper pt-3">
+            {{ $compras->links() }}
+        </div>
+
+    </div>
 
 </div>

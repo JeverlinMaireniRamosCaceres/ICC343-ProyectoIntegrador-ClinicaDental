@@ -1,7 +1,6 @@
-document.addEventListener('DOMContentLoaded', function () {
-
-    const inputBuscar = document.getElementById('buscarAlergia');
-    const contenedorTabla = document.getElementById('contenedorTablaAlergias');
+document.addEventListener("DOMContentLoaded", function () {
+    const inputBuscar = document.getElementById("buscarAlergia");
+    const contenedorTabla = document.getElementById("contenedorTablaAlergias");
 
     if (!inputBuscar || !contenedorTabla) {
         return;
@@ -9,45 +8,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let timeout = null;
 
-    inputBuscar.addEventListener('input', function () {
+    // Buscador con AJAX
+    inputBuscar.addEventListener("input", function () {
         clearTimeout(timeout);
 
-        timeout = setTimeout(function () {
+        timeout = setTimeout(async function () {
             const buscar = inputBuscar.value.trim();
+            const porPagina = document.getElementById("porPagina")?.value ?? 6;
 
-            fetch(`/alergias?buscar=${encodeURIComponent(buscar)}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.text())
-            .then(html => {
-                contenedorTabla.innerHTML = html;
-            });
-        }, 300);
-    });
-
-
-    // paginacion con AJAX
-        document.addEventListener('click', async function (e) {
-
-        if (e.target.closest('.pagination a')) {
-
-            e.preventDefault();
-
-            const url = e.target.closest('a').href;
+            const url = `/alergias?buscar=${encodeURIComponent(
+                buscar,
+            )}&porPagina=${porPagina}`;
 
             const response = await fetch(url, {
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                    "X-Requested-With": "XMLHttpRequest",
+                },
             });
 
             const html = await response.text();
 
             contenedorTabla.innerHTML = html;
-        }
+
+            window.history.pushState({}, "", url);
+        }, 300);
     });
 
+    // Paginación con AJAX
+    document.addEventListener("click", async function (e) {
+        if (!e.target.closest(".pagination a")) return;
 
+        e.preventDefault();
+
+        const url = e.target.closest("a").href;
+
+        const response = await fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
+
+        const html = await response.text();
+
+        contenedorTabla.innerHTML = html;
+
+        window.history.pushState({}, "", url);
+    });
+
+    // Cambio de cantidad de filas con AJAX
+    document.addEventListener("change", async function (e) {
+        if (e.target.id !== "porPagina") return;
+
+        const form = e.target.form;
+
+        const params = new URLSearchParams(new FormData(form));
+
+        const url = `${form.action}?${params.toString()}`;
+
+        const response = await fetch(url, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
+
+        const html = await response.text();
+
+        contenedorTabla.innerHTML = html;
+
+        window.history.pushState({}, "", url);
+    });
 });
