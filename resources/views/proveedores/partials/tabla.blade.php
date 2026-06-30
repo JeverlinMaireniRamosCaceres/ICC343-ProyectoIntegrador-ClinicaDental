@@ -33,7 +33,6 @@
         <tbody>
 
             @forelse ($proveedores as $proveedor)
-
                 <tr>
 
                     <td class="px-4 fw-medium">
@@ -51,20 +50,17 @@
                     <td class="px-4">
 
                         @if (!$proveedor->trashed())
-
                             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
 
                                 Activado
 
                             </span>
                         @else
-
                             <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
 
                                 Desactivado
 
                             </span>
-
                         @endif
 
                     </td>
@@ -75,7 +71,7 @@
 
                             <!-- editar -->
                             <a href="{{ route('proveedores.edit', $proveedor->idProveedor) }}"
-                            class="btn btn-sm btn-warning rounded-pill px-3 text-white">
+                                class="btn btn-sm btn-warning rounded-pill px-3 text-white">
 
                                 <i class="bi bi-pencil"></i>
 
@@ -83,41 +79,27 @@
 
                             <!-- activar/desactivar -->
                             @if (!$proveedor->trashed())
+                                @csrf
+                                @method('DELETE')
 
-                                    @csrf
-                                    @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3"
+                                    title="Desactivar" data-bs-toggle="modal" data-bs-target="#modalEliminarProveedor"
+                                    data-id="{{ $proveedor->idProveedor }}" data-nombre="{{ $proveedor->nombre }}">
 
-                                    <button type="submit"
-                                        class="btn btn-sm btn-danger rounded-pill px-3"
-                                        title="Desactivar"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalEliminarProveedor"
+                                    <i class="bi bi-x-octagon"></i>
 
-                                        data-id="{{ $proveedor->idProveedor }}"
-                                        data-nombre="{{ $proveedor->nombre }}">
-
-                                        <i class="bi bi-x-octagon"></i>
-
-                                    </button>
-
+                                </button>
                             @else
+                                @csrf
+                                @method('PUT')
 
-                                    @csrf
-                                    @method('PUT')
+                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" title="Activar"
+                                    data-bs-toggle="modal" data-bs-target="#modalActivarProveedor"
+                                    data-id="{{ $proveedor->idProveedor }}" data-nombre="{{ $proveedor->nombre }}">
 
-                                    <button type="submit"
-                                        class="btn btn-sm btn-success rounded-pill px-3"
-                                        title="Activar"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalActivarProveedor"
+                                    <i class="bi bi-patch-check"></i>
 
-                                        data-id="{{ $proveedor->idProveedor }}"
-                                        data-nombre="{{ $proveedor->nombre }}">
-
-                                        <i class="bi bi-patch-check"></i>
-
-                                    </button>
-
+                                </button>
                             @endif
 
                         </div>
@@ -139,16 +121,15 @@
                     </td>
 
                 </tr>
-
             @endforelse
 
         </tbody>
 
     </table>
 
-@include('proveedores.partials.modal-eliminar')
+    @include('proveedores.partials.modal-eliminar')
 
-@include('proveedores.partials.modal-activar')
+    @include('proveedores.partials.modal-activar')
 
 </div>
 
@@ -167,9 +148,25 @@
 
     </small>
 
-    <div>
+    <div class="d-flex align-items-center">
+        <small class="text-muted" style="margin-right: 5px;">Filas</small>
+        <form method="GET" action="{{ route('proveedores.index') }}" class="m-0 me-4">
 
-        {{ $proveedores->links() }}
+            <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
+            <select name="porPagina" id="porPagina" class="form-select form-select-sm"
+                style="width: 65px; height: 33px; min-height: 33px; padding-right: 1.5rem;">
+                <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ $porPagina == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ $porPagina == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ $porPagina == 100 ? 'selected' : '' }}>100</option>
+            </select>
+
+        </form>
+
+        <div class="pagination-wrapper pt-3">
+            {{ $proveedores->links() }}
+        </div>
 
     </div>
 
