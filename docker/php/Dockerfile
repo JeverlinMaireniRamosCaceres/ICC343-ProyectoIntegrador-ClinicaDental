@@ -6,7 +6,8 @@ RUN composer install \
     --no-dev \
     --prefer-dist \
     --optimize-autoloader \
-    --no-interaction
+    --no-interaction \
+    --no-scripts
 
 # Stage 2: Assets frontend
 FROM node:22-alpine AS node
