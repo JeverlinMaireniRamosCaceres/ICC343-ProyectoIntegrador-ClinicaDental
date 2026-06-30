@@ -683,3 +683,39 @@ body {
 #sidebar-container:not(.sidebar-expanded)::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.15);
 }
+
+/* diseño tabla procedimientos */
+.btn-tipo-proc {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.btn-tipo-proc.active {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+}
+
+/* quita el azul al expandir un acordeon */
+.accordion-button:not(.collapsed) {
+    background-color: #f8fafc;
+    color: inherit;
+    box-shadow: none;
+}
+
+/* quita el outline al hacer focus */
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+/* quita la flecha azul, la pone gris/dark */
+.accordion-button::after {
+    filter: none;
+}
+
+/* borde sutil entre header y body cuando está abierto */
+.accordion-button:not(.collapsed)::after {
+    filter: none;
+}

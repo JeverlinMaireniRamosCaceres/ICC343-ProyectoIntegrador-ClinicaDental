@@ -45,7 +45,7 @@
 
     </div>
 
-    <script src="{{ asset('js/consultas.js') }}"></script>
+    <script src="{{ asset('js/consulta.js') }}"></script>
     @include('consultas.partials.modal-create-paciente')
     @include('consultas.partials.modal-create-tratamiento')
 
