@@ -20,6 +20,12 @@ class ComprasController extends Controller
         $estado = $request->input('estado');
         $fecha = $request->input('fecha');
 
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [6, 10, 25, 50, 100])) {
+            $porPagina = 6;
+        }
+
         $compras = Compra::query()
             ->when($buscar, function ($query) use ($buscar) {
                 $query->whereHas('proveedor', function ($q) use ($buscar) {
@@ -33,13 +39,20 @@ class ComprasController extends Controller
                 $query->where('fecha', $fecha);
             })
             ->orderBy('fecha', 'desc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('compras.partials.tabla', compact('compras'))->render();
+            return view('compras.partials.tabla', compact('compras', 'porPagina'))->render();
         }
-        return view('compras.index', compact('compras', 'buscar', 'estado', 'fecha'));
+
+        return view('compras.index', compact(
+            'compras',
+            'buscar',
+            'estado',
+            'fecha',
+            'porPagina'
+        ));
     }
 
     /**
