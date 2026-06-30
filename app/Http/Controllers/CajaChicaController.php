@@ -65,7 +65,7 @@ class CajaChicaController extends Controller
         $this->validarDatos($request);
 
         CajaChica::create([
-            'idUsuarioApertura' => 1,
+            'idUsuarioApertura' => auth()->user()->idUsuario,
             'fecha' => $request->fecha,
             'horaApertura' => $request->horaApertura,
             'saldoInicial' => $request->saldoInicial,
