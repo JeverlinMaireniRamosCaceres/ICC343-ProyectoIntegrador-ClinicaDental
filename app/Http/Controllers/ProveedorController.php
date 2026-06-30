@@ -17,8 +17,8 @@ class ProveedorController extends Controller
 
         $porPagina = (int) $request->input('porPagina', 6);
 
-        if (!in_array($porPagina, [6, 10, 25, 50, 100])) {
-            $porPagina = 6;
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
         }
 
         $proveedores = Proveedor::withTrashed()

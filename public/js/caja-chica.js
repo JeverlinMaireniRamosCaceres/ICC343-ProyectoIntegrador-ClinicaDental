@@ -1,5 +1,4 @@
 // Filtro fecha
-
 const filtroFecha = document.getElementById("filtroFecha");
 
 if (filtroFecha) {
@@ -7,7 +6,6 @@ if (filtroFecha) {
 }
 
 // Paginación AJAX
-
 document.addEventListener("click", async function (e) {
     const link = e.target.closest(".pagination a");
 
@@ -24,14 +22,21 @@ document.addEventListener("click", async function (e) {
     const html = await response.text();
 
     document.getElementById("contenedorTablaCajas").innerHTML = html;
+
+    window.history.pushState({}, "", link.href);
 });
 
-// Filtrar cajas
+// Cambio de cantidad de filas con AJAX
+document.addEventListener("change", async function (e) {
+    if (e.target.id !== "porPagina") return;
 
-async function filtrarCajas() {
-    const fecha = document.getElementById("filtroFecha").value;
+    const form = e.target.form;
 
-    const response = await fetch(`/caja-chica?fecha=${fecha}`, {
+    const params = new URLSearchParams(new FormData(form));
+
+    const url = `${form.action}?${params.toString()}`;
+
+    const response = await fetch(url, {
         headers: {
             "X-Requested-With": "XMLHttpRequest",
         },
@@ -40,6 +45,30 @@ async function filtrarCajas() {
     const html = await response.text();
 
     document.getElementById("contenedorTablaCajas").innerHTML = html;
+
+    window.history.pushState({}, "", url);
+});
+
+// Filtrar cajas
+async function filtrarCajas() {
+    const fecha = document.getElementById("filtroFecha").value;
+    const porPagina = document.getElementById("porPagina")?.value ?? 6;
+
+    const url = `/caja-chica?fecha=${encodeURIComponent(
+        fecha,
+    )}&porPagina=${porPagina}`;
+
+    const response = await fetch(url, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
+
+    const html = await response.text();
+
+    document.getElementById("contenedorTablaCajas").innerHTML = html;
+
+    window.history.pushState({}, "", url);
 }
 
 document.addEventListener("input", function (e) {
@@ -72,18 +101,14 @@ document.addEventListener("input", function (e) {
 });
 
 // Modal egreso
-
 document.addEventListener("input", function () {
     const montoInput = document.getElementById("montoEgreso");
-
     const descripcionInput = document.getElementById("descripcionEgreso");
-
     const btnGuardar = document.getElementById("btnGuardarEgreso");
 
     if (!montoInput || !descripcionInput || !btnGuardar) return;
 
     const monto = parseFloat(montoInput.value) || 0;
-
     const descripcion = descripcionInput.value.trim();
 
     btnGuardar.disabled = monto <= 0 || descripcion === "";
@@ -94,9 +119,7 @@ const modalEgreso = document.getElementById("modalEgreso");
 if (modalEgreso) {
     modalEgreso.addEventListener("show.bs.modal", function () {
         document.getElementById("montoEgreso").value = "";
-
         document.getElementById("descripcionEgreso").value = "";
-
         document.getElementById("btnGuardarEgreso").disabled = true;
     });
 }
