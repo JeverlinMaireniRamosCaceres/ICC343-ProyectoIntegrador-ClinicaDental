@@ -36,10 +36,13 @@ return [
     ],
 
     'whatsapp' => [
-        'token' => env('WHATSAPP_ACCESS_TOKEN'),
+        'token' => env('WHATSAPP_TOKEN'),
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'verify_token' => env('WHATSAPP_VERIFY_TOKEN'),
-        'version' => env('WHATSAPP_API_VERSION', 'v23.0'),
+        'version' => env('WHATSAPP_VERSION', 'v23.0'),
+        'language' => env('WHATSAPP_LANGUAGE', 'es_DO'),
+        'templates' => [
+            'recordatorio' => env('WHATSAPP_TEMPLATE_RECORDATORIO', 'recordatorio_cita'),
+        ],
     ],
 
 ];
