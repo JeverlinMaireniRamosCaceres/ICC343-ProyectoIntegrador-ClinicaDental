@@ -30,7 +30,29 @@ class TratamientoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'idPaciente' => 'required|exists:pacientes,idPaciente',
+            'nombre' => 'required|string|max:100',
+            'fechaInicio' => 'required|date',
+            'estado' => 'required|string',
+        ]);
+
+        $tratamiento = Tratamiento::create([
+            'idPaciente' => $request->idPaciente,
+            'nombre' => $request->nombre,
+            'fechaInicio' => $request->fechaInicio,
+            'estado' => $request->estado,
+        ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'tratamiento' => $tratamiento,
+            ]);
+        }
+
+        return redirect()->route('tratamientos.index')
+            ->with('success', 'Tratamiento creado correctamente.');
     }
 
     /**

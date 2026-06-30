@@ -7,6 +7,9 @@ use App\Models\Consulta;
 use App\Models\Odontologo;
 use App\Models\Paciente;
 use App\Models\Procedimiento;
+use App\Models\Tratamiento;
+use App\Models\DetalleConsulta;
+use App\Models\DetalleTratamiento;
 use Illuminate\Support\Facades\Auth;
 
 class ConsultaController extends Controller
@@ -50,7 +53,71 @@ class ConsultaController extends Controller
 
     public function store(Request $request)
     {
-        return redirect()->route('consultas.index');
+        $request->validate([
+            'idPaciente' => 'required|exists:pacientes,idPaciente',
+            'idOdontologo' => 'required|exists:odontologos,idOdontologo',
+            'fecha' => 'required|date',
+            'estado' => 'required|string',
+            'motivo' => 'nullable|string',
+            'diagnostico' => 'nullable|string',
+            'receta' => 'nullable|string',
+        ]);
+
+        // crear la consulta
+        $consulta = Consulta::create([
+            'idPaciente' => $request->idPaciente,
+            'idOdontologo' => $request->idOdontologo,
+            'fecha' => $request->fecha,
+            'motivo' => $request->motivo,
+            'diagnostico' => $request->diagnostico,
+            'receta' => $request->receta,
+            'estado' => $request->estado,
+        ]);
+
+        // guardar procedimientos independientes en detalle_consultas
+        if ($request->has('idProcedimiento')) {
+            foreach ($request->idProcedimiento as $i => $idProc) {
+                $cantidad = $request->cantidadProcedimiento[$i] ?? 1;
+                $precio = Procedimiento::find($idProc)?->precio ?? 0;
+                $subtotal = $cantidad * $precio;
+
+                $consulta->detalles()->create([
+                    'idProcedimiento' => $idProc,
+                    'cantidadProcedimiento' => $cantidad,
+                    'subtotal' => $subtotal,
+                ]);
+            }
+        }
+
+        // guardar procedimientos del tratamiento
+        if ($request->has('idProcedimientoTrat') && $request->idTratamiento) {
+            foreach ($request->idProcedimientoTrat as $i => $idProc) {
+                $cantidad = $request->cantidadProcedimientoTrat[$i] ?? 1;
+                $observacion = $request->observacionTrat[$i] ?? null;
+                $precio = Procedimiento::find($idProc)?->precio ?? 0;
+                $subtotal = $cantidad * $precio;
+
+                // registro en detalle_tratamientos (seguimiento del tratamiento)
+                DetalleTratamiento::create([
+                    'idConsulta' => $consulta->idConsulta,
+                    'idTratamiento' => $request->idTratamiento,
+                    'idProcedimiento' => $idProc,
+                    'cantidadProcedimiento' => $cantidad,
+                    'observacion' => $observacion,
+                    'estado' => 'En proceso',
+                ]);
+
+                // registro en detalle_consultas se cuenta todo el total
+                $consulta->detalles()->create([
+                    'idProcedimiento' => $idProc,
+                    'cantidadProcedimiento' => $cantidad,
+                    'subtotal' => $subtotal,
+                ]);
+            }
+        }
+
+        return redirect()->route('consultas.index')
+            ->with('success', 'Consulta registrada correctamente.');
     }
 
     public function buscarOdontologos(Request $request)
@@ -97,5 +164,16 @@ class ConsultaController extends Controller
             'antecedentes' => $paciente->antecedentes,
         ]);
     }
+
+    public function tratamientosPaciente($id)
+    {
+        $tratamientos = Tratamiento::where('idPaciente', $id)
+            ->whereIn('estado', ['Activo', 'En proceso'])
+            ->orderBy('fechaInicio', 'desc')
+            ->get();
+
+        return response()->json($tratamientos);
+    }
+
 
 }

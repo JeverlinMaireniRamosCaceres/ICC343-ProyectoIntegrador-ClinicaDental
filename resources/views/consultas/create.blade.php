@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div class="container-fluid py-4 px-5 consulta-page">
+    <div class="container-fluid py-4 px-3 consulta-page">
 
         <!-- Header -->
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -22,57 +22,20 @@
         <form action="{{ route('consultas.store') }}" method="POST">
             @csrf
 
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="accordion d-flex flex-column gap-3" id="consultaAccordion">
 
-                <!-- Tabs -->
-                <div class="card-header bg-white border-0 p-0">
-                    <ul class="nav consulta-tabs px-4" role="tablist">
-
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#datosGenerales"
-                                type="button">
-                                <i class="bi bi-person-lines-fill me-2"></i>
-                                Datos generales
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#evaluacionClinica" type="button">
-                                <i class="bi bi-clipboard2-pulse me-2"></i>
-                                Evaluación
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#procedimientos" type="button">
-                                <i class="bi bi-clipboard2-plus me-2"></i>
-                                Procedimientos
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tratamiento" type="button">
-                                <i class="bi bi-activity me-2"></i>
-                                Tratamiento
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#resumen" type="button">
-                                <i class="bi bi-check2-circle me-2"></i>
-                                Resumen
-                            </button>
-                        </li>
-
-                    </ul>
-                </div>
-
-                <div class="card-body p-4">
-
-                    <div class="tab-content">
-
-                        <!-- tab datos generales -->
-                        <div class="tab-pane fade show active" id="datosGenerales">
+                <!-- 1. Datos generales -->
+                <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button rounded-4 fw-semibold" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#secDatosGenerales">
+                            <i class="bi bi-person-lines-fill me-2 text-primary"></i>
+                            Datos generales
+                        </button>
+                    </h2>
+                    <div id="secDatosGenerales" class="accordion-collapse collapse show"
+                        data-bs-parent="#consultaAccordion">
+                        <div class="accordion-body px-3 py-3">
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
@@ -148,9 +111,20 @@
                             </div>
 
                         </div>
+                    </div>
+                </div>
 
-                        <!-- tab evaluacion clinica -->
-                        <div class="tab-pane fade" id="evaluacionClinica">
+                <!-- 2. Evaluación clínica -->
+                <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded-4 fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#secEvaluacion">
+                            <i class="bi bi-clipboard2-pulse me-2 text-primary"></i>
+                            Evaluación clínica
+                        </button>
+                    </h2>
+                    <div id="secEvaluacion" class="accordion-collapse collapse" data-bs-parent="#consultaAccordion">
+                        <div class="accordion-body px-3 py-3">
 
                             <div class="mb-4">
                                 <h5 class="consulta-section-title mb-1">Evaluación clínica</h5>
@@ -180,67 +154,25 @@
                             </div>
 
                         </div>
+                    </div>
+                </div>
 
-                        <!-- tab procedimientos -->
-                        <div class="tab-pane fade" id="procedimientos">
-
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <h5 class="consulta-section-title mb-1">Procedimientos realizados</h5>
-                                </div>
-
-                                <button type="button" class="btn btn-medical-primary rounded-pill px-4 shadow-sm"
-                                    data-bs-toggle="modal" data-bs-target="#modalAgregarProcedimiento">
-                                    <i class="bi bi-plus-lg me-1"></i>
-                                    Agregar procedimiento
-                                </button>
-
-                            </div>
-
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0 consulta-table">
-
-                                    <thead>
-                                        <tr>
-                                            <th>Procedimiento</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio</th>
-                                            <th>Subtotal</th>
-                                            <th class="text-center">Acción</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody id="cuerpoTablaProc">
-                                        <tr id="filaVaciaProc">
-                                            <td colspan="5" class="text-center py-4 text-muted">
-                                                <i class="bi bi-clipboard2-x fs-3 d-block mb-2"></i>
-                                                No hay procedimientos agregados.
-                                            </td>
-                                        </tr>
-                                    </tbody>
-
-                                </table>
-                            </div>
-
-                            <!-- total de procedimientos -->
-                            <div class="d-flex justify-content-end mt-3">
-                                <div class="d-flex align-items-center gap-3 px-4 py-3 rounded-4"
-                                    style="background:#f8fafc; border: 1px solid #e2e8f0;">
-                                    <span class="text-muted fw-semibold">Total:</span>
-                                    <span class="fw-bold fs-5 text-primary" id="totalProcedimientos">RD$ 0.00</span>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- tab tratamiento -->
-                        <div class="tab-pane fade" id="tratamiento">
+                <!-- 3. Tratamiento -->
+                <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded-4 fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#secTratamiento">
+                            <i class="bi bi-activity me-2 text-primary"></i>
+                            Tratamiento
+                        </button>
+                    </h2>
+                    <div id="secTratamiento" class="accordion-collapse collapse" data-bs-parent="#consultaAccordion">
+                        <div class="accordion-body px-3 py-3">
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
                                     <h5 class="consulta-section-title mb-1">Tratamiento</h5>
                                 </div>
-
                                 <button type="button" class="btn btn-outline-primary rounded-pill px-4"
                                     data-bs-toggle="modal" data-bs-target="#modalCrearTratamiento">
                                     <i class="bi bi-plus-lg me-1"></i>
@@ -248,94 +180,225 @@
                                 </button>
                             </div>
 
-                            <div class="consulta-empty-state rounded-4 p-4 text-center">
+                            <!-- estado inicial sin paciente -->
+                            <div id="tratamientoSinPaciente" class="consulta-empty-state rounded-4 p-4 text-center">
                                 <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
                                     style="width: 56px; height: 56px;">
-                                    <i class="bi bi-clipboard2-pulse fs-4"></i>
+                                    <i class="bi bi-person fs-4"></i>
                                 </div>
-
-                                <h6 class="fw-bold mb-1">No hay tratamiento asociado</h6>
-                                <p class="text-muted mb-0">
-                                    Puedes crear un tratamiento si la consulta requiere seguimiento.
+                                <h6 class="fw-bold mb-1">Selecciona un paciente primero</h6>
+                                <p class="text-muted mb-0">Los tratamientos aparecerán aquí una vez
+                                    selecciones el paciente.
                                 </p>
                             </div>
 
-                        </div>
+                            <!-- tratamientos del paciente -->
+                            <div id="tratamientoContenido" style="display:none;">
 
-                        <!-- tab resumen -->
-                        <div class="tab-pane fade" id="resumen">
+                                <!-- sin tratamientos -->
+                                <div id="tratamientoVacio" class="consulta-empty-state rounded-4 p-4 text-center"
+                                    style="display:none;">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style="width: 56px; height: 56px;">
+                                        <i class="bi bi-clipboard2-pulse fs-4"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">No hay tratamientos activos</h6>
+                                    <p class="text-muted mb-0">Puedes crear un tratamiento nuevo para este
+                                        paciente.</p>
+                                </div>
+
+                                <!-- lista de tratamientos -->
+                                <div id="listaTratamientos" class="d-flex flex-column gap-2"></div>
+
+                                <input type="hidden" name="idTratamiento" id="tratamiento_id">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Procedimientos -->
+                <div class="accordion-item border-0 shadow-sm rounded-4 overflow-hidden">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded-4 fw-semibold" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#secProcedimientos">
+                            <i class="bi bi-clipboard2-plus me-2 text-primary"></i>
+                            Procedimientos
+                        </button>
+                    </h2>
+                    <div id="secProcedimientos" class="accordion-collapse collapse" data-bs-parent="#consultaAccordion">
+                        <div class="accordion-body px-3 py-3">
 
                             <div class="mb-4">
-                                <h5 class="consulta-section-title mb-1">Resumen de la consulta</h5>
+                                <h5 class="consulta-section-title mb-1">Procedimientos</h5>
                             </div>
 
-                            <div class="row g-4">
+                            <!-- toggle para elegir tipo -->
+                            <div class="d-flex gap-2 mb-4">
+                                <button type="button" id="btnTipoIndependiente"
+                                    class="btn btn-sm rounded-pill px-4 btn-tipo-proc active" data-tipo="independiente">
+                                    <i class="bi bi-file-medical me-1"></i>
+                                    De esta consulta
+                                </button>
+                                <button type="button" id="btnTipoTratamiento"
+                                    class="btn btn-sm rounded-pill px-4 btn-tipo-proc" data-tipo="tratamiento">
+                                    <i class="bi bi-activity me-1"></i>
+                                    Del tratamiento
+                                </button>
+                            </div>
 
-                                <div class="col-lg-8">
-
-                                    <div class="consulta-summary rounded-4 p-4">
-
-                                        <div class="row g-3">
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Paciente</small>
-                                                <span class="fw-semibold">Ana Martínez</span>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Odontólogo</small>
-                                                <span class="fw-semibold">Dr. Juan Pérez</span>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Fecha</small>
-                                                <span class="fw-semibold">10/05/2026</span>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Estado</small>
-                                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-                                                    Registrada
-                                                </span>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Procedimientos</small>
-                                                <span class="fw-semibold">1</span>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <small class="text-muted d-block">Total consulta</small>
-                                                <span class="fw-bold text-primary">RD$ 1,500.00</span>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
+                            <!-- tabla procedimientos independientes -->
+                            <div id="seccionProcIndependientes">
+                                <p class="text-muted small mb-2">
+                                    Procedimientos realizados solo en esta consulta.
+                                </p>
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0 consulta-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Procedimiento</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio</th>
+                                                <th>Subtotal</th>
+                                                <th class="text-center">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuerpoTablaProc">
+                                            <tr id="filaVaciaProc">
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    <i class="bi bi-clipboard2-x fs-3 d-block mb-2"></i>
+                                                    No hay procedimientos agregados.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-
-                                <div class="col-lg-4">
-
-                                    <div class="consulta-alert rounded-4 small p-3 mb-3">
-                                        Revisa la información antes de guardar.
-                                        Las consultas registradas no podrán editarse posteriormente.
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
-                                        Guardar consulta
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <button type="button" class="btn btn-medical-primary rounded-pill px-4 shadow-sm"
+                                        data-bs-toggle="modal" data-bs-target="#modalAgregarProcedimiento"
+                                        data-destino="independiente">
+                                        <i class="bi bi-plus-lg me-1"></i>
+                                        Agregar procedimiento
                                     </button>
+                                    <div class="d-flex align-items-center gap-3 px-4 py-3 rounded-4"
+                                        style="background:#f8fafc; border:1px solid #e2e8f0;">
+                                        <span class="text-muted fw-semibold">Total:</span>
+                                        <span class="fw-bold fs-5 text-primary" id="totalProcedimientos">RD$ 0.00</span>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- tabla procedimientos del tratamiento -->
+                            <div id="seccionProcTratamiento" style="display:none;">
+
+                                <div id="procTratSinTratamiento" class="consulta-empty-state rounded-4 p-4 text-center">
+                                    <i class="bi bi-activity fs-1 d-block mb-2 text-muted"></i>
+                                    <h6 class="fw-bold mb-1">Sin tratamiento seleccionado</h6>
+                                    <p class="text-muted mb-0">Selecciona o crea un tratamiento en la sección de
+                                        Tratamiento.</p>
+                                </div>
+
+                                <div id="procTratConTratamiento" style="display:none;">
+                                    <p class="text-muted small mb-2">
+                                        Procedimientos realizados en esta consulta que forman parte del tratamiento.
+                                    </p>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0 consulta-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Procedimiento</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio</th>
+                                                    <th>Subtotal</th>
+                                                    <th>Observación</th>
+                                                    <th class="text-center">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cuerpoProcTratamiento">
+                                                <tr id="filaVaciaTrat">
+                                                    <td colspan="6" class="text-center py-4 text-muted">
+                                                        <i class="bi bi-clipboard2-x fs-3 d-block mb-2"></i>
+                                                        No hay procedimientos del tratamiento.
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <div class="d-flex align-items-center gap-3 px-4 py-3 rounded-4"
+                                                style="background:#f8fafc; border:1px solid #e2e8f0;">
+                                                <span class="text-muted fw-semibold">Total tratamiento:</span>
+                                                <span class="fw-bold fs-5 text-primary" id="totalProcTratamiento">RD$
+                                                    0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <button type="button" class="btn btn-outline-primary rounded-pill px-4"
+                                            data-bs-toggle="modal" data-bs-target="#modalAgregarProcedimiento"
+                                            data-destino="tratamiento">
+                                            <i class="bi bi-plus-lg me-1"></i>
+                                            Agregar al tratamiento
+                                        </button>
+                                    </div>
                                 </div>
 
                             </div>
 
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <!-- botón guardar + resumen inline -->
+            <div class="card border-0 shadow-sm rounded-4 mt-4 bg-white">
+                <div class="card-body p-4">
+                    <div class="row align-items-center g-4">
+
+                        <div class="col-lg-8">
+                            <div class="row row-cols-2 row-cols-md-4 g-3 border-end border-light-subtlepe-3">
+                                <div>
+                                    <small class="text-muted d-block text-uppercase tracking-wider fw-semibold"
+                                        style="font-size: 0.75rem;">Paciente</small>
+                                    <span class="fw-bold text-dark" id="resumenPaciente">—</span>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block text-uppercase tracking-wider fw-semibold"
+                                        style="font-size: 0.75rem;">Odontólogo</small>
+                                    <span class="fw-semibold text-dark">{{ $odontologo->persona->nombre }}
+                                        {{ $odontologo->persona->apellido }}</span>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block text-uppercase tracking-wider fw-semibold"
+                                        style="font-size: 0.75rem;">Procedimientos</small>
+                                    <span class="badge bg-light text-primary rounded-pill fw-bold px-3 py-2 mt-1"
+                                        id="resumenProcedimientos" style="font-size: 0.9rem;">0</span>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block text-uppercase tracking-wider fw-semibold"
+                                        style="font-size: 0.75rem;">Total a pagar</small>
+                                    <span class="fw-extrabold fs-5 text-primary d-block" id="resumenTotal">RD$
+                                        0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 d-flex flex-column justify-content-center text-lg-end">
+                            <div class="text-muted small mb-2 d-flex align-items-center justify-content-lg-end gap-1">
+                                <i class="bi bi-info-circle text-warning"></i> Revisa la información antes de guardar.
+                            </div>
+                            <button type="submit"
+                                class="btn btn-primary w-100 rounded-pill py-2.5 fw-semibold shadow-sm transition-all">
+                                <i class="bi bi-check-circle me-1"></i> Guardar consulta
+                            </button>
                         </div>
 
                     </div>
-
                 </div>
-
             </div>
 
         </form>
@@ -344,5 +407,6 @@
 
     <script src="{{ asset('js/consulta.js') }}"></script>
     @include('consultas.partials.modal-agregar-procedimiento')
+    @include('consultas.partials.modal-create-tratamiento')
 
 @endsection
