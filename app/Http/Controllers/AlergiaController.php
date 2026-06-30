@@ -12,19 +12,35 @@ class AlergiaController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [6, 10, 25, 50, 100])) {
+            $porPagina = 6;
+        }
+
         $alergias = Alergia::query()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%");
             })
             ->orderBy('idAlergia', 'asc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('alergias.partials.tabla', compact('alergias'))->render();
+            return view(
+                'alergias.partials.tabla',
+                compact('alergias', 'porPagina')
+            )->render();
         }
 
-        return view('alergias.index', compact('alergias', 'buscar'));
+        return view(
+            'alergias.index',
+            compact(
+                'alergias',
+                'buscar',
+                'porPagina'
+            )
+        );
     }
 
     public function create()
