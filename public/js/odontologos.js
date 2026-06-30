@@ -3,8 +3,11 @@ document
     .getElementById("buscarOdontologo")
     .addEventListener("keyup", async function () {
         const texto = this.value;
+        const porPagina = document.getElementById("porPagina")?.value ?? 6;
 
-        const response = await fetch(`/odontologos?buscar=${texto}`, {
+        const url = `/odontologos?buscar=${encodeURIComponent(texto)}&porPagina=${porPagina}`;
+
+        const response = await fetch(url, {
             headers: {
                 "X-Requested-With": "XMLHttpRequest",
             },
@@ -13,9 +16,11 @@ document
         const html = await response.text();
 
         document.getElementById("contenedorTablaOdontologos").innerHTML = html;
+
+        window.history.pushState({}, "", url);
     });
 
-// Paginacion con ajax
+// Paginación con ajax
 document.addEventListener("click", async function (e) {
     if (e.target.closest(".pagination a")) {
         e.preventDefault();
@@ -31,7 +36,32 @@ document.addEventListener("click", async function (e) {
         const html = await response.text();
 
         document.getElementById("contenedorTablaOdontologos").innerHTML = html;
+
+        window.history.pushState({}, "", url);
     }
+});
+
+// Cantidad de filas con ajax
+document.addEventListener("change", async function (e) {
+    if (e.target.id !== "porPagina") return;
+
+    const form = e.target.form;
+
+    const params = new URLSearchParams(new FormData(form));
+
+    const url = `${form.action}?${params.toString()}`;
+
+    const response = await fetch(url, {
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    });
+
+    const html = await response.text();
+
+    document.getElementById("contenedorTablaOdontologos").innerHTML = html;
+
+    window.history.pushState({}, "", url);
 });
 
 // Modal desactivar odontólogo

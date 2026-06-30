@@ -16,6 +16,12 @@ class OdontologoController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $porPagina = (int) $request->input('porPagina', 10);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
         $odontologos = Odontologo::query()
             ->withTrashed()
             ->with(['persona', 'especialidades'])
@@ -28,14 +34,14 @@ class OdontologoController extends Controller
                     ->orWhere('exequatur', 'like', "%{$buscar}%");
             })
             ->orderBy('idOdontologo', 'asc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('odontologos.partials.tabla', compact('odontologos'))->render();
+            return view('odontologos.partials.tabla', compact('odontologos', 'porPagina'))->render();
         }
 
-        return view('odontologos.index', compact('odontologos', 'buscar'));
+        return view('odontologos.index', compact('odontologos', 'buscar', 'porPagina'));
     }
 
     public function create()
