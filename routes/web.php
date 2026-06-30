@@ -19,6 +19,8 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\EspecialidadController;
 use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\DashboardController;
+use App\Services\WhatsAppService;
+use App\Http\Controllers\WhatsAppWebhookController;
 
 // Rutas para invitados
 Route::middleware('guest')->group(function () {
@@ -140,4 +142,8 @@ Route::middleware('auth')->group(function () {
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
 
+
+    // WhatsApp
+    Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
+    Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'receive']);
 });
