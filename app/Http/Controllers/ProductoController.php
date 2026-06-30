@@ -14,20 +14,26 @@ class ProductoController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
         $productos = Producto::query()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%")
-                      ->orWhere('descripcion', 'like', "%{$buscar}%");
+                    ->orWhere('descripcion', 'like', "%{$buscar}%");
             })
             ->orderBy('idProducto', 'asc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('productos.partials.tabla', compact('productos'))->render();
+            return view('productos.partials.tabla', compact('productos', 'porPagina'))->render();
         }
 
-        return view('productos.index', compact('productos', 'buscar'));
+        return view('productos.index', compact('productos', 'buscar', 'porPagina'));
     }
 
     /**
@@ -39,31 +45,33 @@ class ProductoController extends Controller
     }
 
     /**
- * Store a newly created resource in storage.
- */
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:100|unique:productos,nombre',
-            'descripcion' => 'nullable|string|max:255',
-            'stockActual' => 'required|integer|min:0',
-            'stockMinimo' => 'required|integer|min:0',
-            'unidadMedida' => 'required|string|max:50'
-        ],
-        [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.unique' => 'Este producto ya existe.',
-            
-            'stockActual.required' => 'El stock inicial es obligatorio.',
-            'stockActual.integer' => 'El stock inicial debe ser un número entero.',
-            'stockActual.min' => 'El stock inicial no puede ser negativo.',
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:100|unique:productos,nombre',
+                'descripcion' => 'nullable|string|max:255',
+                'stockActual' => 'required|integer|min:0',
+                'stockMinimo' => 'required|integer|min:0',
+                'unidadMedida' => 'required|string|max:50'
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.unique' => 'Este producto ya existe.',
 
-            'stockMinimo.required' => 'El stock mínimo es obligatorio.',
-            'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
-            'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
-            
-            'unidadMedida.required' => 'Debes seleccionar una unidad de medida.',
-        ]);
+                'stockActual.required' => 'El stock inicial es obligatorio.',
+                'stockActual.integer' => 'El stock inicial debe ser un número entero.',
+                'stockActual.min' => 'El stock inicial no puede ser negativo.',
+
+                'stockMinimo.required' => 'El stock mínimo es obligatorio.',
+                'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
+                'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
+
+                'unidadMedida.required' => 'Debes seleccionar una unidad de medida.',
+            ]
+        );
 
         Producto::create($request->all());
 
@@ -95,25 +103,27 @@ class ProductoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:100|unique:productos,nombre,' . $id . ',idProducto',
-            'descripcion' => 'nullable|string|max:255',
-            'stockMinimo' => 'required|integer|min:0',
-            'unidadMedida' => 'required|string|max:50'
+        $request->validate(
+            [
+                'nombre' => 'required|string|max:100|unique:productos,nombre,' . $id . ',idProducto',
+                'descripcion' => 'nullable|string|max:255',
+                'stockMinimo' => 'required|integer|min:0',
+                'unidadMedida' => 'required|string|max:50'
 
-        ],
-        [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.unique' => 'Este producto ya existe.',
+            ],
+            [
+                'nombre.required' => 'El nombre es obligatorio.',
+                'nombre.unique' => 'Este producto ya existe.',
 
-            'stockMinimo.required' => 'El stock mínimo es obligatorio.',
-            'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
-            'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
-        ]);
+                'stockMinimo.required' => 'El stock mínimo es obligatorio.',
+                'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
+                'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
+            ]
+        );
 
         $producto = Producto::findOrFail($id);
         $producto->update($request->all());
-        
+
         return redirect()
             ->route('productos.index')
             ->with('success', 'Producto actualizado correctamente.');
@@ -122,25 +132,24 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-public function destroy(string $id)
-{
-    $producto = Producto::findOrFail($id);
+    public function destroy(string $id)
+    {
+        $producto = Producto::findOrFail($id);
 
-    try {
-        $producto->delete();
+        try {
+            $producto->delete();
 
-        return redirect()
-            ->route('productos.index')
-            ->with('success', 'Producto eliminado correctamente.');
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'a foreign key constraint fails')) {
             return redirect()
                 ->route('productos.index')
-                ->with('error', "No se puede eliminar el producto '{$producto->nombre}' porque está siendo utilizado en compras, facturación u otros registros del sistema.");
-        }
+                ->with('success', 'Producto eliminado correctamente.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'a foreign key constraint fails')) {
+                return redirect()
+                    ->route('productos.index')
+                    ->with('error', "No se puede eliminar el producto '{$producto->nombre}' porque está siendo utilizado en compras, facturación u otros registros del sistema.");
+            }
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 }

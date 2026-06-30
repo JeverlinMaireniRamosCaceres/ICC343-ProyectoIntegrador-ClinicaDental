@@ -87,6 +87,26 @@
         de {{ $cajas->total() }} resultados
     </span>
 
-    {{ $cajas->links() }}
+    <div class="d-flex align-items-center">
+        <small class="text-muted" style="margin-right: 5px;">Filas</small>
+        <form method="GET" action="{{ route('caja-chica.index') }}" class="m-0 me-4">
+
+            <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
+            <select name="porPagina" id="porPagina" class="form-select form-select-sm"
+                style="width: 65px; height: 33px; min-height: 33px; padding-right: 1.5rem;">
+                <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ $porPagina == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ $porPagina == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ $porPagina == 100 ? 'selected' : '' }}>100</option>
+            </select>
+
+        </form>
+
+        <div class="pagination-wrapper pt-3">
+            {{ $cajas->links() }}
+        </div>
+
+    </div>
 
 </div>

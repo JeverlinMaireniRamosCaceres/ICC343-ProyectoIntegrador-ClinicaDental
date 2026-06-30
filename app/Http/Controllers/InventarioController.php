@@ -14,9 +14,14 @@ class InventarioController extends Controller
 {
     public function index(Request $request)
     {
-
         $buscar = $request->buscar;
         $filtro = $request->filtro;
+
+        $porPaginaProductos = (int) $request->input('porPagina', 5);
+
+        if (!in_array($porPaginaProductos, [10, 25, 50, 100])) {
+            $porPaginaProductos = 10;
+        }
 
         $productos = Producto::with('detallesCompra')
 
@@ -37,10 +42,10 @@ class InventarioController extends Controller
                 $query->where('stockActual', '<=', 0);
             })
 
-            ->paginate(5)
+            ->paginate($porPaginaProductos)
             ->withQueryString();
 
-        // metricas para las tarjetas
+        // métricas para las tarjetas
         $totalProductos = Producto::count();
 
         $stockBajo = Producto::where('stockActual', '>', 0)
@@ -75,8 +80,6 @@ class InventarioController extends Controller
             + $alertasStockBajo->count()
             + $alertasVencimiento->count();
 
-        // movimientos
-
         // entradas
         $entradas = DetalleCompra::with('producto')
             ->orderBy('created_at', 'desc')
@@ -101,7 +104,7 @@ class InventarioController extends Controller
                 'motivo' => 'Procedimiento #' . $p->idProcedimiento . ': ' . ($p->procedimiento->nombre ?? '—'),
             ]);
 
-        // combinar, ordenar y paginar movimientos
+        // ajustes
         $ajustes = Ajuste::with('producto')
             ->orderBy('created_at', 'desc')
             ->get()
@@ -118,13 +121,18 @@ class InventarioController extends Controller
             ->values();
 
         $paginaActual = $request->get('pagMov', 1);
-        $porPagina = 10;
+        $porPaginaMovimientos = 10;
+
         $movimientosPag = new \Illuminate\Pagination\LengthAwarePaginator(
-            $movimientos->forPage($paginaActual, $porPagina),
+            $movimientos->forPage($paginaActual, $porPaginaMovimientos),
             $movimientos->count(),
-            $porPagina,
+            $porPaginaMovimientos,
             $paginaActual,
-            ['pageName' => 'pagMov', 'path' => request()->url(), 'query' => request()->query(),]
+            [
+                'pageName' => 'pagMov',
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
         );
 
         if ($request->ajax()) {
@@ -139,11 +147,12 @@ class InventarioController extends Controller
 
             return view(
                 'inventario.partials.tabla',
-                compact('productos')
+                compact('productos', 'porPaginaProductos')
             )->render();
         }
 
-        $todosProductos = Producto::orderBy('nombre')->get(['idProducto', 'nombre', 'stockActual', 'unidadMedida']);
+        $todosProductos = Producto::orderBy('nombre')
+            ->get(['idProducto', 'nombre', 'stockActual', 'unidadMedida']);
 
         return view('inventario.index', compact(
             'productos',
@@ -156,10 +165,9 @@ class InventarioController extends Controller
             'alertasVencimiento',
             'totalAlertas',
             'movimientosPag',
-            'todosProductos'
+            'todosProductos',
+            'porPaginaProductos'
         ));
-
-
     }
 
     public function ajuste(Request $request)
@@ -259,7 +267,7 @@ class InventarioController extends Controller
                 $producto->estadoStock = 'Normal';
             }
 
-            // proximo vencimiento de los lotes 
+            // proximo vencimiento de los lotes
             $proximoLote = $producto->detallesCompra
                 ->filter(function ($lote) {
                     return $lote->fechaVencimiento &&
@@ -296,11 +304,9 @@ class InventarioController extends Controller
                 if ($dias < 0) {
 
                     $lote->estadoLote = 'Vencido';
-
                 } elseif ($dias <= 30) {
 
                     $lote->estadoLote = 'Por vencer';
-
                 } else {
 
                     $lote->estadoLote = 'Vigente';
@@ -338,6 +344,4 @@ class InventarioController extends Controller
 
         return $pdf->stream($nombreArchivo);
     }
-
-
 }

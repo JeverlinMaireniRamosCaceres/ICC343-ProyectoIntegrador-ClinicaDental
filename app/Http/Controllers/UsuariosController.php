@@ -15,20 +15,30 @@ class UsuariosController extends Controller
     {
         $buscar = $request->input('buscar');
 
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
         $usuarios = Usuario::query()
             ->when($buscar, function ($query, $buscar) {
                 $query->where('username', 'like', "%{$buscar}%");
             })
             ->orderBy('idUsuario', 'asc')
             ->withTrashed()
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('usuarios.partials.tabla', compact('usuarios'))->render();
+            return view('usuarios.partials.tabla', compact('usuarios', 'porPagina'))->render();
         }
 
-        return view('usuarios.index', compact('usuarios', 'buscar'));
+        return view('usuarios.index', compact(
+            'usuarios',
+            'buscar',
+            'porPagina'
+        ));
     }
 
     public function create()
@@ -95,7 +105,7 @@ class UsuariosController extends Controller
         return view('usuarios.show', compact('id'));
     }
 
-public function edit($id)
+    public function edit($id)
     {
         $usuario = Usuario::withTrashed()->findOrFail($id);
 
@@ -166,5 +176,4 @@ public function edit($id)
             ->route('usuarios.index')
             ->with('success', 'Usuario activado correctamente.');
     }
-
 }

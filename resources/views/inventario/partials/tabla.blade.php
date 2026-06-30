@@ -57,7 +57,8 @@
                                 {{ $producto->stockActual }}
                             </span>
 
-                            <span style="
+                            <span
+                                style="
                                                     width:8px;
                                                     height:8px;
                                                     border-radius:50%;
@@ -80,37 +81,30 @@
 
                     <td class="px-4">
 
-                        @if($proximoVencimiento)
-
+                        @if ($proximoVencimiento)
                             @php
 
                                 $diasRestantes = now()->diffInDays(
                                     \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento),
-                                    false
+                                    false,
                                 );
                                 $vencePronto = $diasRestantes >= 0 && $diasRestantes <= 30;
 
                             @endphp
 
-                            @if($vencePronto)
-
-                                <span style="
+                            @if ($vencePronto)
+                                <span
+                                    style="
                                                                     border-bottom:2px dashed #e03131;
                                                                     padding-bottom:1px;
                                                                 ">
                                     {{ \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)->format('d/m/Y') }}
                                 </span>
-
                             @else
-
                                 {{ \Carbon\Carbon::parse($proximoVencimiento->fechaVencimiento)->format('d/m/Y') }}
-
                             @endif
-
                         @else
-
                             <span class="text-muted">N/A</span>
-
                         @endif
 
                     </td>
@@ -129,31 +123,26 @@
 
                     <td class="px-4">
 
-                        @if($estado == 'normal')
-
+                        @if ($estado == 'normal')
                             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
                                 Normal
                             </span>
-
                         @elseif($estado == 'bajo')
-
                             <span class="badge rounded-pill px-3 py-2" style="background:#fff0e6;color:#c2510a;">
                                 Stock bajo
                             </span>
-
                         @else
-
                             <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
                                 Sin stock
                             </span>
-
                         @endif
 
                     </td>
 
                     <td class="px-4 text-center">
 
-                        <a href="{{ route('inventario.detalle', $producto->idProducto) }}" class="btn btn-sm rounded-circle"
+                        <a href="{{ route('inventario.detalle', $producto->idProducto) }}"
+                            class="btn btn-sm rounded-circle"
                             style="width:34px;height:34px;background:#e8f4fd;color:#0ea5e9;border:none;">
                             <i class="bi bi-eye"></i>
                         </a>
@@ -188,7 +177,27 @@
             resultados
         </small>
 
-        {{ $productos->links() }}
+        <div class="d-flex align-items-center">
+            <small class="text-muted" style="margin-right: 5px;">Filas</small>
+            <form method="GET" action="{{ route('productos.index') }}" class="m-0 me-4">
+
+                <input type="hidden" name="buscar" value="{{ request('buscar') }}">
+
+                <select name="porPagina" id="porPagina" class="form-select form-select-sm"
+                    style="width: 65px; height: 33px; min-height: 33px; padding-right: 1.5rem;">
+                    <option value="10" {{ $porPaginaProductos == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $porPaginaProductos == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ $porPaginaProductos == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ $porPaginaProductos == 100 ? 'selected' : '' }}>100</option>
+                </select>
+
+            </form>
+
+            <div class="pagination-wrapper pt-3">
+                {{ $productos->links() }}
+            </div>
+
+        </div>
 
     </div>
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Proveedor;
 use Illuminate\Validation\Rule;
@@ -12,7 +13,13 @@ class ProveedorController extends Controller
      */
     public function index(Request $request)
     {
-        $buscar = $request->buscar;
+        $buscar = $request->input('buscar');
+
+        $porPagina = (int) $request->input('porPagina', 6);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
 
         $proveedores = Proveedor::withTrashed()
             ->when($buscar, function ($query, $buscar) {
@@ -21,14 +28,18 @@ class ProveedorController extends Controller
                     ->orWhere('telefono', 'like', "%{$buscar}%");
             })
             ->orderBy('idProveedor', 'asc')
-            ->paginate(6)
+            ->paginate($porPagina)
             ->withQueryString();
 
         if ($request->ajax()) {
-            return view('proveedores.partials.tabla', compact('proveedores'))->render();
+            return view('proveedores.partials.tabla', compact('proveedores', 'porPagina'))->render();
         }
 
-        return view('proveedores.index', compact('proveedores', 'buscar'));
+        return view('proveedores.index', compact(
+            'proveedores',
+            'buscar',
+            'porPagina'
+        ));
     }
 
     /**
@@ -79,7 +90,6 @@ class ProveedorController extends Controller
         return redirect()
             ->route('proveedores.index')
             ->with('success', 'Proveedor registrado correctamente.');
-
     }
 
     /**
@@ -167,7 +177,5 @@ class ProveedorController extends Controller
         return redirect()
             ->route('proveedores.index')
             ->with('success', 'Proveedor activado correctamente.');
-
     }
-
 }
