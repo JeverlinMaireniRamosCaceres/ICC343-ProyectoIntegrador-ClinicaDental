@@ -37,6 +37,8 @@ COPY . .
 COPY --from=composer /app/vendor ./vendor
 COPY --from=node /app/public/build ./public/build
 
+RUN cp -r /var/www/html/public /var/www/html/public-source
+
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
