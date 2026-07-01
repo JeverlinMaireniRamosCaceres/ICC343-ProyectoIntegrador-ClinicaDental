@@ -21,6 +21,9 @@ class Cita extends Model
         'telefono',
         'correo',
         'estado',
+        'recordatorioWhatsappEnviado',
+        'recordatorioWhatsappEnviadoAt',
+        'whatsappMessageId',
     ];
 
     public function odontologo()
@@ -32,5 +35,4 @@ class Cita extends Model
     {
         return $this->belongsTo(Usuario::class, 'idUsuarioRegistro', 'idUsuario');
     }
-
 }
