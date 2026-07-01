@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\DetalleCompra;
 use App\Models\ProductoProcedimiento;
 use App\Models\Ajuste;
+use App\Models\MovimientoInventario;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class InventarioController extends Controller
@@ -81,27 +82,31 @@ class InventarioController extends Controller
             + $alertasVencimiento->count();
 
         // entradas
-        $entradas = DetalleCompra::with('producto')
+        $entradas = MovimientoInventario::with('producto')
+            ->where('tipo', 'ENTRADA')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(fn($d) => [
-                'fecha' => $d->created_at,
-                'producto' => $d->producto->nombre ?? '—',
+            ->map(fn($m) => [
+                'fecha' => $m->created_at,
+                'producto' => $m->producto->nombre ?? '—',
                 'tipo' => 'ENTRADA',
-                'cantidad' => $d->cantidad,
-                'motivo' => 'Compra #' . str_pad($d->idCompras, 4, '0', STR_PAD_LEFT),
+                'cantidad' => $m->cantidad,
+                'motivo' => $m->motivo,
             ]);
 
         // salidas
-        $salidas = ProductoProcedimiento::with(['producto', 'procedimiento'])
+        $salidas = MovimientoInventario::with(['producto', 'procedimiento'])
+            ->where('tipo', 'SALIDA')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(fn($p) => [
-                'fecha' => $p->created_at,
-                'producto' => $p->producto->nombre ?? '—',
+            ->map(fn($m) => [
+                'fecha' => $m->created_at,
+                'producto' => $m->producto->nombre ?? '—',
                 'tipo' => 'SALIDA',
-                'cantidad' => $p->cantidad,
-                'motivo' => 'Procedimiento #' . $p->idProcedimiento . ': ' . ($p->procedimiento->nombre ?? '—'),
+                'cantidad' => $m->cantidad,
+                'motivo' => $m->procedimiento
+                    ? 'Procedimiento: ' . $m->procedimiento->nombre
+                    : $m->motivo,
             ]);
 
         // ajustes
