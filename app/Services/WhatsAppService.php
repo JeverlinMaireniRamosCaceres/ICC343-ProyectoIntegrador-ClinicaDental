@@ -10,12 +10,14 @@ class WhatsAppService
     protected string $token;
     protected string $phoneNumberId;
     protected string $version;
+    protected string $language;
 
     public function __construct()
     {
         $this->token = config('services.whatsapp.token');
         $this->phoneNumberId = config('services.whatsapp.phone_number_id');
         $this->version = config('services.whatsapp.version');
+        $this->language = config('services.whatsapp.language');
     }
 
     /**
@@ -29,13 +31,13 @@ class WhatsAppService
         return Http::withToken($this->token)
             ->acceptJson()
             ->post($url, [
-                "messaging_product" => "whatsapp",
-                "to" => $this->normalizePhone($to),
-                "type" => "text",
-                "text" => [
-                    "preview_url" => false,
-                    "body" => $message
-                ]
+                'messaging_product' => 'whatsapp',
+                'to' => $this->normalizePhone($to),
+                'type' => 'text',
+                'text' => [
+                    'preview_url' => false,
+                    'body' => $message,
+                ],
             ]);
     }
 
@@ -47,29 +49,29 @@ class WhatsAppService
         $url = "https://graph.facebook.com/{$this->version}/{$this->phoneNumberId}/messages";
 
         $payload = [
-            "messaging_product" => "whatsapp",
-            "to" => $this->normalizePhone($to),
-            "type" => "template",
-            "template" => [
-                "name" => $template,
-                "language" => [
-                    "code" => "es"
-                ]
-            ]
+            'messaging_product' => 'whatsapp',
+            'to' => $this->normalizePhone($to),
+            'type' => 'template',
+            'template' => [
+                'name' => $template,
+                'language' => [
+                    'code' => $this->language,
+                ],
+            ],
         ];
 
         if (!empty($parameters)) {
-
-            $payload["template"]["components"] = [
+            $payload['template']['components'] = [
                 [
-                    "type" => "body",
-                    "parameters" => collect($parameters)->map(function ($value) {
-                        return [
-                            "type" => "text",
-                            "text" => (string) $value
-                        ];
-                    })->toArray()
-                ]
+                    'type' => 'body',
+                    'parameters' => collect($parameters)
+                        ->map(fn($value) => [
+                            'type' => 'text',
+                            'text' => (string) $value,
+                        ])
+                        ->values()
+                        ->toArray(),
+                ],
             ];
         }
 
@@ -92,21 +94,34 @@ class WhatsAppService
             );
         }
 
-        return $this->sendTemplate(
+        $response = $this->sendTemplate(
             $cita->telefono,
-            'recordatorio_cita',
+            config('services.whatsapp.templates.recordatorio'),
             [
                 $cita->nombrePersona,
-                date('d/m/Y', strtotime($cita->fecha)),
-                date('g:i A', strtotime($cita->hora)),
+                \Carbon\Carbon::parse($cita->fecha)->format('d/m/Y'),
+                \Carbon\Carbon::parse($cita->hora)->format('g:i A'),
                 $nombreOdontologo,
             ]
         );
+
+        if ($response->failed()) {
+            logger()->error('Error enviando recordatorio de WhatsApp.', [
+                'cita_id' => $cita->id,
+                'telefono' => $cita->telefono,
+                'response' => $response->json(),
+            ]);
+        }
+
+        return $response;
     }
 
+    /**
+     * Normaliza el número al formato E.164 sin el signo +.
+     */
     private function normalizePhone(string $phone): string
     {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
+        $phone = preg_replace('/\D/', '', $phone);
 
         if (strlen($phone) === 10) {
             $phone = '1' . $phone;

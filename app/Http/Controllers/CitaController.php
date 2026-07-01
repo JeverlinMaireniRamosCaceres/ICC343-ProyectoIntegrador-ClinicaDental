@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cita;
 use App\Models\Odontologo;
+use App\Services\WhatsAppService;
 
 class CitaController extends Controller
 {

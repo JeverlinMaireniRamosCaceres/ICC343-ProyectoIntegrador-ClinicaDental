@@ -7,7 +7,7 @@ use App\Services\WhatsAppService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class SendAppointmentReminders extends Command
+class AppointmentReminders extends Command
 {
     /**
      * The name and signature of the console command.
@@ -30,20 +30,20 @@ class SendAppointmentReminders extends Command
         $citas = Cita::with('odontologo.persona')
             ->where('estado', 'Pendiente')
             ->where('recordatorioWhatsappEnviado', false)
-            ->where(function ($query) use ($desde, $hasta) {
-                $query->whereRaw(
-                    "TIMESTAMP(fecha, hora) >= ?",
-                    [$desde->format('Y-m-d H:i:s')]
-                )->whereRaw(
-                    "TIMESTAMP(fecha, hora) < ?",
-                    [$hasta->format('Y-m-d H:i:s')]
-                );
-            })
+            ->whereNotNull('telefono')
+            ->whereRaw(
+                'TIMESTAMP(fecha, hora) >= ?',
+                [$desde->format('Y-m-d H:i:s')]
+            )
+            ->whereRaw(
+                'TIMESTAMP(fecha, hora) < ?',
+                [$hasta->format('Y-m-d H:i:s')]
+            )
             ->get();
 
         if ($citas->isEmpty()) {
             $this->info('No hay citas para recordar.');
-            return Command::SUCCESS;
+            return self::SUCCESS;
         }
 
         foreach ($citas as $cita) {
@@ -61,16 +61,15 @@ class SendAppointmentReminders extends Command
                 ]);
 
                 $this->info("✓ Recordatorio enviado a {$cita->nombrePersona}");
+
             } else {
 
                 $error = $response->json()['error']['message'] ?? 'Error desconocido';
 
-                $this->error(
-                    "✗ {$cita->nombrePersona}: {$error}"
-                );
+                $this->error("✗ {$cita->nombrePersona}: {$error}");
             }
         }
 
-        return Command::SUCCESS;
+        return self::SUCCESS;
     }
 }
