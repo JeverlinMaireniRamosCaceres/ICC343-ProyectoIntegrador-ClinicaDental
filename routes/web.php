@@ -22,7 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
 
-// Webhook de WhatsApp (PÚBLICO)
+// Webhook de WhatsApp 
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'receive']);
 
