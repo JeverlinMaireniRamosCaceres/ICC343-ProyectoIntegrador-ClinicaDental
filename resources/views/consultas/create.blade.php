@@ -387,8 +387,8 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 d-flex flex-column justify-content-center text-lg-end">
-                            <div class="text-muted small mb-2 d-flex align-items-center justify-content-lg-end gap-1">
+                        <div class="col-lg-4 d-flex flex-column justify-content-center">
+                            <div class="text-muted small mb-2 d-flex align-items-center justify-content-center gap-1">
                                 <i class="bi bi-info-circle text-warning"></i> Revisa la información antes de guardar.
                             </div>
                             <button type="submit"
