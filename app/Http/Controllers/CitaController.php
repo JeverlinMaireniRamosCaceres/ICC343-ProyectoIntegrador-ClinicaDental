@@ -163,8 +163,10 @@ class CitaController extends Controller
     public function destroy($id)
     {
         $cita = Cita::findOrFail($id);
-        $cita->update(['estado' => 'Cancelada']);
-        $cita->delete();
+
+        $cita->update([
+            'estado' => 'Cancelada'
+        ]);
 
         return redirect()->route('citas.index')
             ->with('success', 'Cita cancelada correctamente.');
