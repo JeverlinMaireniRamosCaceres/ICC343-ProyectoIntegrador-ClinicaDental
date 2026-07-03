@@ -22,9 +22,9 @@
             text-align: center;
             font-size: 13px;
             font-weight: normal;
-            color: #666;
             margin-top: 4px;
             margin-bottom: 25px;
+            color: #666;
         }
 
         .fecha {
@@ -51,7 +51,7 @@
         }
 
         .producto h3 {
-            margin: 0 0 12px;
+            margin: 0 0 12px 0;
             font-size: 14px;
             color: #222;
         }
@@ -73,9 +73,10 @@
             width: 25%;
         }
 
-        .titulo-lotes {
-            font-weight: bold;
+        .proveedores-titulo {
+            margin-top: 10px;
             margin-bottom: 8px;
+            font-weight: bold;
         }
 
         table {
@@ -95,9 +96,25 @@
             padding: 7px;
         }
 
-        .sin-lotes {
+        .sin-proveedores {
             font-style: italic;
             color: #666;
+            margin-top: 8px;
+        }
+
+        .firma {
+            margin-top: 60px;
+        }
+
+        .linea {
+            width: 250px;
+            border-top: 1px solid #000;
+            margin-top: 40px;
+        }
+
+        .texto-firma {
+            margin-top: 5px;
+            font-size: 10px;
         }
 
         .info {
@@ -120,7 +137,7 @@
 <body>
 
     <h1>Clínica Dental</h1>
-    <h2>Reporte de Inventario</h2>
+    <h2>Reporte de orden de compra</h2>
 
     <div class="fecha">
         <strong>Generado:</strong> {{ $fechaReporte }}
@@ -128,20 +145,11 @@
 
     <div class="resumen">
 
-        <p>
-            <strong>Total de productos:</strong>
-            {{ $totalProductos }}
-        </p>
+        <p><strong>Total de productos a reabastecer:</strong> {{ $totalProductos }}</p>
 
-        <p>
-            <strong>Productos con stock bajo:</strong>
-            {{ $stockBajo }}
-        </p>
+        <p><strong>Productos con stock bajo:</strong> {{ $stockBajo }}</p>
 
-        <p>
-            <strong>Productos sin stock:</strong>
-            {{ $sinStock }}
-        </p>
+        <p><strong>Productos sin stock:</strong> {{ $sinStock }}</p>
 
     </div>
 
@@ -154,116 +162,54 @@
             <table class="info">
 
                 <tr>
-
                     <td class="titulo">Estado</td>
                     <td>{{ $producto->estadoStock }}</td>
 
                     <td class="titulo">Unidad</td>
                     <td>{{ $producto->unidadMedida }}</td>
-
                 </tr>
 
                 <tr>
-
                     <td class="titulo">Stock actual</td>
                     <td>{{ $producto->stockActual }}</td>
 
                     <td class="titulo">Stock mínimo</td>
                     <td>{{ $producto->stockMinimo }}</td>
-
                 </tr>
 
                 <tr>
-
-                    <td class="titulo">Próximo vencimiento</td>
-
+                    <td class="titulo">Cantidad a comprar</td>
                     <td colspan="3">
-                        {{ $producto->proximoVencimiento ?? 'No disponible' }}
+                        <strong>{{ $producto->cantidadComprar }}</strong>
                     </td>
-
                 </tr>
 
             </table>
 
-            <div class="titulo-lotes">
-                Historial de lotes
+            <div class="proveedores-titulo">
+                Historial de proveedores
             </div>
 
-            @if($producto->detallesCompra->count())
+            @if($producto->proveedores->count())
 
                 <table>
 
                     <thead>
-
                         <tr>
-
-                            <th style="width:14%">Compra</th>
-
-                            <th style="width:12%">Cantidad</th>
-
-                            <th style="width:18%">Costo total</th>
-
-                            <th style="width:20%">Vencimiento</th>
-
-                            <th style="width:16%">Días restantes</th>
-
-                            <th style="width:20%">Estado</th>
-
+                            <th style="width:70%">Proveedor</th>
+                            <th>Última compra</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
 
-                        @foreach($producto->detallesCompra as $lote)
+                        @foreach($producto->proveedores as $proveedor)
 
                             <tr>
 
-                                <td>
-                                    #{{ str_pad($lote->idCompras, 4, '0', STR_PAD_LEFT) }}
-                                </td>
+                                <td>{{ $proveedor->nombre }}</td>
 
-                                <td>
-                                    {{ $lote->cantidad }}
-                                </td>
-
-                                <td>
-                                    RD$ {{ number_format($lote->costoTotal, 2) }}
-                                </td>
-
-                                <td>
-                                    {{ $lote->fechaVencimientoFormateada }}
-                                </td>
-
-                                <td>
-
-                                    @if(is_null($lote->diasRestantes))
-
-                                        N/A
-
-                                    @elseif($lote->diasRestantes < 0)
-
-                                        Hace {{ abs($lote->diasRestantes) }} días
-
-                                    @elseif($lote->diasRestantes == 0)
-
-                                        Hoy
-
-                                    @elseif($lote->diasRestantes == 1)
-
-                                        Mañana
-
-                                    @else
-
-                                        {{ $lote->diasRestantes }} días
-
-                                    @endif
-
-                                </td>
-
-                                <td>
-                                    {{ $lote->estadoLote }}
-                                </td>
+                                <td>{{ $proveedor->fechaUltimaCompra }}</td>
 
                             </tr>
 
@@ -275,8 +221,8 @@
 
             @else
 
-                <p class="sin-lotes">
-                    No existen lotes registrados para este producto.
+                <p class="sin-proveedores">
+                    No existen proveedores registrados para este producto.
                 </p>
 
             @endif
@@ -284,6 +230,7 @@
         </div>
 
     @endforeach
+
 
 </body>
 
