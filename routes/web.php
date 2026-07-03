@@ -21,6 +21,7 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
+use Illuminate\Support\Facades\Mail;
 
 // Webhook de WhatsApp 
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
@@ -153,4 +154,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('tratamientos', TratamientoController::class);
 
 
+});
+
+// Ruta temporal para probar el envío de correos
+Route::get('/probar-correo', function () {
+
+    Mail::raw('Si recibes este correo, Laravel está enviando correos correctamente.', function ($message) {
+        $message->to('jeverlinpucmm@gmail.com')
+                ->subject('Prueba de correo Laravel');
+    });
+
+    return 'Correo enviado.';
 });
