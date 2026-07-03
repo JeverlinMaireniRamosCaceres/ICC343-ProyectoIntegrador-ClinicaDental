@@ -24,10 +24,18 @@
         <!-- header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-dark mb-0">Inventario</h2>
-            <a href="{{ route('inventario.reporte') }}" target="_blank" class="btn btn-sm rounded-pill px-4"
-                style="background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">
-                <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
-            </a>
+
+            <div class="d-flex gap-2">
+                <a href="{{ route('inventario.reporteOrdenCompra') }}" target="_blank" class="btn btn-sm rounded-pill px-4"
+                    style="background:#f1f5f9; color:#0ea5e9; border:1px solid #0ea5e9;">
+                    <i class="bi bi-clipboard2-check me-1"></i> Reporte orden de compra
+                </a>
+
+                <a href="{{ route('inventario.reporte') }}" target="_blank" class="btn btn-sm rounded-pill px-4"
+                    style="background:#f1f5f9; color:#64748b; border:1px solid #e2e8f0;">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF
+                </a>
+            </div>
         </div>
 
         <!-- cards con info rapida -->

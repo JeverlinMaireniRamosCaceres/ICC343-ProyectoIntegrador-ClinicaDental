@@ -302,9 +302,12 @@ class InventarioController extends Controller
                 $lote->fechaVencimientoFormateada =
                     $fechaVencimiento->format('d/m/Y');
 
-                $dias = now()->diffInDays($fechaVencimiento, false);
 
-                $lote->diasRestantes = $dias;
+                $dias = now()
+                    ->startOfDay()
+                    ->diffInDays($fechaVencimiento->startOfDay(), false);
+
+                $lote->diasRestantes = (int) $dias;
 
                 if ($dias < 0) {
 
@@ -349,4 +352,88 @@ class InventarioController extends Controller
 
         return $pdf->stream($nombreArchivo);
     }
+
+    public function reporteOrdenCompra()
+    {
+        $productos = Producto::with([
+            'detallesCompra.compra.proveedor'
+        ])
+            ->whereColumn('stockActual', '<=', 'stockMinimo')
+            ->orderBy('nombre')
+            ->get();
+
+        foreach ($productos as $producto) {
+
+            // Estado del stock
+            $producto->estadoStock = $producto->stockActual <= 0
+                ? 'Sin stock'
+                : 'Stock bajo';
+
+            // Cantidad sugerida a comprar
+            $producto->cantidadComprar = max(
+                0,
+                $producto->stockMinimo - $producto->stockActual
+            );
+
+            // Proveedores a los que se ha comprado el producto
+            $producto->proveedores = $producto->detallesCompra
+
+                // Ignorar compras eliminadas o sin proveedor
+                ->filter(function ($detalle) {
+                    return $detalle->compra !== null
+                        && $detalle->compra->proveedor !== null;
+                })
+
+                // Agrupar por proveedor
+                ->groupBy(function ($detalle) {
+                    return $detalle->compra->proveedor->idProveedor;
+                })
+
+                // Obtener la última compra realizada a cada proveedor
+                ->map(function ($comprasProveedor) {
+
+                    $ultimaCompra = $comprasProveedor
+                        ->sortByDesc(function ($detalle) {
+                            return $detalle->compra->fecha;
+                        })
+                        ->first();
+
+                    return (object) [
+                        'nombre' => $ultimaCompra->compra->proveedor->nombre,
+                        'fechaUltimaCompra' => Carbon::parse(
+                            $ultimaCompra->compra->fecha
+                        )->format('d/m/Y'),
+                    ];
+                })
+
+                ->sortBy('nombre')
+                ->values();
+        }
+
+        $sinStock = $productos
+            ->where('stockActual', '<=', 0)
+            ->count();
+
+        $stockBajo = $productos
+            ->where('stockActual', '>', 0)
+            ->count();
+
+        $fechaReporte = now()->format('d/m/Y H:i');
+
+        $pdf = Pdf::loadView(
+            'inventario.reporteOrden',
+            [
+                'productos' => $productos,
+                'totalProductos' => $productos->count(),
+                'sinStock' => $sinStock,
+                'stockBajo' => $stockBajo,
+                'fechaReporte' => $fechaReporte,
+            ]
+        )->setPaper('a4', 'portrait');
+
+        $nombreArchivo = 'reporte-orden-compra-' . now()->format('d-m-Y') . '.pdf';
+
+        return $pdf->stream($nombreArchivo);
+    }
+
 }

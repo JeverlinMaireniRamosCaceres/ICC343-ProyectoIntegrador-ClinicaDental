@@ -132,6 +132,9 @@ Route::middleware('auth')->group(function () {
     Route::get('inventario/reporte', [InventarioController::class, 'reporte'])
         ->name('inventario.reporte');
 
+    Route::get('/inventario/reporte-orden-compra', [InventarioController::class, 'reporteOrdenCompra'])
+        ->name('inventario.reporteOrdenCompra');
+
     Route::post('/inventario/ajuste', [InventarioController::class, 'ajuste'])
         ->name('inventario.ajuste');
 
