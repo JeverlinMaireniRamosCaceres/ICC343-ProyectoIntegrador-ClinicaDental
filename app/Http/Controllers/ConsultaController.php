@@ -94,8 +94,8 @@ class ConsultaController extends Controller
             'idOdontologo' => 'required|exists:odontologos,idOdontologo',
             'fecha' => 'required|date',
             'estado' => 'required|string',
-            'motivo' => 'nullable|string',
-            'diagnostico' => 'nullable|string',
+            'motivo' => 'required|string',
+            'diagnostico' => 'required|string',
             'receta' => 'nullable|string',
         ]);
 
@@ -126,7 +126,7 @@ class ConsultaController extends Controller
                         'subtotal' => $subtotal,
                     ]);
 
-                    $this->descontarStock($idProc, $cantidad,$consulta->idConsulta);
+                    $this->descontarStock($idProc, $cantidad, $consulta->idConsulta);
                 }
             }
 
@@ -218,6 +218,33 @@ class ConsultaController extends Controller
             ->get();
 
         return response()->json($tratamientos);
+    }
+
+    public function show($id)
+    {
+        $consulta = Consulta::with([
+            'paciente.persona',
+            'paciente.alergias',
+            'odontologo.persona',
+            'detalles.procedimiento',
+        ])->findOrFail($id);
+
+        $detallesTratamiento = DetalleTratamiento::with([
+            'procedimiento',
+            'tratamiento'
+        ])
+            ->where('idConsulta', $id)
+            ->get();
+
+        $subtotalTratamiento = $detallesTratamiento->sum(function ($detalle) {
+            return $detalle->cantidadProcedimiento * $detalle->procedimiento->precio;
+        });
+
+        return view('consultas.show', compact(
+            'consulta',
+            'detallesTratamiento',
+            'subtotalTratamiento'
+        ));
     }
 
 
