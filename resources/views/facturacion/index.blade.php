@@ -17,10 +17,12 @@
             <div>
                 <h2 class="fw-bold page-title mb-1 fs-3">Historial de facturas</h2>
             </div>
-            <a href="{{ route('facturacion.create') }}"
-                class="btn btn-medical-primary rounded-pill px-4 shadow-sm fw-medium d-flex align-items-center gap-2">
-                <i class="bi bi-plus-lg"></i>
-                <span>Nueva</span>
+            <a href="{{ route('facturacion.create', [
+                'return' => request()->fullUrl(),
+            ]) }}"
+                class="btn btn-medical-primary rounded-pill px-4 py-2 fw-medium shadow-sm">
+                <i class="bi bi-plus-lg me-2"></i>
+                Nueva factura
             </a>
         </div>
 

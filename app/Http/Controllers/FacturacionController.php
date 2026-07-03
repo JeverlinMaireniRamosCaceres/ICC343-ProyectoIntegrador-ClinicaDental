@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Factura;
+use App\Models\Consulta;
 
 class FacturacionController extends Controller
 {
@@ -65,9 +66,38 @@ class FacturacionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('facturacion.create');
+        $fecha = $request->input('fecha', now()->toDateString());
+
+        $consultas = Consulta::with([
+            'paciente.persona',
+            'odontologo.persona',
+        ])
+            ->doesntHave('factura')
+            ->whereDate('fecha', $fecha)
+            ->orderBy('fecha')
+            ->get();
+
+        $consulta = null;
+
+        if ($request->filled('consulta')) {
+
+            $consulta = Consulta::with([
+                'paciente.persona',
+                'odontologo.persona',
+                'detalles.procedimiento',
+            ])->findOrFail($request->consulta);
+        }
+
+        $return = $request->input('return', url()->previous());
+
+        return view('facturacion.create', compact(
+            'consulta',
+            'consultas',
+            'return',
+            'fecha'
+        ));
     }
 
     /**
@@ -108,5 +138,42 @@ class FacturacionController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function consultas(Request $request)
+    {
+        $fecha = $request->input('fecha', now()->toDateString());
+        $buscar = trim($request->input('buscar', ''));
+
+        $consultas = Consulta::with([
+            'paciente.persona',
+            'odontologo.persona',
+        ])
+            ->doesntHave('factura');
+
+        if ($buscar !== '') {
+
+            $consultas->whereHas('paciente.persona', function ($query) use ($buscar) {
+
+                $query->where(function ($q) use ($buscar) {
+
+                    $q->where('nombre', 'like', "%{$buscar}%")
+                        ->orWhere('apellido', 'like', "%{$buscar}%")
+                        ->orWhereRaw("CONCAT(nombre, ' ', apellido) LIKE ?", ["%{$buscar}%"]);
+                });
+            });
+        } else {
+
+            $consultas->whereDate('fecha', $fecha);
+        }
+
+        $consultas = $consultas
+            ->orderByDesc('fecha')
+            ->get();
+
+        return view('facturacion.partials.tabla-consultas', compact(
+            'consultas',
+            'fecha'
+        ));
     }
 }

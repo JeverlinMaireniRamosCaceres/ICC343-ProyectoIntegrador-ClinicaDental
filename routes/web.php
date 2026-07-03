@@ -22,7 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
 
-// Webhook de WhatsApp 
+// Webhook de WhatsApp
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'receive']);
 
@@ -108,6 +108,8 @@ Route::middleware('auth')->group(function () {
         ->name('caja-chica.cerrar');
 
     // Facturación
+    Route::get('/facturacion/consultas', [FacturacionController::class, 'consultas'])
+        ->name('facturacion.consultas');
     Route::resource('facturacion', FacturacionController::class);
 
     // Consultas
@@ -148,6 +150,4 @@ Route::middleware('auth')->group(function () {
 
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
-
-
 });
