@@ -10,7 +10,10 @@ use App\Models\Procedimiento;
 use App\Models\Tratamiento;
 use App\Models\DetalleConsulta;
 use App\Models\DetalleTratamiento;
+use App\Models\MovimientoInventario;
+use App\Models\ProductoProcedimiento;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ConsultaController extends Controller
 {
@@ -51,6 +54,39 @@ class ConsultaController extends Controller
 
     }
 
+    private function descontarStock(int $idProcedimiento, int $cantidadProcedimiento, int $idConsulta): void
+    {
+        $productosProcedimiento = ProductoProcedimiento::with('producto')
+            ->where('idProcedimiento', $idProcedimiento)
+            ->get();
+
+        foreach ($productosProcedimiento as $pp) {
+            $producto = $pp->producto;
+
+            if (!$producto) {
+                continue;
+            }
+
+            $cantidadADescontar = $pp->cantidad * $cantidadProcedimiento;
+
+            $producto->stockActual = max(
+                0,
+                $producto->stockActual - $cantidadADescontar
+            );
+
+            $producto->save();
+
+            MovimientoInventario::create([
+                'idProducto' => $producto->idProducto,
+                'tipo' => 'SALIDA',
+                'cantidad' => $cantidadADescontar,
+                'motivo' => 'Procedimiento',
+                'idConsulta' => $idConsulta,
+                'idProcedimiento' => $idProcedimiento,
+            ]);
+        }
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -58,63 +94,72 @@ class ConsultaController extends Controller
             'idOdontologo' => 'required|exists:odontologos,idOdontologo',
             'fecha' => 'required|date',
             'estado' => 'required|string',
-            'motivo' => 'nullable|string',
-            'diagnostico' => 'nullable|string',
+            'motivo' => 'required|string',
+            'diagnostico' => 'required|string',
             'receta' => 'nullable|string',
         ]);
 
-        // crear la consulta
-        $consulta = Consulta::create([
-            'idPaciente' => $request->idPaciente,
-            'idOdontologo' => $request->idOdontologo,
-            'fecha' => $request->fecha,
-            'motivo' => $request->motivo,
-            'diagnostico' => $request->diagnostico,
-            'receta' => $request->receta,
-            'estado' => $request->estado,
-        ]);
+        DB::transaction(function () use ($request) {
 
-        // guardar procedimientos independientes en detalle_consultas
-        if ($request->has('idProcedimiento')) {
-            foreach ($request->idProcedimiento as $i => $idProc) {
-                $cantidad = $request->cantidadProcedimiento[$i] ?? 1;
-                $precio = Procedimiento::find($idProc)?->precio ?? 0;
-                $subtotal = $cantidad * $precio;
+            // crear la consulta
+            $consulta = Consulta::create([
+                'idPaciente' => $request->idPaciente,
+                'idOdontologo' => $request->idOdontologo,
+                'fecha' => $request->fecha,
+                'motivo' => $request->motivo,
+                'diagnostico' => $request->diagnostico,
+                'receta' => $request->receta,
+                'estado' => $request->estado,
+            ]);
 
-                $consulta->detalles()->create([
-                    'idProcedimiento' => $idProc,
-                    'cantidadProcedimiento' => $cantidad,
-                    'subtotal' => $subtotal,
-                ]);
+            // guardar procedimientos independientes
+            if ($request->has('idProcedimiento')) {
+                foreach ($request->idProcedimiento as $i => $idProc) {
+
+                    $cantidad = $request->cantidadProcedimiento[$i] ?? 1;
+                    $precio = Procedimiento::find($idProc)?->precio ?? 0;
+                    $subtotal = $cantidad * $precio;
+
+                    $consulta->detalles()->create([
+                        'idProcedimiento' => $idProc,
+                        'cantidadProcedimiento' => $cantidad,
+                        'subtotal' => $subtotal,
+                    ]);
+
+                    $this->descontarStock($idProc, $cantidad, $consulta->idConsulta);
+                }
             }
-        }
 
-        // guardar procedimientos del tratamiento
-        if ($request->has('idProcedimientoTrat') && $request->idTratamiento) {
-            foreach ($request->idProcedimientoTrat as $i => $idProc) {
-                $cantidad = $request->cantidadProcedimientoTrat[$i] ?? 1;
-                $observacion = $request->observacionTrat[$i] ?? null;
-                $precio = Procedimiento::find($idProc)?->precio ?? 0;
-                $subtotal = $cantidad * $precio;
+            // guardar procedimientos del tratamiento
+            if ($request->has('idProcedimientoTrat') && $request->idTratamiento) {
 
-                // registro en detalle_tratamientos (seguimiento del tratamiento)
-                DetalleTratamiento::create([
-                    'idConsulta' => $consulta->idConsulta,
-                    'idTratamiento' => $request->idTratamiento,
-                    'idProcedimiento' => $idProc,
-                    'cantidadProcedimiento' => $cantidad,
-                    'observacion' => $observacion,
-                    'estado' => 'En proceso',
-                ]);
+                foreach ($request->idProcedimientoTrat as $i => $idProc) {
 
-                // registro en detalle_consultas se cuenta todo el total
-                $consulta->detalles()->create([
-                    'idProcedimiento' => $idProc,
-                    'cantidadProcedimiento' => $cantidad,
-                    'subtotal' => $subtotal,
-                ]);
+                    $cantidad = $request->cantidadProcedimientoTrat[$i] ?? 1;
+                    $observacion = $request->observacionTrat[$i] ?? null;
+                    $precio = Procedimiento::find($idProc)?->precio ?? 0;
+                    $subtotal = $cantidad * $precio;
+
+                    DetalleTratamiento::create([
+                        'idConsulta' => $consulta->idConsulta,
+                        'idTratamiento' => $request->idTratamiento,
+                        'idProcedimiento' => $idProc,
+                        'cantidadProcedimiento' => $cantidad,
+                        'observacion' => $observacion,
+                        'estado' => 'En proceso',
+                    ]);
+
+                    $consulta->detalles()->create([
+                        'idProcedimiento' => $idProc,
+                        'cantidadProcedimiento' => $cantidad,
+                        'subtotal' => $subtotal,
+                    ]);
+
+                    $this->descontarStock($idProc, $cantidad, $consulta->idConsulta);
+                }
             }
-        }
+
+        });
 
         return redirect()->route('consultas.index')
             ->with('success', 'Consulta registrada correctamente.');
@@ -173,6 +218,33 @@ class ConsultaController extends Controller
             ->get();
 
         return response()->json($tratamientos);
+    }
+
+    public function show($id)
+    {
+        $consulta = Consulta::with([
+            'paciente.persona',
+            'paciente.alergias',
+            'odontologo.persona',
+            'detalles.procedimiento',
+        ])->findOrFail($id);
+
+        $detallesTratamiento = DetalleTratamiento::with([
+            'procedimiento',
+            'tratamiento'
+        ])
+            ->where('idConsulta', $id)
+            ->get();
+
+        $subtotalTratamiento = $detallesTratamiento->sum(function ($detalle) {
+            return $detalle->cantidadProcedimiento * $detalle->procedimiento->precio;
+        });
+
+        return view('consultas.show', compact(
+            'consulta',
+            'detallesTratamiento',
+            'subtotalTratamiento'
+        ));
     }
 
 

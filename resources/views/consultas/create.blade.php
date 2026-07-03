@@ -22,6 +22,8 @@
         <form action="{{ route('consultas.store') }}" method="POST">
             @csrf
 
+            <input type="hidden" name="estado" value="Registrada">
+
             <div class="accordion d-flex flex-column gap-3" id="consultaAccordion">
 
                 <!-- 1. Datos generales -->
@@ -61,10 +63,12 @@
 
                                         <i
                                             class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
-                                    </div>
 
-                                    <div id="resultadosPacientes" class="list-group mt-1 shadow-sm position-absolute w-100"
-                                        style="z-index: 9999;"></div>
+                                        <div id="resultadosPacientes"
+                                            class="list-group mt-1 shadow-sm position-absolute w-100"
+                                            style="z-index: 9999;">
+                                        </div>
+                                    </div>
 
                                     <input type="hidden" name="idPaciente" id="paciente_id">
                                 </div>
@@ -85,12 +89,6 @@
 
                                     <input type="date" name="fecha" class="form-control consulta-input consulta-readonly"
                                         value="{{ now()->format('Y-m-d') }}" readonly>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Estado</label>
-                                    <input type="text" name="estado" class="form-control consulta-input consulta-readonly"
-                                        value="Registrada" readonly>
                                 </div>
 
                                 <div class="col-12" id="contenedorAlergias" style="display:none;">
@@ -134,16 +132,27 @@
 
                                 <div class="col-12">
                                     <label class="form-label">Motivo de consulta</label>
-                                    <textarea name="motivo" rows="3" class="form-control consulta-input consulta-textarea"
-                                        placeholder="Describe el motivo principal de la consulta"></textarea>
+                                    <textarea name="motivo" rows="3"
+                                        class="form-control consulta-input consulta-textarea @error('motivo') is-invalid @enderror"
+                                        placeholder="Describe el motivo principal de la consulta" required></textarea>
                                 </div>
+                                @error('motivo')
+                                    <small class="text-danger fw-semibold">
+                                        {{ $message }}
+                                    </small>
+                                @enderror
 
                                 <div class="col-12">
                                     <label class="form-label">Diagnóstico</label>
                                     <textarea name="diagnostico" rows="4"
-                                        class="form-control consulta-input consulta-textarea"
-                                        placeholder="Describe el diagnóstico clínico"></textarea>
+                                        class="form-control consulta-input consulta-textarea @error('diagnostico') is-invalid @enderror"
+                                        placeholder="Describe el diagnóstico clínico" required></textarea>
                                 </div>
+                                @error('diagnostico')
+                                    <small class="text-danger fw-semibold">
+                                        {{ $message }}
+                                    </small>
+                                @enderror
 
                                 <div class="col-12">
                                     <label class="form-label">Receta / indicaciones</label>
@@ -387,8 +396,8 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 d-flex flex-column justify-content-center text-lg-end">
-                            <div class="text-muted small mb-2 d-flex align-items-center justify-content-lg-end gap-1">
+                        <div class="col-lg-4 d-flex flex-column justify-content-center">
+                            <div class="text-muted small mb-2 d-flex align-items-center justify-content-center gap-1">
                                 <i class="bi bi-info-circle text-warning"></i> Revisa la información antes de guardar.
                             </div>
                             <button type="submit"

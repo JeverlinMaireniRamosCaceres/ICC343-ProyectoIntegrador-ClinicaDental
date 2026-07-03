@@ -7,6 +7,7 @@ use App\Models\Compra;
 use App\Models\Proveedor;
 use App\Models\Producto;
 use App\Models\DetalleCompra;
+use App\Models\MovimientoInventario;
 use Illuminate\Support\Facades\DB;
 
 class ComprasController extends Controller
@@ -252,8 +253,16 @@ class ComprasController extends Controller
     private function actualizarStock(int $idProducto, int $cantidad)
     {
         $producto = Producto::findOrFail($idProducto);
+
         $producto->stockActual += $cantidad;
         $producto->save();
+
+        MovimientoInventario::create([
+            'idProducto' => $producto->idProducto,
+            'tipo' => 'ENTRADA',
+            'cantidad' => $cantidad,
+            'motivo' => 'Compra',
+        ]);
     }
 
     private function actualizarCabeceraCompra(Request $request, Compra $compra)
@@ -273,6 +282,12 @@ class ComprasController extends Controller
             if ($producto) {
                 $producto->stockActual -= $detalle->cantidad;
                 $producto->save();
+                MovimientoInventario::create([
+                    'idProducto' => $producto->idProducto,
+                    'tipo' => 'SALIDA',
+                    'cantidad' => $detalle->cantidad,
+                    'motivo' => 'Edición de compra',
+                ]);
             }
         }
         DetalleCompra::where('idCompras', $compra->idCompras)->delete();
@@ -284,6 +299,12 @@ class ComprasController extends Controller
             $producto = Producto::findOrFail($detalle->idProducto);
             $producto->stockActual -= $detalle->cantidad;
             $producto->save();
+            MovimientoInventario::create([
+                'idProducto' => $producto->idProducto,
+                'tipo' => 'SALIDA',
+                'cantidad' => $detalle->cantidad,
+                'motivo' => 'Compra anulada',
+            ]);
         }
     }
 
