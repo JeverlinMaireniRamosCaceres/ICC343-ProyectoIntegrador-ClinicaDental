@@ -138,7 +138,7 @@
 
         <li>
             <a class="nav-link {{ request()->routeIs('facturacion.*') ? 'active' : '' }}"
-                href="{{ route('facturacion.create') }}">
+                href="{{ route('facturacion.index') }}">
                 <i class="bi bi-receipt-cutoff"></i>
                 <span class="link-text">Facturas</span>
             </a>
