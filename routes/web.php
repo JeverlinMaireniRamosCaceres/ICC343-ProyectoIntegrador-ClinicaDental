@@ -21,6 +21,7 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
+use App\Http\Controllers\PagosController;
 
 // Webhook de WhatsApp
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
@@ -110,7 +111,10 @@ Route::middleware('auth')->group(function () {
     // Facturación
     Route::get('/facturacion/consultas', [FacturacionController::class, 'consultas'])
         ->name('facturacion.consultas');
-    Route::resource('facturacion', FacturacionController::class);
+    Route::resource('facturacion', FacturacionController::class)
+        ->parameters([
+            'facturacion' => 'factura',
+        ]);
 
     // Consultas
     Route::get('/consultas/buscar-odontologos', [ConsultaController::class, 'buscarOdontologos'])
@@ -150,4 +154,7 @@ Route::middleware('auth')->group(function () {
 
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
+
+    //Pagos
+    Route::resource('pagos', PagosController::class);
 });

@@ -8,6 +8,7 @@ use App\Models\Consulta;
 use App\Models\Pago;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\MetodoPago;
 
 class FacturacionController extends Controller
 {
@@ -144,9 +145,20 @@ class FacturacionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Factura $factura)
     {
-        return view('facturacion.show');
+        $factura->load([
+            'consulta.paciente.persona',
+            'consulta.odontologo.persona',
+            'consulta.detalles.procedimiento',
+            'pagos' => fn($query) => $query
+                ->with('metodoPago')
+                ->orderBy('numeroCuota'),
+        ]);
+
+        $metodosPago = MetodoPago::all();
+
+        return view('facturacion.show', compact('factura', 'metodosPago'));
     }
 
     /**

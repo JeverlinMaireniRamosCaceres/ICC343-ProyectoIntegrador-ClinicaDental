@@ -1,5 +1,3 @@
-{{-- resources/views/facturacion/show.blade.php --}}
-
 @extends('layouts.app')
 
 @section('title', 'Detalle Factura')
@@ -9,35 +7,43 @@
     <div class="container py-4">
 
         {{-- HEADER --}}
-        <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <div>
+            <div class="d-flex align-items-center gap-3">
 
-                <h2 class="fw-semibold mb-1">
-                    Factura #00015
-                </h2>
+                <a href="{{ route('facturacion.index') }}" class="btn btn-light rounded-pill px-3">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                </a>
+
+                <div>
+
+                    <h2 class="fw-bold mb-1">
+
+                        FAC-{{ str_pad($factura->idFactura, 6, '0', STR_PAD_LEFT) }}
+
+                    </h2>
+
+                </div>
 
             </div>
 
             <div class="d-flex gap-2">
 
-                {{-- IMPRIMIR --}}
                 <button class="btn btn-light rounded-pill px-4">
-
-                    <i class="bi bi-printer me-2"></i>
-
-                    Imprimir
-
+                    <i class="bi bi-printer-fill text-secondary"></i>
                 </button>
 
-                {{-- ANULAR --}}
-                <button class="btn btn-danger rounded-pill px-4">
+                @if (!$factura->tiene_pagos_realizados && $factura->estado !== 'Anulada')
+                    <button class="btn btn-danger rounded-pill px-4">
 
-                    <i class="bi bi-x-circle me-2"></i>
+                        <i class="bi bi-x-circle me-2"></i>
 
-                    Anular
+                        Anular
 
-                </button>
+                    </button>
+                @endif
 
             </div>
 
@@ -45,65 +51,107 @@
 
         <div class="row g-4">
 
-            {{-- LEFT --}}
+            {{-- IZQUIERDA --}}
             <div class="col-lg-8">
 
-                {{-- PACIENTE --}}
+                {{-- INFORMACIÓN --}}
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
 
                     <div class="card-body p-4">
 
-                        <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h5 class="fw-semibold mb-1">
 
-                            <div>
+                            Información de la factura
 
-                                <h5 class="fw-semibold mb-1">
-                                    Juan Pérez
-                                </h5>
+                        </h5>
 
-                                <small class="text-muted">
-                                    Información del paciente
-                                </small>
-
-                            </div>
-
-                        </div>
+                        <hr>
 
                         <div class="row g-4">
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
 
-                                <small class="text-muted d-block mb-1">
+                                <small class="text-muted d-block">
+                                    Paciente
+                                </small>
+
+                                <span class="fw-medium">
+
+                                    {{ $factura->consulta->paciente->persona->nombre }}
+                                    {{ $factura->consulta->paciente->persona->apellido }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <small class="text-muted d-block">
+                                    Odontólogo
+                                </small>
+
+                                <span class="fw-medium">
+
+                                    {{ $factura->consulta->odontologo->persona->nombre }}
+                                    {{ $factura->consulta->odontologo->persona->apellido }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <small class="text-muted d-block">
                                     Cédula
                                 </small>
 
-                                <div class="fw-medium">
-                                    001-1234567-8
-                                </div>
+                                <span class="fw-medium">
+
+                                    {{ $factura->consulta->paciente->persona->cedula ?? 'Sin cédula' }}
+
+                                </span>
 
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
 
-                                <small class="text-muted d-block mb-1">
+                                <small class="text-muted d-block">
+                                    Fecha de factura
+                                </small>
+
+                                <span class="fw-medium">
+
+                                    {{ $factura->created_at->format('d/m/Y') }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <small class="text-muted d-block">
                                     Teléfono
                                 </small>
 
-                                <div class="fw-medium">
-                                    809-555-1234
-                                </div>
+                                <span class="fw-medium">
+
+                                    {{ $factura->consulta->paciente->persona->telefono ?? 'No registrado' }}
+
+                                </span>
 
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
 
-                                <small class="text-muted d-block mb-1">
-                                    Fecha Factura
+                                <small class="text-muted d-block">
+                                    Fecha de consulta
                                 </small>
 
-                                <div class="fw-medium">
-                                    09/05/2026
-                                </div>
+                                <span class="fw-medium">
+
+                                    {{ \Carbon\Carbon::parse($factura->consulta->fecha)->format('d/m/Y') }}
+
+                                </span>
 
                             </div>
 
@@ -113,266 +161,210 @@
 
                 </div>
 
-                {{-- TABS --}}
+                {{-- PROCEDIMIENTOS --}}
                 <div class="card border-0 shadow-sm rounded-4">
 
-                    {{-- NAV --}}
-                    <div class="border-bottom px-4 pt-4">
+                    <div class="card-body p-0">
 
-                        <ul class="nav nav-pills gap-2 mb-4">
+                        <div class="p-4 border-bottom">
 
-                            {{-- PROCEDIMIENTOS --}}
-                            <li class="nav-item">
+                            <h5 class="fw-semibold mb-0">
 
-                                <button class="nav-link active rounded-pill px-4" data-bs-toggle="tab"
-                                    data-bs-target="#procedimientos">
+                                Procedimientos
 
-                                    Procedimientos
-
-                                </button>
-
-                            </li>
-
-                            {{-- CUOTAS --}}
-                            <li class="nav-item">
-
-                                <button class="nav-link rounded-pill px-4" data-bs-toggle="tab" data-bs-target="#cuotas">
-
-                                    Cuotas
-
-                                </button>
-
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                    {{-- TAB CONTENT --}}
-                    <div class="tab-content">
-
-                        {{-- PROCEDIMIENTOS --}}
-                        <div class="tab-pane fade show active" id="procedimientos">
-
-                            <div class="px-3 pb-3">
-
-                                <div class="table-responsive">
-
-                                    <table class="table table-hover align-middle mb-0">
-
-                                        <thead class="table-light">
-
-                                            <tr>
-
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Procedimiento
-                                                </th>
-
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Cantidad
-                                                </th>
-
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Precio
-                                                </th>
-
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Subtotal
-                                                </th>
-
-                                            </tr>
-
-                                        </thead>
-
-                                        <tbody>
-
-                                            <tr>
-
-                                                <td class="px-4">
-                                                    Limpieza Dental
-                                                </td>
-
-                                                <td class="px-4">
-                                                    1
-                                                </td>
-
-                                                <td class="px-4">
-                                                    RD$ 1,500
-                                                </td>
-
-                                                <td class="px-4 fw-medium">
-                                                    RD$ 1,500
-                                                </td>
-
-                                            </tr>
-
-                                            <tr>
-
-                                                <td class="px-4">
-                                                    Resina
-                                                </td>
-
-                                                <td class="px-4">
-                                                    2
-                                                </td>
-
-                                                <td class="px-4">
-                                                    RD$ 2,500
-                                                </td>
-
-                                                <td class="px-4 fw-medium">
-                                                    RD$ 5,000
-                                                </td>
-
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-
-                            </div>
+                            </h5>
 
                         </div>
 
-                        {{-- CUOTAS --}}
-                        <div class="tab-pane fade" id="cuotas">
+                        <div class="table-responsive">
 
-                            <div class="px-3 pb-3">
+                            <table class="table table-hover-custom align-middle mb-0">
 
-                                <div class="table-responsive">
+                                <thead class="table-light">
 
-                                    <table class="table table-hover align-middle mb-0">
+                                    <tr>
 
-                                        <thead class="table-light">
+                                        <th class="px-4 py-3">
+                                            Procedimiento
+                                        </th>
 
-                                            <tr>
+                                        <th class="px-4 py-3 text-center">
+                                            Cantidad
+                                        </th>
 
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    #
-                                                </th>
+                                        <th class="px-4 py-3 text-end">
+                                            Precio
+                                        </th>
 
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Vencimiento
-                                                </th>
+                                        <th class="px-4 py-3 text-end">
+                                            Subtotal
+                                        </th>
 
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Monto
-                                                </th>
+                                    </tr>
 
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Estado
-                                                </th>
+                                </thead>
 
-                                                <th class="px-4 py-3 text-muted fw-semibold small">
-                                                    Pago
-                                                </th>
+                                <tbody>
 
-                                            </tr>
+                                    @foreach ($factura->consulta->detalles as $detalle)
+                                        <tr>
 
-                                        </thead>
+                                            <td class="px-4">
 
-                                        <tbody>
+                                                {{ $detalle->procedimiento->nombre }}
 
-                                            {{-- CUOTA PAGADA --}}
-                                            <tr>
+                                            </td>
 
-                                                <td class="px-4">
-                                                    1
-                                                </td>
+                                            <td class="px-4 text-center">
 
-                                                <td class="px-4">
-                                                    15/05/2026
-                                                </td>
+                                                {{ $detalle->cantidadProcedimiento }}
 
-                                                <td class="px-4">
-                                                    RD$ 2,000
-                                                </td>
+                                            </td>
 
-                                                <td class="px-4">
+                                            <td class="px-4 text-end">
 
-                                                    <span class="badge rounded-pill text-bg-success">
-                                                        PAGADA
+                                                RD$ {{ number_format($detalle->procedimiento->precio, 2) }}
+
+                                            </td>
+
+                                            <td class="px-4 text-end fw-semibold">
+
+                                                RD$ {{ number_format($detalle->subtotal, 2) }}
+
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- CRONOGRAMA DE PAGOS --}}
+                <div class="card border-0 shadow-sm rounded-4 mt-4">
+
+                    <div class="card-body p-0">
+
+                        <div class="p-4 border-bottom">
+
+                            <h5 class="fw-semibold mb-0">
+                                Cronograma de pagos
+                            </h5>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-hover-custom align-middle mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+
+                                        <th class="px-4 py-3">
+                                            Cuota
+                                        </th>
+
+                                        <th class="px-4 py-3">
+                                            Vencimiento
+                                        </th>
+
+                                        <th class="px-4 py-3 text-end">
+                                            Monto
+                                        </th>
+
+                                        <th class="px-4 py-3 text-center">
+                                            Estado
+                                        </th>
+
+                                        <th class="px-4 py-3">
+                                            Recibo
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @forelse ($factura->pagos as $pago)
+                                        <tr>
+
+                                            <td class="px-4">
+
+                                                {{ $pago->numeroCuota }}
+
+                                            </td>
+
+                                            <td class="px-4">
+
+                                                {{ \Carbon\Carbon::parse($pago->fechaVencimiento)->format('d/m/Y') }}
+
+                                            </td>
+
+                                            <td class="px-4 text-end fw-semibold">
+
+                                                RD$ {{ number_format($pago->monto, 2) }}
+
+                                            </td>
+
+                                            <td class="px-4 text-center">
+
+                                                @if ($pago->estado === 'Pagado')
+                                                    <span
+                                                        class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
+                                                        Pagada
                                                     </span>
-
-                                                </td>
-
-                                                <td class="px-4">
-
-                                                    <small class="text-muted">
-                                                        Efectivo · 09/05/2026
-                                                    </small>
-
-                                                </td>
-
-                                            </tr>
-
-                                            {{-- CUOTA PENDIENTE --}}
-                                            <tr>
-
-                                                <td class="px-4">
-                                                    2
-                                                </td>
-
-                                                <td class="px-4">
-                                                    15/06/2026
-                                                </td>
-
-                                                <td class="px-4">
-                                                    RD$ 2,000
-                                                </td>
-
-                                                <td class="px-4">
-
-                                                    <span class="badge rounded-pill text-bg-warning">
-                                                        PENDIENTE
+                                                @else
+                                                    <span class="badge rounded-pill px-3 py-2"
+                                                        style="background-color: #FFE5B4; color: #D97706;">
+                                                        Pendiente
                                                     </span>
+                                                @endif
 
-                                                </td>
+                                            </td>
 
-                                                <td class="px-4 text-muted">
-                                                    -
-                                                </td>
+                                            <td class="px-4">
 
-                                            </tr>
+                                                @if ($pago->estado === 'Pagado')
+                                                    <a href="{{ route('pagos.show', $pago->idPago) }}"
+                                                        class="btn btn-sm btn-light border rounded-pill px-3">
 
-                                            {{-- CUOTA PENDIENTE --}}
-                                            <tr>
+                                                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
 
-                                                <td class="px-4">
-                                                    3
-                                                </td>
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">
 
-                                                <td class="px-4">
-                                                    15/07/2026
-                                                </td>
-
-                                                <td class="px-4">
-                                                    RD$ 2,000
-                                                </td>
-
-                                                <td class="px-4">
-
-                                                    <span class="badge rounded-pill text-bg-warning">
-                                                        PENDIENTE
                                                     </span>
+                                                @endif
 
-                                                </td>
+                                            </td>
 
-                                                <td class="px-4 text-muted">
-                                                    -
-                                                </td>
+                                        </tr>
 
-                                            </tr>
+                                    @empty
 
-                                        </tbody>
+                                        <tr>
 
-                                    </table>
+                                            <td colspan="5" class="text-center py-5 text-muted">
 
-                                </div>
+                                                No hay pagos registrados.
 
-                            </div>
+                                            </td>
+
+                                        </tr>
+                                    @endforelse
+
+                                </tbody>
+
+                            </table>
 
                         </div>
 
@@ -381,8 +373,7 @@
                 </div>
 
             </div>
-
-            {{-- RIGHT --}}
+            {{-- DERECHA --}}
             <div class="col-lg-4">
 
                 <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
@@ -390,31 +381,62 @@
                     <div class="card-body p-4">
 
                         <h5 class="fw-semibold mb-4">
-                            Resumen Financiero
+
+                            Resumen
+
                         </h5>
 
                         {{-- ESTADO --}}
                         <div class="mb-4">
 
                             <small class="text-muted d-block mb-1">
-                                Estado Factura
+
+                                Estado
+
                             </small>
 
-                            <span class="badge rounded-pill text-bg-warning">
-                                PARCIAL
+                            @php
+                                if ($factura->estado === 'Anulada') {
+                                    $badge = 'text-danger bg-danger-subtle';
+                                    $style = '';
+                                    $estado = 'Anulada';
+                                } elseif ($factura->estado === 'Pagada') {
+                                    $badge = 'text-success bg-success-subtle';
+                                    $style = '';
+                                    $estado = 'Pagada';
+                                } elseif ($factura->estado === 'Parcial') {
+                                    $badge = '';
+                                    $style = 'background-color: #EDE9FE; color: #7C3AED;';
+                                    $estado = 'Parcial';
+                                } else {
+                                    $badge = '';
+                                    $style = 'background-color: #FFE5B4; color: #D97706;';
+                                    $estado = 'Pendiente';
+                                }
+                            @endphp
+
+                            <span class="badge rounded-pill px-3 py-2 {{ $badge }}" style="{{ $style }}">
+                                {{ $estado }}
                             </span>
 
                         </div>
 
-                        {{-- TOTALES --}}
                         <div class="d-flex justify-content-between mb-3">
 
                             <span class="text-muted">
+
                                 Subtotal
+
                             </span>
 
                             <span class="fw-medium">
-                                RD$ 6,500
+
+                                @php
+                                    $subtotal = $factura->consulta->detalles->sum('subtotal');
+                                @endphp
+
+                                RD$ {{ number_format($subtotal, 2) }}
+
                             </span>
 
                         </div>
@@ -422,11 +444,15 @@
                         <div class="d-flex justify-content-between mb-3">
 
                             <span class="text-muted">
+
                                 Descuento
+
                             </span>
 
                             <span class="fw-medium text-danger">
-                                - RD$ 500
+
+                                - RD$ {{ number_format($factura->montoDescuento, 2) }}
+
                             </span>
 
                         </div>
@@ -436,11 +462,15 @@
                         <div class="d-flex justify-content-between mb-3">
 
                             <span class="fw-semibold">
+
                                 Total
+
                             </span>
 
                             <span class="fw-bold fs-5">
-                                RD$ 6,000
+
+                                RD$ {{ number_format($factura->total, 2) }}
+
                             </span>
 
                         </div>
@@ -448,11 +478,15 @@
                         <div class="d-flex justify-content-between mb-3">
 
                             <span class="text-muted">
+
                                 Pagado
+
                             </span>
 
                             <span class="fw-medium text-success">
-                                RD$ 2,000
+
+                                RD$ {{ number_format($factura->total_pagado, 2) }}
+
                             </span>
 
                         </div>
@@ -460,49 +494,48 @@
                         <div class="d-flex justify-content-between mb-4">
 
                             <span class="text-muted">
-                                Balance Pendiente
+
+                                Balance pendiente
+
                             </span>
 
-                            <span class="fw-bold text-warning">
-                                RD$ 4,000
+                            <span class="fw-bold" style="color:#D97706;">
+
+                                RD$ {{ number_format($factura->saldo_pendiente, 2) }}
+
                             </span>
 
                         </div>
 
                         <hr>
 
-                        {{-- CUOTAS --}}
                         <div class="d-flex justify-content-between mb-3">
 
-                            <span class="text-muted">
-                                Cuotas
-                            </span>
+                            @if ($factura->cantidadCuotas > 1)
+                                <span class="text-muted">
 
-                            <span class="fw-medium">
-                                3
-                            </span>
+                                    Cuotas
 
-                        </div>
+                                </span>
 
-                        <div class="d-flex justify-content-between mb-4">
+                                <span class="fw-medium">
 
-                            <span class="text-muted">
-                                Monto por cuota
-                            </span>
+                                    {{ $factura->cantidadCuotas }}
 
-                            <span class="fw-medium">
-                                RD$ 2,000
-                            </span>
+                                </span>
+                            @endif
 
                         </div>
 
-                        {{-- BUTTON --}}
-                        <button class="btn btn-success w-100 rounded-pill py-3" data-bs-toggle="modal"
-                            data-bs-target="#modalPago">
 
-                            Registrar Pago
+                        @if ($factura->estado !== 'Anulada' && $factura->saldo_pendiente > 0)
+                            <button class="btn btn-success w-100 rounded-pill py-3" data-bs-toggle="modal"
+                                data-bs-target="#modalPago">
 
-                        </button>
+                                Registrar pago
+
+                            </button>
+                        @endif
 
                     </div>
 
@@ -512,181 +545,9 @@
 
         </div>
 
+
     </div>
 
-    {{-- MODAL REGISTRAR PAGO --}}
-    <div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true">
-
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-
-            <div class="modal-content border-0 rounded-4">
-
-                {{-- HEADER --}}
-                <div class="modal-header border-0 px-4 pt-4">
-
-                    <div>
-
-                        <h5 class="modal-title fw-semibold mb-1">
-                            Registrar Pago
-                        </h5>
-
-                        <small class="text-muted">
-                            Seleccione una o varias cuotas
-                        </small>
-
-                    </div>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-
-                </div>
-
-                {{-- BODY --}}
-                <div class="modal-body px-4 pb-4">
-
-                    {{-- METODO --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small">
-                            Método de Pago
-                        </label>
-
-                        <select class="form-select rounded-3">
-
-                            <option>Efectivo</option>
-                            <option>Transferencia</option>
-                            <option>Tarjeta</option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- REFERENCIA --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small">
-                            Referencia
-                        </label>
-
-                        <input type="text" class="form-control rounded-3" placeholder="Opcional">
-
-                    </div>
-
-                    {{-- CUOTAS --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small mb-3">
-                            Cuotas Pendientes
-                        </label>
-
-                        <div class="border rounded-4 overflow-hidden">
-
-                            {{-- CUOTA 2 --}}
-                            <label class="d-flex align-items-center justify-content-between p-3 border-bottom">
-
-                                <div class="d-flex align-items-center gap-3">
-
-                                    <input type="checkbox" class="form-check-input">
-
-                                    <div>
-
-                                        <div class="fw-medium">
-                                            Cuota #2
-                                        </div>
-
-                                        <small class="text-muted">
-                                            Vence: 15/06/2026
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="fw-semibold">
-                                    RD$ 2,000
-                                </div>
-
-                            </label>
-
-                            {{-- CUOTA 3 --}}
-                            <label class="d-flex align-items-center justify-content-between p-3">
-
-                                <div class="d-flex align-items-center gap-3">
-
-                                    <input type="checkbox" class="form-check-input">
-
-                                    <div>
-
-                                        <div class="fw-medium">
-                                            Cuota #3
-                                        </div>
-
-                                        <small class="text-muted">
-                                            Vence: 15/07/2026
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="fw-semibold">
-                                    RD$ 2,000
-                                </div>
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
-                    {{-- TOTAL --}}
-                    <div class="bg-light rounded-4 p-4">
-
-                        <div class="d-flex align-items-center justify-content-between">
-
-                            <div>
-
-                                <small class="text-muted d-block mb-1">
-                                    Total Seleccionado
-                                </small>
-
-                                <h4 class="fw-bold mb-0">
-                                    RD$ 4,000
-                                </h4>
-
-                            </div>
-
-                            <span class="badge rounded-pill text-bg-primary px-3 py-2">
-                                2 Cuotas
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- FOOTER --}}
-                <div class="modal-footer border-0 px-4 pb-4">
-
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
-
-                        Cancelar
-
-                    </button>
-
-                    <button class="btn btn-success rounded-pill px-4">
-
-                        Confirmar Pago
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+    @include('pagos.partials.modal-registrar-pago')
 
 @endsection

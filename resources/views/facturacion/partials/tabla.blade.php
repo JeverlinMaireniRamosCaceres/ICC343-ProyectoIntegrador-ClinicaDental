@@ -67,13 +67,6 @@
                                 <i class="bi bi-eye-fill"></i>
                             </a>
 
-                            @if (in_array($factura->estado, ['Pendiente', 'Parcial']))
-                                <a href="#" class="btn btn-sm btn-success rounded-pill px-3"
-                                    title="Registrar pago">
-                                    <i class="bi bi-cash-stack"></i>
-                                </a>
-                            @endif
-
                             @if ($factura->estado === 'Pendiente')
                                 <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 btnAnularFactura"
                                     data-bs-toggle="modal" data-bs-target="#modalAnularFactura"
