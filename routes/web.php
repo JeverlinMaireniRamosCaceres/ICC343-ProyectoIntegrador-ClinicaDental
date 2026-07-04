@@ -100,6 +100,9 @@ Route::middleware('auth')->group(function () {
 
 
     // Caja chica
+    Route::get('/caja-chica/verificar', [CajaChicaController::class, 'verificar'])
+        ->name('caja-chica.verificar');
+
     Route::resource('caja-chica', CajaChicaController::class);
 
     Route::post('/caja-chica/{caja}/egreso', [CajaChicaController::class, 'registrarEgreso'])

@@ -1,7 +1,7 @@
 <div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-centered modal-pago">
-        <form action="{{ route('pagos.store') }}" method="POST" class="modal-content border-0 rounded-4">
+        <form id="formPago" action="{{ route('pagos.store') }}" method="POST" class="modal-content border-0 rounded-4">
 
             @csrf
 
@@ -26,6 +26,16 @@
             </div>
 
             <div class="modal-body px-4 pt-2">
+
+                <div id="alertCajaCerrada" class="alert alert-danger d-none mb-4">
+
+                    <strong>No hay una caja chica abierta.</strong>
+
+                    <br>
+
+                    Debe abrir una caja chica antes de registrar un pago en efectivo.
+
+                </div>
 
                 {{-- MÉTODO DE PAGO --}}
                 <div class="mb-4">
@@ -395,6 +405,10 @@
 
         const btnConfirmar = document.getElementById('btnConfirmarPago');
 
+        const formPago = document.getElementById('formPago');
+
+        const alertCaja = document.getElementById('alertCajaCerrada');
+
         // La primera cuota (la más próxima) es obligatoria: evita confirmar un pago de RD$0
         if (checks.length > 0) {
 
@@ -559,6 +573,64 @@
         actualizarResumen();
 
         actualizarMetodoPago();
+
+        formPago.addEventListener('submit', async function(e) {
+
+            const metodoSeleccionado = document.querySelector('.metodo-radio:checked');
+
+            if (!metodoSeleccionado) {
+                return;
+            }
+
+            const nombreMetodo = metodoSeleccionado
+                .nextElementSibling
+                .querySelector('.fw-semibold')
+                .textContent
+                .trim();
+
+            // Si NO es efectivo, deja enviar normalmente
+            if (nombreMetodo !== 'Efectivo') {
+                return;
+            }
+
+            e.preventDefault();
+
+            // Oculta cualquier alerta anterior
+            alertCaja.classList.add('d-none');
+
+            try {
+
+                const respuesta = await fetch('{{ route('caja-chica.verificar') }}');
+
+                const data = await respuesta.json();
+
+                if (data.abierta) {
+
+                    formPago.submit();
+
+                } else {
+
+                    alertCaja.classList.remove('d-none');
+
+                    alertCaja.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                }
+
+            } catch (error) {
+
+                alertCaja.classList.remove('d-none');
+
+                alertCaja.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+            }
+
+        });
 
     });
 </script>

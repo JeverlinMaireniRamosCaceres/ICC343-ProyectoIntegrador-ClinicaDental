@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use App\Models\MetodoPago;
+use App\Models\CajaChica;
+use App\Models\MovimientoCajaChica;
 
 class PagosController extends Controller
 {
@@ -45,25 +48,65 @@ class PagosController extends Controller
 
         $factura = Factura::findOrFail($request->idFactura);
 
+        $metodoPago = MetodoPago::find($request->idMetodoPago);
+
+        if ($metodoPago?->descripcion === 'Efectivo') {
+
+            $cajaAbierta = CajaChica::whereDate('fecha', today())
+                ->where('estado', 'Abierta')
+                ->exists();
+
+            if (!$cajaAbierta) {
+
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'caja' => 'Debe abrir una caja chica antes de registrar un pago en efectivo.'
+                    ]);
+            }
+        }
+
         $pagos = Pago::where('idFactura', $factura->idFactura)
             ->whereIn('idPago', $request->pagos)
             ->get();
 
+        // Todos los pagos de esta operación compartirán este código
         $codigoRecibo = Str::uuid()->toString();
 
-        DB::transaction(function () use ($request, $pagos, $codigoRecibo) {
+        DB::transaction(function () use ($request, $pagos, $metodoPago, $codigoRecibo) {
 
             foreach ($pagos as $pago) {
 
                 $pago->update([
                     'idMetodoPago' => $request->idMetodoPago,
                     'idUsuario' => Auth::id(),
-                    'codigoRecibo' => $codigoRecibo,
                     'fechaRealizacion' => Carbon::today(),
                     'referenciaPago' => $request->referenciaPago,
                     'observacion' => $request->observacion,
                     'estado' => 'Pagado',
+                    'idTransaccion' => $codigoRecibo,
                 ]);
+            }
+
+            if ($metodoPago?->descripcion === 'Efectivo') {
+
+                $caja = CajaChica::whereDate('fecha', today())
+                    ->where('estado', 'Abierta')
+                    ->first();
+
+                $total = $pagos->sum('monto');
+
+                MovimientoCajaChica::create([
+                    'idUsuario' => Auth::id(),
+                    'idCajaChica' => $caja->idCajaChica,
+                    'hora' => now()->format('H:i:s'),
+                    'monto' => $total,
+                    'tipo' => 'Ingreso',
+                    'descripcion' => 'Pago de factura FAC-' .
+                        str_pad($pagos->first()->factura->idFactura, 6, '0', STR_PAD_LEFT),
+                ]);
+
+                $caja->increment('monto', $total);
             }
         });
 
@@ -145,7 +188,7 @@ class PagosController extends Controller
             'factura'
         ));
 
-        $pdf->setPaper([0, 0, 612, 396]); 
+        $pdf->setPaper([0, 0, 612, 396]);
 
         return $pdf->stream(
             'REC-' . str_pad($pagos->first()->idPago, 6, '0', STR_PAD_LEFT) . '.pdf'

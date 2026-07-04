@@ -8,6 +8,7 @@ use App\Models\MovimientoCajaChica;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CajaChicaController extends Controller
 {
@@ -189,5 +190,16 @@ class CajaChicaController extends Controller
         return redirect()
             ->route('caja-chica.show', $idCaja)
             ->with('success', 'Caja cerrada correctamente.');
+    }
+
+    public function verificar()
+    {
+        $abierta = CajaChica::whereDate('fecha', Carbon::today())
+            ->where('estado', 'Abierta')
+            ->exists();
+
+        return response()->json([
+            'abierta' => $abierta
+        ]);
     }
 }
