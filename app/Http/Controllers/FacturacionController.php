@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Factura;
 use App\Models\Consulta;
+use App\Models\Pago;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class FacturacionController extends Controller
 {
@@ -105,7 +108,37 @@ class FacturacionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'idConsulta' => 'required|exists:consultas,idConsulta',
+            'cantidadCuotas' => 'required|integer|min:1',
+            'tipoDescuento' => 'nullable|in:Monto,Porcentaje',
+            'valorDescuento' => 'nullable|numeric|min:0',
+            'fechasVencimiento' => 'required|array|min:1',
+            'fechasVencimiento.*' => 'required|date',
+        ]);
+
+        $consulta = $this->obtenerConsulta($request->idConsulta);
+
+        $totales = $this->calcularTotales(
+            $consulta,
+            $request->tipoDescuento,
+            $request->valorDescuento
+        );
+
+        DB::transaction(function () use ($request, $consulta, $totales, &$factura) {
+
+            $factura = $this->crearFactura($consulta, $request, $totales);
+
+            $this->crearPagos(
+                $factura,
+                $request->fechasVencimiento,
+                $totales['total']
+            );
+        });
+
+        return redirect()
+            ->route('facturacion.show', $factura)
+            ->with('success', 'Factura creada correctamente.');
     }
 
     /**
@@ -175,5 +208,78 @@ class FacturacionController extends Controller
             'consultas',
             'fecha'
         ));
+    }
+
+    private function obtenerConsulta(int $idConsulta): Consulta
+    {
+        return Consulta::with('detalles')
+            ->findOrFail($idConsulta);
+    }
+
+    private function calcularTotales(Consulta $consulta, ?string $tipoDescuento, ?float $valorDescuento): array
+    {
+        $valorDescuento ??= 0;
+
+        $subtotal = $consulta->detalles->sum('subtotal');
+
+        $montoDescuento = 0;
+        $porcentajeDescuento = 0;
+
+        if ($tipoDescuento === 'Monto') {
+
+            $montoDescuento = min($valorDescuento, $subtotal);
+        } elseif ($tipoDescuento === 'Porcentaje') {
+
+            $porcentajeDescuento = min($valorDescuento, 100);
+            $montoDescuento = $subtotal * ($porcentajeDescuento / 100);
+        }
+
+        return [
+            'subtotal' => $subtotal,
+            'total' => $subtotal - $montoDescuento,
+            'tipoDescuento' => $tipoDescuento,
+            'montoDescuento' => $montoDescuento,
+            'porcentajeDescuento' => $porcentajeDescuento,
+        ];
+    }
+
+    private function crearFactura(Consulta $consulta, Request $request, array $totales): Factura
+    {
+        return Factura::create([
+            'idConsulta' => $consulta->idConsulta,
+            'total' => $totales['total'],
+            'cantidadCuotas' => $request->cantidadCuotas,
+            'tipoDescuento' => $totales['tipoDescuento'],
+            'montoDescuento' => $totales['montoDescuento'],
+            'porcentajeDescuento' => $totales['porcentajeDescuento'],
+            'estado' => 'Pendiente',
+        ]);
+    }
+
+    private function crearPagos(Factura $factura, array $fechasVencimiento, float $total): void
+    {
+        $cantidadCuotas = count($fechasVencimiento);
+
+        $montoCuota = round($total / $cantidadCuotas, 2);
+        $restante = $total;
+
+        foreach ($fechasVencimiento as $i => $fechaVencimiento) {
+
+            $monto = ($i === $cantidadCuotas - 1)
+                ? $restante
+                : $montoCuota;
+
+            Pago::create([
+                'idFactura' => $factura->idFactura,
+                'idMetodoPago' => null,
+                'idUsuario' => Auth::id(),
+                'fechaVencimiento' => $fechaVencimiento,
+                'monto' => $monto,
+                'numeroCuota' => $i + 1,
+                'estado' => 'Pendiente',
+            ]);
+
+            $restante -= $monto;
+        }
     }
 }
