@@ -111,10 +111,13 @@ Route::middleware('auth')->group(function () {
     // Facturación
     Route::get('/facturacion/consultas', [FacturacionController::class, 'consultas'])
         ->name('facturacion.consultas');
+    Route::get('/facturacion/{factura}/pdf', [FacturacionController::class, 'pdf'])
+        ->name('facturacion.pdf');
     Route::resource('facturacion', FacturacionController::class)
         ->parameters([
             'facturacion' => 'factura',
         ]);
+
 
     // Consultas
     Route::get('/consultas/buscar-odontologos', [ConsultaController::class, 'buscarOdontologos'])

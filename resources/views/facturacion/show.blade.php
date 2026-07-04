@@ -31,9 +31,10 @@
 
             <div class="d-flex gap-2">
 
-                <button class="btn btn-light rounded-pill px-4">
+                <a href="{{ route('facturacion.pdf', $factura) }}" class="btn btn-light rounded-pill px-4" target="_blank"
+                    title="Imprimir factura">
                     <i class="bi bi-printer-fill text-secondary"></i>
-                </button>
+                </a>
 
                 @if (!$factura->tiene_pagos_realizados && $factura->estado !== 'Anulada')
                     <button class="btn btn-danger rounded-pill px-4">

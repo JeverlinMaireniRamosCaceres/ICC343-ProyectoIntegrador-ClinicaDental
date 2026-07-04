@@ -9,6 +9,7 @@ use App\Models\Pago;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\MetodoPago;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacturacionController extends Controller
 {
@@ -293,5 +294,22 @@ class FacturacionController extends Controller
 
             $restante -= $monto;
         }
+    }
+
+    public function pdf(Factura $factura)
+    {
+        $factura->load([
+            'consulta.paciente.persona',
+            'consulta.odontologo.persona',
+            'consulta.detalles.procedimiento',
+            'pagos.metodoPago',
+            'pagos.usuario.persona',
+        ]);
+
+        $pdf = Pdf::loadView('facturacion.pdf', compact('factura'));
+
+        $pdf->setPaper('letter');
+
+        return $pdf->stream('Factura-' . $factura->idFactura . '.pdf');
     }
 }
