@@ -4,599 +4,657 @@
 
 @section('content')
 
-<div class="container py-4">
+    <div class="container py-4">
 
-    {{-- HEADER --}}
-    <div class="d-flex align-items-center justify-content-between mb-4">
+        <form action="{{ route('facturacion.store') }}" method="POST">
 
-        <div>
+            @csrf
 
-            <h2 class="fw-semibold mb-1">
-                Nueva Factura
-            </h2>
+            <input type="hidden" name="return" value="{{ $return }}">
 
-            <p class="text-muted mb-0">
-                Generar factura desde consultas pendientes
-            </p>
-
-        </div>
-
-        <button class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2"
-                data-bs-toggle="modal"
-                data-bs-target="#modalPaciente">
-
-            <i class="bi bi-person-plus"></i>
-
-            Seleccionar Paciente
-
-        </button>
-
-    </div>
-
-    <div class="row g-4">
-
-        {{-- LEFT --}}
-        <div class="col-lg-8">
-
-            {{-- PACIENTE --}}
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-
-                <div class="card-body p-4">
-
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-
-                        <h5 class="fw-semibold mb-0">
-                            Paciente Seleccionado
-                        </h5>
-
-                        <button class="btn btn-light btn-sm rounded-pill px-3"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modalPaciente">
-
-                            Cambiar
-
-                        </button>
-
-                    </div>
-
-                    <div class="row g-4">
-
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block">
-                                Nombre
-                            </small>
-
-                            <span class="fw-medium">
-                                Juan Pérez
-                            </span>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block">
-                                Cédula
-                            </small>
-
-                            <span class="fw-medium">
-                                001-1234567-8
-                            </span>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block">
-                                Teléfono
-                            </small>
-
-                            <span class="fw-medium">
-                                809-555-1234
-                            </span>
-
-                        </div>
-
-                        <div class="col-md-6">
-
-                            <small class="text-muted d-block">
-                                Balance Pendiente
-                            </small>
-
-                            <span class="fw-semibold text-danger">
-                                RD$ 4,000
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{-- CONSULTAS --}}
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-
-                <div class="card-body p-0">
-
-                    <div class="p-4 border-bottom">
-
-                        <h5 class="fw-semibold mb-0">
-                            Consultas Pendientes
-                        </h5>
-
-                    </div>
-
-                    <div class="px-3 pb-3">
-
-                        <div class="table-responsive">
-
-                            <table class="table table-hover align-middle mb-0">
-
-                                <thead class="table-light">
-
-                                    <tr>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Fecha
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Odontólogo
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Motivo
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Estado
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Acción
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    <tr>
-
-                                        <td class="px-4">
-                                            09/05/2026
-                                        </td>
-
-                                        <td class="px-4">
-                                            Dr. García
-                                        </td>
-
-                                        <td class="px-4">
-                                            Dolor Dental
-                                        </td>
-
-                                        <td class="px-4">
-
-                                            <span class="badge rounded-pill text-bg-warning">
-                                                Pendiente
-                                            </span>
-
-                                        </td>
-
-                                        <td class="px-4">
-
-                                            <button class="btn btn-sm btn-primary rounded-pill px-3">
-
-                                                Seleccionar
-
-                                            </button>
-
-                                        </td>
-
-                                    </tr>
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{-- PROCEDIMIENTOS --}}
-            <div class="card border-0 shadow-sm rounded-4">
-
-                <div class="card-body p-0">
-
-                    <div class="p-4 border-bottom">
-
-                        <h5 class="fw-semibold mb-1">
-                            Procedimientos
-                        </h5>
-
-                        <small class="text-muted">
-                            Cargados automáticamente desde la consulta seleccionada
-                        </small>
-
-                    </div>
-
-                    <div class="px-3 pb-3">
-
-                        <div class="table-responsive">
-
-                            <table class="table table-hover align-middle mb-0">
-
-                                <thead class="table-light">
-
-                                    <tr>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Procedimiento
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Cantidad
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Precio
-                                        </th>
-
-                                        <th class="px-4 py-3 text-muted fw-semibold small">
-                                            Subtotal
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    <tr>
-
-                                        <td class="px-4">
-                                            Limpieza Dental
-                                        </td>
-
-                                        <td class="px-4">
-                                            1
-                                        </td>
-
-                                        <td class="px-4">
-                                            RD$ 1,500
-                                        </td>
-
-                                        <td class="px-4 fw-medium">
-                                            RD$ 1,500
-                                        </td>
-
-                                    </tr>
-
-                                    <tr>
-
-                                        <td class="px-4">
-                                            Resina
-                                        </td>
-
-                                        <td class="px-4">
-                                            2
-                                        </td>
-
-                                        <td class="px-4">
-                                            RD$ 2,500
-                                        </td>
-
-                                        <td class="px-4 fw-medium">
-                                            RD$ 5,000
-                                        </td>
-
-                                    </tr>
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {{-- RIGHT --}}
-        <div class="col-lg-4">
-
-            {{-- CONFIGURACION --}}
-            <div class="card border-0 shadow-sm rounded-4 mb-4">
-
-                <div class="card-body p-4">
-
-                    <h5 class="fw-semibold mb-4">
-                        Configuración Factura
-                    </h5>
-
-                    {{-- TIPO DESCUENTO --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small">
-                            Tipo de descuento
-                        </label>
-
-                        <select class="form-select rounded-3">
-
-                            <option>Sin descuento</option>
-                            <option>Monto</option>
-                            <option>Porcentaje</option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- VALOR DESCUENTO --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small">
-                            Valor descuento
-                        </label>
-
-                        <input type="number"
-                               class="form-control rounded-3"
-                               placeholder="0">
-
-                    </div>
-
-                    {{-- CUOTAS --}}
-                    <div class="mb-4">
-
-                        <label class="form-label text-muted small">
-                            Cantidad de cuotas
-                        </label>
-
-                        <input type="number"
-                               class="form-control rounded-3"
-                               value="3">
-
-                    </div>
-
-                    {{-- MONTO CUOTA --}}
-                    <div>
-
-                        <label class="form-label text-muted small">
-                            Monto por cuota
-                        </label>
-
-                        <div class="form-control rounded-3 bg-light">
-
-                            RD$ 2,000
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {{-- RESUMEN --}}
-            <div class="card border-0 shadow-sm rounded-4">
-
-                <div class="card-body p-4">
-
-                    <h5 class="fw-semibold mb-4">
-                        Resumen
-                    </h5>
-
-                    <div class="d-flex justify-content-between mb-3">
-
-                        <span class="text-muted">
-                            Subtotal
-                        </span>
-
-                        <span class="fw-medium">
-                            RD$ 6,500
-                        </span>
-
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-
-                        <span class="text-muted">
-                            Descuento
-                        </span>
-
-                        <span class="fw-medium text-danger">
-                            - RD$ 500
-                        </span>
-
-                    </div>
-
-                    <hr>
-
-                    <div class="d-flex justify-content-between mb-4">
-
-                        <span class="fw-semibold">
-                            Total
-                        </span>
-
-                        <span class="fw-bold fs-4">
-                            RD$ 6,000
-                        </span>
-
-                    </div>
-
-                    <button class="btn btn-primary w-100 rounded-pill py-3">
-
-                        Generar Factura
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-{{-- MODAL PACIENTE --}}
-<div class="modal fade"
-     id="modalPaciente"
-     tabindex="-1"
-     aria-hidden="true">
-
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-
-        <div class="modal-content border-0 rounded-4">
+            <input type="hidden" name="idConsulta" value="{{ $consulta?->idConsulta }}">
 
             {{-- HEADER --}}
-            <div class="modal-header border-0 px-4 pt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
 
-                <h5 class="modal-title fw-semibold">
-                    Buscar Paciente
-                </h5>
+                <div class="d-flex align-items-center gap-3">
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                    <a href="{{ $return }}" class="btn btn-light rounded-pill px-3">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                    </a>
+
+                    <h2 class="fw-bold mb-0">
+                        Nueva factura
+                    </h2>
+
+                </div>
+
+                @if ($consulta)
+                    <button type="button" class="btn btn-outline-primary rounded-pill px-4 d-flex align-items-center gap-2"
+                        data-bs-toggle="modal" data-bs-target="#modalConsultas">
+
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        Cambiar consulta
+
+                    </button>
+                @endif
 
             </div>
 
-            {{-- BODY --}}
-            <div class="modal-body px-4 pb-4">
+            <div class="row g-4">
 
-                {{-- SEARCH --}}
-                <div class="mb-4">
+                {{-- IZQUIERDA --}}
+                <div class="col-lg-8">
 
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 bg-light rounded-pill border border-transparent"
-                         style="transition: border-color 0.2s;"
-                         onfocusin="this.style.background='#fff'; this.style.borderColor='#2563EB';"
-                         onfocusout="this.style.background=''; this.style.borderColor='transparent';">
+                    {{-- INFORMACIÓN DE LA CONSULTA --}}
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                        <i class="bi bi-search text-secondary"
-                           style="font-size: 14px;">
-                        </i>
+                        <div class="card-body p-4">
 
-                        <input type="text"
-                               class="border-0 bg-transparent p-0 w-100"
-                               style="outline: none; font-size: 14px;"
-                               placeholder="Buscar paciente...">
+                            <h5 class="fw-semibold mb-1">
+                                Información de la consulta
+                            </h5>
+
+                            <hr>
+
+                            @if ($consulta)
+                                <div class="row g-4">
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Paciente
+                                        </small>
+
+                                        <span class="fw-medium">
+                                            {{ $consulta->paciente->persona->nombre }}
+                                            {{ $consulta->paciente->persona->apellido }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Odontólogo
+                                        </small>
+
+                                        <span class="fw-medium">
+                                            {{ $consulta->odontologo->persona->nombre }}
+                                            {{ $consulta->odontologo->persona->apellido }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Cédula
+                                        </small>
+
+                                        <span class="fw-medium">
+                                            {{ $consulta->paciente->persona->cedula ?? 'Sin cédula' }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Fecha
+                                        </small>
+
+                                        <span class="fw-medium">
+                                            {{ \Carbon\Carbon::parse($consulta->fecha)->format('d/m/Y') }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Teléfono
+                                        </small>
+
+                                        <span class="fw-medium">
+                                            {{ $consulta->paciente->persona->telefono ?? 'No registrado' }}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <small class="text-muted d-block">
+                                            Estado
+                                        </small>
+
+                                        <span class="badge rounded-pill bg-success-subtle text-success">
+
+                                            {{ $consulta->estado }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            @else
+                                <div class="text-center py-5 text-muted">
+
+                                    No se ha seleccionado ninguna consulta.
+
+                                </div>
+                            @endif
+
+                        </div>
+
+                    </div>
+                    {{-- PROCEDIMIENTOS --}}
+                    <div class="card border-0 shadow-sm rounded-4">
+
+                        <div class="card-body p-0">
+
+                            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <h5 class="fw-semibold mb-1">
+                                        Procedimientos
+                                    </h5>
+
+                                </div>
+
+                                @if ($consulta)
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2">
+                                        {{ $consulta->detalles->count() }}
+                                    </span>
+                                @endif
+
+                            </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table table-hover-custom align-middle mb-0">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th class="px-4 py-3 text-muted fw-semibold small">
+                                                Procedimiento
+                                            </th>
+
+                                            <th class="px-4 py-3 text-muted fw-semibold small text-center">
+                                                Cantidad
+                                            </th>
+
+                                            <th class="px-4 py-3 text-muted fw-semibold small text-end">
+                                                Precio
+                                            </th>
+
+                                            <th class="px-4 py-3 text-muted fw-semibold small text-end">
+                                                Subtotal
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        @forelse($consulta?->detalles ?? [] as $detalle)
+                                            <tr>
+
+                                                <td class="px-4 fw-medium">
+
+                                                    {{ $detalle->procedimiento->nombre }}
+
+                                                </td>
+
+                                                <td class="px-4 text-center">
+
+                                                    {{ $detalle->cantidadProcedimiento }}
+
+                                                </td>
+
+                                                <td class="px-4 text-end">
+
+                                                    RD$ {{ number_format($detalle->procedimiento->precio, 2) }}
+
+                                                </td>
+
+                                                <td class="px-4 text-end fw-semibold">
+
+                                                    RD$ {{ number_format($detalle->subtotal, 2) }}
+
+                                                </td>
+
+                                            </tr>
+
+                                        @empty
+
+                                            <tr>
+
+                                                <td colspan="4" class="text-center py-5 text-muted">
+
+                                                    <i class="bi bi-clipboard-x fs-2 d-block mb-2"></i>
+
+                                                    No hay procedimientos registrados para esta consulta.
+
+                                                </td>
+
+                                            </tr>
+                                        @endforelse
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {{-- CRONOGRAMA DE PAGOS --}}
+                    <div class="card border-0 shadow-sm rounded-4 mt-4" id="cardCronograma">
+
+                        <div class="card-body p-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <h5 class="fw-semibold mb-0">
+                                    Cronograma de pagos
+                                </h5>
+
+                            </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table table-hover-custom align-middle mb-0">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th style="width:10%">
+                                                Cuota
+                                            </th>
+
+                                            <th style="width:35%">
+                                                Fecha de vencimiento
+                                            </th>
+
+                                            <th class="text-end">
+                                                Monto
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="tablaCuotas">
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-                {{-- TABLE --}}
-                <div class="px-3 pb-3">
+                @php
+                    $subtotal = $consulta ? $consulta->detalles->sum('subtotal') : 0;
+                @endphp
 
-                    <div class="table-responsive">
+                {{-- DERECHA --}}
+                <div class="col-lg-4">
 
-                        <table class="table table-hover align-middle mb-0">
+                    {{-- RESUMEN --}}
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                            <thead class="table-light">
+                        <div class="card-body p-4">
 
-                                <tr>
+                            <h5 class="fw-semibold mb-4">
+                                Descuento
+                            </h5>
 
-                                    <th class="px-4 py-3 text-muted fw-semibold small">
-                                        Nombre
-                                    </th>
+                            <div class="mb-3">
 
-                                    <th class="px-4 py-3 text-muted fw-semibold small">
-                                        Cédula
-                                    </th>
+                                <label class="form-label text-muted small">
+                                    Tipo de descuento
+                                </label>
 
-                                    <th class="px-4 py-3 text-muted fw-semibold small">
-                                        Teléfono
-                                    </th>
+                                <select class="form-select rounded-3" id="tipoDescuento" name="tipoDescuento">
 
-                                    <th class="px-4 py-3 text-muted fw-semibold small">
-                                        Acción
-                                    </th>
+                                    <option value="">Sin descuento</option>
+                                    <option value="Monto">Monto fijo</option>
+                                    <option value="Porcentaje">Porcentaje</option>
 
-                                </tr>
+                                </select>
 
-                            </thead>
+                            </div>
 
-                            <tbody>
+                            <div>
 
-                                <tr>
+                                <label class="form-label text-muted small">
+                                    Valor del descuento
+                                </label>
 
-                                    <td class="px-4 fw-medium">
-                                        Juan Pérez
-                                    </td>
+                                <input type="number" class="form-control rounded-3" id="valorDescuento"
+                                    name="valorDescuento" value="0" min="0" disabled>
 
-                                    <td class="px-4 text-muted">
-                                        001-1234567-8
-                                    </td>
+                            </div>
 
-                                    <td class="px-4 text-muted">
-                                        809-555-1234
-                                    </td>
-
-                                    <td class="px-4">
-
-                                        <button class="btn btn-primary btn-sm rounded-pill px-3">
-
-                                            Seleccionar
-
-                                        </button>
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <td class="px-4 fw-medium">
-                                        María López
-                                    </td>
-
-                                    <td class="px-4 text-muted">
-                                        402-9876543-1
-                                    </td>
-
-                                    <td class="px-4 text-muted">
-                                        829-555-7890
-                                    </td>
-
-                                    <td class="px-4">
-
-                                        <button class="btn btn-primary btn-sm rounded-pill px-3">
-
-                                            Seleccionar
-
-                                        </button>
-
-                                    </td>
-
-                                </tr>
-
-                            </tbody>
-
-                        </table>
+                        </div>
 
                     </div>
 
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+                        <div class="card-body p-4">
+
+                            <h5 class="fw-semibold mb-4">
+                                Cuotas
+                            </h5>
+
+                            <div class="mb-4">
+
+                                <label class="form-label text-muted small">
+                                    Cantidad de cuotas
+                                </label>
+
+                                <input type="number" class="form-control rounded-3" id="cantidadCuotas"
+                                    name="cantidadCuotas" value="1" min="1">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4">
+
+                        <div class="card-body p-4">
+
+                            <h5 class="fw-semibold mb-4">
+                                Resumen de la factura
+                            </h5>
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Subtotal
+                                </span>
+
+                                <span id="subtotalFactura" class="fw-medium">
+
+                                    RD$ {{ number_format($subtotal, 2) }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-3">
+
+                                <span class="text-muted">
+                                    Descuento
+                                </span>
+
+                                <span id="descuentoFactura" class="fw-medium text-danger">
+
+                                    RD$ 0.00
+
+                                </span>
+
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+
+                                <span class="fw-semibold">
+                                    Total
+                                </span>
+
+                                <span id="totalFactura" class="fw-bold fs-3">
+
+                                    RD$ {{ number_format($subtotal, 2) }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <span class="text-muted">
+                                    Monto por cuota
+                                </span>
+
+                                <span id="montoCuota" class="fw-semibold">
+
+                                    RD$ {{ number_format($subtotal, 2) }}
+
+                                </span>
+
+                            </div>
+
+                            <button type="submit" class="btn btn-medical-primary w-100 rounded-pill py-3"
+                                {{ !$consulta ? 'disabled' : '' }}>
+
+                                <i class="bi bi-receipt me-2"></i>
+
+                                Generar factura
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
                 </div>
+
 
             </div>
 
-        </div>
 
-    </div>
 
-</div>
+        </form>
 
-@endsection
+        @include('facturacion.partials.modal-seleccionar-consulta')
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const modalElement = document.getElementById('modalConsultas');
+
+                if (!modalElement) return;
+
+                const params = new URLSearchParams(window.location.search);
+
+                const abrir =
+                    {{ $consulta ? 'false' : 'true' }} ||
+                    params.get('modal') === '1';
+
+                if (abrir) {
+
+                    const modal = new bootstrap.Modal(modalElement, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    modal.show();
+
+                }
+
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+
+                const subtotal = {{ $subtotal }};
+
+                const tipo = document.getElementById('tipoDescuento');
+                const valor = document.getElementById('valorDescuento');
+                const cuotas = document.getElementById('cantidadCuotas');
+
+                const descuentoLbl = document.getElementById('descuentoFactura');
+                const totalLbl = document.getElementById('totalFactura');
+                const cuotaLbl = document.getElementById('montoCuota');
+
+                const tablaCuotas = document.getElementById('tablaCuotas');
+                const cardCronograma = document.getElementById('cardCronograma');
+                const partes = '{{ $consulta?->fecha }}'.split('-');
+                const fechaFactura = new Date(
+                    parseInt(partes[0]),
+                    parseInt(partes[1]) - 1,
+                    parseInt(partes[2])
+                );
+
+                function recalcular() {
+
+                    if (tipo.value === '') {
+                        valor.disabled = true;
+                        valor.value = 0;
+                    } else {
+                        valor.disabled = false;
+                    }
+
+                    let descuento = 0;
+
+                    if (tipo.value === 'Monto') {
+
+                        descuento = parseFloat(valor.value) || 0;
+
+                    } else if (tipo.value === 'Porcentaje') {
+
+                        descuento = subtotal * ((parseFloat(valor.value) || 0) / 100);
+
+                    }
+
+                    descuento = Math.min(descuento, subtotal);
+
+                    const total = subtotal - descuento;
+
+                    const nCuotas = Math.max(parseInt(cuotas.value) || 1, 1);
+                    if (nCuotas === 1) {
+
+                        cardCronograma.style.display = 'none';
+
+                    } else {
+
+                        cardCronograma.style.display = '';
+
+                    }
+
+                    const montoCuota = total / nCuotas;
+
+                    tablaCuotas.innerHTML = '';
+
+                    for (let i = 0; i < nCuotas; i++) {
+
+                        const fecha = new Date(fechaFactura);
+
+                        fecha.setMonth(fecha.getMonth() + i);
+
+                        const yyyy = fecha.getFullYear();
+                        const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+                        const dd = String(fecha.getDate()).padStart(2, '0');
+
+                        tablaCuotas.innerHTML += `
+                            <tr>
+
+                                <td>
+                                    ${i + 1}
+                                </td>
+
+                                <td>
+                                    <input
+                                        type="date"
+                                        name="fechasVencimiento[]"
+                                        class="form-control form-control-sm rounded-3 fecha-cuota"
+                                        data-indice="${i}"
+                                        value="${yyyy}-${mm}-${dd}">
+                                </td>
+
+                                <td class="text-end fw-semibold">
+                                    RD$ ${montoCuota.toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </td>
+
+                            </tr>
+                        `;
+                    }
+
+                    document.querySelectorAll('.fecha-cuota').forEach(input => {
+
+                        input.addEventListener('change', function() {
+
+                            const indice = parseInt(this.dataset.indice);
+
+                            const partes = this.value.split('-');
+
+                            const fechaBase = new Date(
+                                parseInt(partes[0]),
+                                parseInt(partes[1]) - 1,
+                                parseInt(partes[2])
+                            );
+
+                            document.querySelectorAll('.fecha-cuota').forEach((fechaInput, i) => {
+
+                                const nuevaFecha = new Date(fechaBase);
+
+                                nuevaFecha.setMonth(fechaBase.getMonth() + (i - indice));
+
+                                const yyyy = nuevaFecha.getFullYear();
+                                const mm = String(nuevaFecha.getMonth() + 1).padStart(2, '0');
+                                const dd = String(nuevaFecha.getDate()).padStart(2, '0');
+
+                                fechaInput.value = `${yyyy}-${mm}-${dd}`;
+
+                            });
+
+                        });
+
+                    });
+
+                    descuentoLbl.textContent =
+                        'RD$ ' + descuento.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                    totalLbl.textContent =
+                        'RD$ ' + total.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                    cuotaLbl.textContent =
+                        'RD$ ' + montoCuota.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                }
+
+                tipo.addEventListener('change', recalcular);
+                valor.addEventListener('input', recalcular);
+                cuotas.addEventListener('input', recalcular);
+
+                recalcular();
+
+            });
+        </script>
+
+    @endsection

@@ -21,9 +21,10 @@ use App\Http\Controllers\TratamientoController;
 use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
+use App\Http\Controllers\PagosController;
 use Illuminate\Support\Facades\Mail;
 
-// Webhook de WhatsApp 
+// Webhook de WhatsApp
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
 Route::post('/webhook/whatsapp', [WhatsAppWebhookController::class, 'receive']);
 
@@ -100,6 +101,9 @@ Route::middleware('auth')->group(function () {
 
 
     // Caja chica
+    Route::get('/caja-chica/verificar', [CajaChicaController::class, 'verificar'])
+        ->name('caja-chica.verificar');
+
     Route::resource('caja-chica', CajaChicaController::class);
 
     Route::post('/caja-chica/{caja}/egreso', [CajaChicaController::class, 'registrarEgreso'])
@@ -109,7 +113,15 @@ Route::middleware('auth')->group(function () {
         ->name('caja-chica.cerrar');
 
     // Facturación
-    Route::resource('facturacion', FacturacionController::class);
+    Route::get('/facturacion/consultas', [FacturacionController::class, 'consultas'])
+        ->name('facturacion.consultas');
+    Route::get('/facturacion/{factura}/pdf', [FacturacionController::class, 'pdf'])
+        ->name('facturacion.pdf');
+    Route::resource('facturacion', FacturacionController::class)
+        ->parameters([
+            'facturacion' => 'factura',
+        ]);
+
 
     // Consultas
     Route::get('/consultas/buscar-odontologos', [ConsultaController::class, 'buscarOdontologos'])
@@ -153,7 +165,10 @@ Route::middleware('auth')->group(function () {
     // Tratamientos
     Route::resource('tratamientos', TratamientoController::class);
 
-
+    //Pagos
+    Route::get('/pagos/{pago}/pdf', [PagosController::class, 'pdf'])
+        ->name('pagos.pdf');
+    Route::resource('pagos', PagosController::class);
 });
 
 // Ruta temporal para probar el envío de correos

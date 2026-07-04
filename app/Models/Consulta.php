@@ -40,4 +40,9 @@ class Consulta extends Model
             'idConsulta'
         );
     }
+
+    public function factura()
+    {
+        return $this->hasOne(Factura::class, 'idConsulta', 'idConsulta');
+    }
 }
