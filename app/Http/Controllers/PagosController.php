@@ -8,6 +8,8 @@ use App\Models\Pago;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class PagosController extends Controller
 {
@@ -47,13 +49,16 @@ class PagosController extends Controller
             ->whereIn('idPago', $request->pagos)
             ->get();
 
-        DB::transaction(function () use ($request, $pagos) {
+        $codigoRecibo = Str::uuid()->toString();
+
+        DB::transaction(function () use ($request, $pagos, $codigoRecibo) {
 
             foreach ($pagos as $pago) {
 
                 $pago->update([
                     'idMetodoPago' => $request->idMetodoPago,
                     'idUsuario' => Auth::id(),
+                    'codigoRecibo' => $codigoRecibo,
                     'fechaRealizacion' => Carbon::today(),
                     'referenciaPago' => $request->referenciaPago,
                     'observacion' => $request->observacion,
@@ -119,5 +124,31 @@ class PagosController extends Controller
         }
 
         $factura->save();
+    }
+
+    public function pdf(Pago $pago)
+    {
+        $pagos = Pago::with([
+            'factura.consulta.paciente.persona',
+            'factura.consulta.odontologo.persona',
+            'metodoPago',
+            'usuario.persona',
+        ])
+            ->where('codigoRecibo', $pago->codigoRecibo)
+            ->orderBy('numeroCuota')
+            ->get();
+
+        $factura = $pagos->first()->factura;
+
+        $pdf = Pdf::loadView('pagos.pdf', compact(
+            'pagos',
+            'factura'
+        ));
+
+        $pdf->setPaper([0, 0, 612, 396]); 
+
+        return $pdf->stream(
+            'REC-' . str_pad($pagos->first()->idPago, 6, '0', STR_PAD_LEFT) . '.pdf'
+        );
     }
 }

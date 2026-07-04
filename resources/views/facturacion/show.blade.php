@@ -334,10 +334,14 @@
                                             <td class="px-4">
 
                                                 @if ($pago->estado === 'Pagado')
-                                                    <a href="{{ route('pagos.show', $pago->idPago) }}"
-                                                        class="btn btn-sm btn-light border rounded-pill px-3">
+                                                   
+
+                                                    <a href="{{ route('pagos.pdf', $pago) }}" target="_blank"
+                                                        class="btn btn-sm btn-light border rounded-pill px-3"
+                                                        title="Imprimir recibo">
 
                                                         <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+
 
                                                     </a>
                                                 @else

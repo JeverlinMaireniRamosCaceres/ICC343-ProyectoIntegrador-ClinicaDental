@@ -16,6 +16,7 @@ class Pago extends Model
     protected $fillable = [
         'idFactura',
         'idMetodoPago',
+        'codigoRecibo',
         'idUsuario',
         'fechaVencimiento',
         'monto',

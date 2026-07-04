@@ -159,5 +159,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tratamientos', TratamientoController::class);
 
     //Pagos
+    Route::get('/pagos/{pago}/pdf', [PagosController::class, 'pdf'])
+        ->name('pagos.pdf');
     Route::resource('pagos', PagosController::class);
 });
