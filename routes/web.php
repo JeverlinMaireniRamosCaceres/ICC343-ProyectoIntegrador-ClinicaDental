@@ -22,6 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Services\WhatsAppService;
 use App\Http\Controllers\WhatsAppWebhookController;
 use App\Http\Controllers\PagosController;
+use Illuminate\Support\Facades\Mail;
 
 // Webhook de WhatsApp
 Route::get('/webhook/whatsapp', [WhatsAppWebhookController::class, 'verify']);
@@ -144,6 +145,9 @@ Route::middleware('auth')->group(function () {
     Route::get('inventario/reporte', [InventarioController::class, 'reporte'])
         ->name('inventario.reporte');
 
+    Route::get('/inventario/reporte-orden-compra', [InventarioController::class, 'reporteOrdenCompra'])
+        ->name('inventario.reporteOrdenCompra');
+
     Route::post('/inventario/ajuste', [InventarioController::class, 'ajuste'])
         ->name('inventario.ajuste');
 
@@ -165,4 +169,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/pagos/{pago}/pdf', [PagosController::class, 'pdf'])
         ->name('pagos.pdf');
     Route::resource('pagos', PagosController::class);
+});
+
+// Ruta temporal para probar el envío de correos
+Route::get('/probar-correo', function () {
+
+    Mail::raw('Si recibes este correo, Laravel está enviando correos correctamente.', function ($message) {
+        $message->to('jeverlinpucmm@gmail.com')
+                ->subject('Prueba de correo Laravel');
+    });
+
+    return 'Correo enviado.';
 });

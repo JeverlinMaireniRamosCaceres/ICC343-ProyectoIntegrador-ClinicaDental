@@ -18,6 +18,7 @@ class Cita extends Model
         'nombrePersona',
         'telefono',
         'correo',
+        'recordatorioCorreoEnviadoAt',
         'estado',
         'recordatorioWhatsappEnviado',
         'recordatorioWhatsappEnviadoAt',
