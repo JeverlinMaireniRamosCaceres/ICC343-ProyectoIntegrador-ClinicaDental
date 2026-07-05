@@ -109,40 +109,5 @@
 
     @include('facturacion.partials.modal-anular-factura')
 
-    <style>
-        .btn-filtro {
-            transition: all 0.2s ease;
-            font-size: 0.85rem;
-            background: transparent;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-filtro.active {
-            background-color: #ffffff !important;
-            color: #0ea5e9 !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
-            font-weight: 600 !important;
-        }
-
-        .btn-filtro:not(.active):hover {
-            color: #212529 !important;
-            background-color: rgba(0, 0, 0, 0.04);
-        }
-
-        .date-input {
-            font-size: 0.85rem;
-        }
-
-        .date-input::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-            opacity: 0.6;
-        }
-
-        .date-input::-webkit-calendar-picker-indicator:hover {
-            opacity: 1;
-        }
-    </style>
-
     <script src="{{ asset('js/historial-factura.js') }}"></script>
 @endsection

@@ -37,12 +37,14 @@
 
                 <!-- filtro por fecha -->
                 <div class="p-4 border-bottom d-flex justify-content-start">
-                    <form id="formFiltroCaja">
+                    <div class="d-flex align-items-center bg-light p-1 rounded-pill border border-light-subtle"
+                        style="width: 250px; height: 38px;">
 
-                        <input type="date" name="fecha" id="filtroFecha" value="{{ request('fecha') }}"
-                            class="form-control date-input" style="width: 250px;">
+                        <input type="date" name="fecha" id="filtroFecha"
+                            class="form-control form-control-sm border-0 bg-transparent rounded-pill px-2 date-input text-muted"
+                            value="{{ request('fecha') }}" style="box-shadow: none;">
 
-                    </form>
+                    </div>
                 </div>
 
                 <!-- tabla -->

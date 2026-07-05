@@ -281,7 +281,7 @@ body {
     padding: 1.15rem 1.5rem;
 }
 
-.table-hover-custom tbody tr:hover>* {
+.table-hover-custom tbody tr:hover > * {
     background-color: #eef4ff !important;
     color: #0f172a;
 }
@@ -437,7 +437,7 @@ body {
     color: white;
 }
 
-#sidebar-container.sidebar-collapsed .sidebar-nav>li {
+#sidebar-container.sidebar-collapsed .sidebar-nav > li {
     width: 100%;
 }
 
@@ -470,11 +470,11 @@ body {
 
 #sidebar-container.sidebar-collapsed .sidebar-header {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 12px;
-    padding: 16px 0 !important; 
+    padding: 16px 0 !important;
     min-height: 90px;
 }
 
@@ -489,12 +489,12 @@ body {
 }
 
 #sidebar-container.sidebar-collapsed .brand-icon {
-    margin: 0 auto !important; 
+    margin: 0 auto !important;
     display: block !important;
 }
 
 #sidebar-container.sidebar-collapsed .sidebar-toggle-btn {
-    display: flex !important; 
+    display: flex !important;
     margin: 0 auto;
 }
 
@@ -507,7 +507,7 @@ body {
 
 /* SUBMENU EN SIDEBAR COLAPSADO */
 #sidebar-container.sidebar-collapsed .submenu.show {
-    display: block !important; 
+    display: block !important;
     background: #0f172a;
     border-radius: 12px;
     margin: 4px 12px 0;
@@ -718,4 +718,37 @@ body {
 /* borde sutil entre header y body cuando está abierto */
 .accordion-button:not(.collapsed)::after {
     filter: none;
+}
+
+.btn-filtro {
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    background: transparent;
+    display: flex;
+    align-items: center;
+}
+
+.btn-filtro.active {
+    background-color: #fff !important;
+    color: #0ea5e9 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+    font-weight: 600 !important;
+}
+
+.btn-filtro:not(.active):hover {
+    color: #212529 !important;
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.date-input {
+    font-size: 0.85rem;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
 }

@@ -151,21 +151,40 @@
                                     <i
                                         class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                                    <input type="text" name="buscar" id="buscarProducto" value="{{ request('buscar') }}"
+                                    <input type="text" name="buscar" id="buscarProducto"
+                                        value="{{ request('buscar') }}"
                                         class="form-control rounded-pill ps-5 search-input"
                                         placeholder="Buscar producto...">
 
                                 </div>
 
-                                <div class="ms-auto d-flex gap-2">
-                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro active"
-                                        data-filtro="">Todos</button>
-                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                        data-filtro="normal">Normal</button>
-                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                        data-filtro="bajo">Stock bajo</button>
-                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                        data-filtro="agotado">Sin stock</button>
+                                <div class="ms-auto d-flex gap-1 bg-light p-1 rounded-pill border border-light-subtle"
+                                    style="height: 38px;">
+
+                                    <button type="button"
+                                        class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium active border-0"
+                                        data-filtro="">
+                                        Todos
+                                    </button>
+
+                                    <button type="button"
+                                        class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                        data-filtro="normal">
+                                        Normal
+                                    </button>
+
+                                    <button type="button"
+                                        class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                        data-filtro="bajo">
+                                        Stock bajo
+                                    </button>
+
+                                    <button type="button"
+                                        class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                        data-filtro="agotado">
+                                        Sin stock
+                                    </button>
+
                                 </div>
 
                                 <!-- separador -->
@@ -216,14 +235,16 @@
                                 <div>
                                     <p class="text-muted fw-semibold mb-2 text-uppercase"
                                         style="letter-spacing:.05em; font-size:11px;">
-                                        <i class="bi bi-exclamation-triangle-fill me-1" style="color:#c2510a;"></i> Stock bajo
+                                        <i class="bi bi-exclamation-triangle-fill me-1" style="color:#c2510a;"></i> Stock
+                                        bajo
                                     </p>
                                     <div class="d-flex flex-wrap gap-2">
                                         @foreach ($alertasStockBajo as $p)
                                             <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
                                                 style="background:#fff0e6; color:#c2510a; font-size:13px;">
                                                 <strong>{{ $p->nombre }}</strong>
-                                                <span class="fw-normal">— {{ $p->stockActual }} {{ $p->unidadMedida }}</span>
+                                                <span class="fw-normal">— {{ $p->stockActual }}
+                                                    {{ $p->unidadMedida }}</span>
                                             </div>
                                         @endforeach
                                     </div>
