@@ -15,7 +15,7 @@
     <p>Hola <strong>{{ $persona->nombre }} {{ $persona->apellido }}</strong>.</p>
 
     <p>
-        Todo el equipo de <strong>Clínica Dental</strong> te desea un excelente día.
+        Todo el equipo de <strong>Clínica Dental Dr. Eddy Paulino</strong> te desea un excelente día.
     </p>
 
     <p>
