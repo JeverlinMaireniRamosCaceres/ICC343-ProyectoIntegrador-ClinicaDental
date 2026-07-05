@@ -130,14 +130,50 @@
         .info .titulo {
             width: 25%;
         }
+
+        .header {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .header td {
+            border: none;
+            vertical-align: middle;
+        }
+
+        .logo img {
+            height: 120px;
+        }
     </style>
 
 </head>
 
 <body>
 
-    <h1>Clínica Dental</h1>
-    <h2>Reporte de orden de compra</h2>
+    <table class="header">
+
+        <tr>
+
+            <td class="logo">
+                <img src="{{ public_path('images/logo.png') }}" alt="Logo">
+            </td>
+
+            <td style="text-align:right;">
+
+                <h1 style="margin:0;">
+                    Clínica Dental
+                </h1>
+
+                <h2 style="margin-top:4px;">
+                    Reporte de orden de compra
+                </h2>
+
+            </td>
+
+        </tr>
+
+    </table>
 
     <div class="fecha">
         <strong>Generado:</strong> {{ $fechaReporte }}
