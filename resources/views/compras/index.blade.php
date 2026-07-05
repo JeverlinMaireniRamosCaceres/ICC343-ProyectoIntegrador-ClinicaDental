@@ -59,20 +59,44 @@
                         <div class="d-flex gap-3 ms-auto flex-wrap align-items-center">
 
                             <!-- estado -->
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro active"
-                                    data-filtro="">Todos</button>
-                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                    data-filtro="pagada">Pagada</button>
-                                <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                    data-filtro="pendiente">Pendiente</button>
-                                    <button type="button" class="btn btn-sm rounded-pill px-3 btn-filtro"
-                                       data-filtro="anulada">Anulada</button>
+                            <div class="d-flex gap-1 bg-light p-1 rounded-pill border border-light-subtle"
+                                style="height: 38px;">
+
+                                <button type="button"
+                                    class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium active border-0"
+                                    data-filtro="">
+                                    Todos
+                                </button>
+
+                                <button type="button"
+                                    class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                    data-filtro="pagada">
+                                    Pagada
+                                </button>
+
+                                <button type="button"
+                                    class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                    data-filtro="pendiente">
+                                    Pendiente
+                                </button>
+
+                                <button type="button"
+                                    class="btn btn-sm rounded-pill px-3 btn-filtro fw-medium border-0 text-muted"
+                                    data-filtro="anulada">
+                                    Anulada
+                                </button>
+
                             </div>
 
                             <!-- fecha -->
-                            <input type="date" name="fecha" id="filtroFecha" class="form-control date-input"
-                                style="width: 150px;">
+                            <div class="d-flex align-items-center bg-light p-1 rounded-pill border border-light-subtle"
+                                style="width: 180px; height: 38px;">
+
+                                <input type="date" name="fecha" id="filtroFecha"
+                                    class="form-control form-control-sm border-0 bg-transparent rounded-pill px-2 date-input text-muted w-100"
+                                    style="box-shadow: none;">
+
+                            </div>
                         </div>
 
                     </div>
