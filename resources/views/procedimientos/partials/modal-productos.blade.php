@@ -29,7 +29,7 @@
                                             data-id="{{ $producto->idProducto }}"
                                             data-nombre="{{ $producto->nombre }}"
                                             data-unidad="{{ $producto->unidadMedida }}">
-                                            <i class="bi bi-check-lg"></i>
+                                            <i class="bi bi-circle"></i>
                                         </button>
                                     </td>
                                 </tr>
