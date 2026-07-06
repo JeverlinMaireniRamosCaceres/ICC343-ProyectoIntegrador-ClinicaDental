@@ -8,7 +8,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title fw-semibold">
-                        Buscar producto
+                        Buscar producto HEEEEEEEEEY
                     </h5>
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
@@ -45,7 +45,7 @@
                                                 data-nombre="{{ $producto->nombre }}"
                                                 data-unidad="{{ $producto->unidadMedida }}">
 
-                                                <i class="bi bi-check-lg"></i>
+                                                <i class="bi bi-circle"></i>
                                             </button>
                                         </td>
                                     </tr>
