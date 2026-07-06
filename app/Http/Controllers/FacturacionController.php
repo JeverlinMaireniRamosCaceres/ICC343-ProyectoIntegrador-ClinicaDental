@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\MetodoPago;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Mail\FacturaMail;
+use Illuminate\Support\Facades\Mail;
 
 class FacturacionController extends Controller
 {
@@ -140,7 +142,10 @@ class FacturacionController extends Controller
 
         return redirect()
             ->route('facturacion.show', $factura)
-            ->with('success', 'Factura creada correctamente.');
+            ->with([
+                'success' => 'Factura creada correctamente.',
+                'mostrarModalDocumento' => true,
+            ]);
     }
 
     /**
@@ -311,5 +316,20 @@ class FacturacionController extends Controller
         $pdf->setPaper('letter');
 
         return $pdf->stream('Factura-' . $factura->idFactura . '.pdf');
+    }
+
+    public function enviarCorreo(Request $request, Factura $factura)
+    {
+        $request->validate([
+            'correo' => ['required', 'email'],
+        ]);
+
+        Mail::to($request->correo)->send(
+            new FacturaMail($factura)
+        );
+
+        return redirect()
+            ->route('facturacion.show', $factura)
+            ->with('success', 'Factura enviada correctamente.');
     }
 }

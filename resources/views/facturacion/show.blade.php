@@ -31,18 +31,20 @@
 
             <div class="d-flex gap-2">
 
-                <a href="{{ route('facturacion.pdf', $factura) }}" class="btn btn-light rounded-pill px-4" target="_blank"
-                    title="Imprimir factura">
-                    <i class="bi bi-printer-fill text-secondary"></i>
+                <a href="{{ route('facturacion.pdf', $factura) }}" class="btn btn-light rounded-pill px-4"
+                    style="background-color: #0ea5e9" target="_blank" title="Imprimir factura">
+                    <i class="bi bi-printer text-white"></i>
                 </a>
+
+                <button type="button" class="btn btn-light rounded-pill px-4" style="background-color: #0ea5e9"
+                    id="btnAbrirCorreo" data-correo="{{ $factura->consulta->paciente->persona->correo ?? '' }}"
+                    title="Enviar por correo">
+                    <i class="bi bi-envelope text-white"></i>
+                </button>
 
                 @if (!$factura->tiene_pagos_realizados && $factura->estado !== 'Anulada')
                     <button class="btn btn-danger rounded-pill px-4">
-
-                        <i class="bi bi-x-circle me-2"></i>
-
-                        Anular
-
+                        <i class="bi bi-x-circle"></i>
                     </button>
                 @endif
 
@@ -334,8 +336,6 @@
                                             <td class="px-4">
 
                                                 @if ($pago->estado === 'Pagado')
-                                                   
-
                                                     <a href="{{ route('pagos.pdf', $pago) }}" target="_blank"
                                                         class="btn btn-sm btn-light border rounded-pill px-3"
                                                         title="Imprimir recibo">
@@ -554,5 +554,72 @@
     </div>
 
     @include('pagos.partials.modal-registrar-pago')
+    @include('facturacion.partials.modal-acciones-documento')
+    @include('facturacion.partials.modal-enviar-correo')
+
+    @if (session('mostrarModalDocumento'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalDocumento = new bootstrap.Modal(
+                    document.getElementById('modalDocumento')
+                );
+
+                modalDocumento.show();
+            });
+        </script>
+    @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const modalDocumento = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById('modalDocumento')
+            );
+
+            const modalCorreo = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById('modalEnviarCorreo')
+            );
+
+            document.getElementById('btnDocumentoCorreo').addEventListener('click', function() {
+
+                // Aquí cargaremos el correo del paciente
+                document.getElementById('correoDocumento').value = this.dataset.correo ?? '';
+
+                document.getElementById('modalDocumento')
+                    .addEventListener('hidden.bs.modal', function abrirCorreo() {
+
+                        modalCorreo.show();
+
+                        this.removeEventListener('hidden.bs.modal', abrirCorreo);
+
+                    }, {
+                        once: true
+                    });
+
+                modalDocumento.hide();
+
+            });
+
+            document.getElementById('btnAbrirCorreo')?.addEventListener('click', function() {
+
+                document.getElementById('correoDocumento').value =
+                    this.dataset.correo ?? '';
+
+                modalCorreo.show();
+
+            });
+
+            const btnPdf = document.getElementById('btnDocumentoImprimir');
+
+            if (btnPdf) {
+                btnPdf.addEventListener('click', function() {
+
+                    window.open(this.dataset.url, '_blank');
+
+                });
+            }
+
+        });
+    </script>
 
 @endsection

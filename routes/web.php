@@ -117,6 +117,8 @@ Route::middleware('auth')->group(function () {
         ->name('facturacion.consultas');
     Route::get('/facturacion/{factura}/pdf', [FacturacionController::class, 'pdf'])
         ->name('facturacion.pdf');
+    Route::post('/facturacion/{factura}/correo', [FacturacionController::class, 'enviarCorreo'])
+        ->name('facturacion.correo');
     Route::resource('facturacion', FacturacionController::class)
         ->parameters([
             'facturacion' => 'factura',
@@ -176,7 +178,7 @@ Route::get('/probar-correo', function () {
 
     Mail::raw('Si recibes este correo, Laravel está enviando correos correctamente.', function ($message) {
         $message->to('jeverlinpucmm@gmail.com')
-                ->subject('Prueba de correo Laravel');
+            ->subject('Prueba de correo Laravel');
     });
 
     return 'Correo enviado.';
