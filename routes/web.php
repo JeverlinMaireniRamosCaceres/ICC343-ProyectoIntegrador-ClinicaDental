@@ -170,6 +170,8 @@ Route::middleware('auth')->group(function () {
     //Pagos
     Route::get('/pagos/{pago}/pdf', [PagosController::class, 'pdf'])
         ->name('pagos.pdf');
+    Route::post('/pagos/{pago}/correo', [PagosController::class, 'enviarCorreo'])
+        ->name('pagos.correo');
     Route::resource('pagos', PagosController::class);
 });
 

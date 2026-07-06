@@ -1,10 +1,16 @@
+@php
+    $esRecibo = session('tipoDocumento') === 'recibo';
+
+    $rutaCorreo = $esRecibo ? route('pagos.correo', session('idPago')) : route('facturacion.correo', $factura);
+@endphp
+
 <div class="modal fade" id="modalEnviarCorreo" tabindex="-1" aria-labelledby="tituloModalCorreo" aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered modal-sm-max">
 
         <div class="modal-content border-0 rounded-4 overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
 
-            <form id="formEnviarCorreo" method="POST" action="{{ route('facturacion.correo', $factura) }}">
+            <form id="formEnviarCorreo" method="POST" action="{{ $rutaCorreo }}">
 
                 @csrf
 
@@ -17,21 +23,22 @@
 
                     </div>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 
                 </div>
 
                 <div class="px-3 pt-2">
 
-                    <h6 class="fw-semibold mb-1" style="font-size:1rem; color:#0f172a;">
+                    <h6 class="fw-semibold mb-1" id="tituloModalCorreo" style="font-size:1rem; color:#0f172a;">
 
-                        Enviar factura por correo
+                        {{ $esRecibo ? 'Enviar recibo por correo' : 'Enviar factura por correo' }}
 
                     </h6>
 
                     <p class="mb-3" style="font-size:.845rem;color:#64748b;">
 
-                        Confirme el correo al que desea enviar la factura.
+                        Confirme el correo al que desea enviar
+                        {{ $esRecibo ? 'el recibo' : 'la factura' }}.
 
                     </p>
 
@@ -58,7 +65,7 @@
 
                     </button>
 
-                    <button type="submit" class="btn btn-medical-primary rounded-pill px-4">
+                    <button type="submit" class="btn btn-medical-primary rounded-pill px-4" id="btnEnviarCorreo">
 
                         Enviar
 

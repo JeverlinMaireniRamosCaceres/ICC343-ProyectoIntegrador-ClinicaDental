@@ -336,18 +336,31 @@
                                             <td class="px-4">
 
                                                 @if ($pago->estado === 'Pagado')
-                                                    <a href="{{ route('pagos.pdf', $pago) }}" target="_blank"
-                                                        class="btn btn-sm btn-light border rounded-pill px-3"
-                                                        title="Imprimir recibo">
+                                                    <div class="d-flex gap-2">
 
-                                                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                        <a href="{{ route('pagos.pdf', $pago) }}"
+                                                            class="btn btn-sm rounded-pill px-3"
+                                                            style="background-color: #0ea5e9;" target="_blank"
+                                                            title="Imprimir recibo">
 
+                                                            <i class="bi bi-printer text-white"></i>
 
-                                                    </a>
+                                                        </a>
+
+                                                        <button type="button"
+                                                            class="btn btn-sm rounded-pill px-3 btnAbrirCorreoRecibo"
+                                                            style="background-color: #0ea5e9;"
+                                                            data-correo="{{ $factura->consulta->paciente->persona->correo ?? '' }}"
+                                                            data-action="{{ route('pagos.correo', $pago) }}"
+                                                            title="Enviar recibo por correo">
+
+                                                            <i class="bi bi-envelope text-white"></i>
+
+                                                        </button>
+
+                                                    </div>
                                                 @else
-                                                    <span class="text-muted">
-
-                                                    </span>
+                                                    <span class="text-muted"></span>
                                                 @endif
 
                                             </td>
@@ -618,6 +631,22 @@
 
                 });
             }
+
+            document.querySelectorAll('.btnAbrirCorreoRecibo').forEach(function(btn) {
+
+                btn.addEventListener('click', function() {
+
+                    document.getElementById('correoDocumento').value =
+                        this.dataset.correo ?? '';
+
+                    document.getElementById('formEnviarCorreo').action =
+                        this.dataset.action;
+
+                    modalCorreo.show();
+
+                });
+
+            });
 
         });
     </script>

@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 use App\Models\MetodoPago;
 use App\Models\CajaChica;
 use App\Models\MovimientoCajaChica;
+use App\Mail\ReciboMail;
+use Illuminate\Support\Facades\Mail;
 
 class PagosController extends Controller
 {
@@ -84,7 +86,7 @@ class PagosController extends Controller
                     'referenciaPago' => $request->referenciaPago,
                     'observacion' => $request->observacion,
                     'estado' => 'Pagado',
-                    'idTransaccion' => $codigoRecibo,
+                    'codigoRecibo' => $codigoRecibo,
                 ]);
             }
 
@@ -113,8 +115,15 @@ class PagosController extends Controller
         $this->actualizarEstadoFactura($factura);
 
         return redirect()
-            ->route('facturacion.show', $factura->idFactura)
-            ->with('success', 'Pago registrado correctamente.');
+            ->route('facturacion.show', $factura)
+            ->with([
+                'success' => 'Pago registrado correctamente.',
+                'mostrarModalDocumento' => true,
+                'tipoDocumento' => 'recibo',
+                'codigoRecibo' => $codigoRecibo,
+                'montoRecibo' => $pagos->sum('monto'),
+                'idPago' => $pagos->first()->idPago,
+            ]);
     }
 
     /**
@@ -193,5 +202,20 @@ class PagosController extends Controller
         return $pdf->stream(
             'REC-' . str_pad($pagos->first()->idPago, 6, '0', STR_PAD_LEFT) . '.pdf'
         );
+    }
+
+    public function enviarCorreo(Request $request, Pago $pago)
+    {
+        $request->validate([
+            'correo' => ['required', 'email'],
+        ]);
+
+        Mail::to($request->correo)->send(
+            new ReciboMail($pago)
+        );
+
+        return redirect()
+            ->route('facturacion.show', $pago->factura)
+            ->with('success', 'Recibo enviado correctamente.');
     }
 }
