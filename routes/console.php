@@ -3,7 +3,8 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
-use App\Jobs\EnviarCorreosAutomaticos;
+use App\Jobs\EnviarCorreosCumpleanos;
+use App\Jobs\EnviarRecordatoriosCitas;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -11,7 +12,12 @@ Artisan::command('inspire', function () {
 
 Schedule::command('appointments:reminders')->hourly();
 
-// para enviar los correos automaticos de cumpleaños y recordatorio de citas
-Schedule::job(new EnviarCorreosAutomaticos)
+// cumpleaños una sola vez al día
+Schedule::job(new EnviarCorreosCumpleanos)
     ->dailyAt('08:00')
+    ->withoutOverlapping();
+
+// recordatorios de cita cada una hora
+Schedule::job(new EnviarRecordatoriosCitas)
+    ->hourly()
     ->withoutOverlapping();
