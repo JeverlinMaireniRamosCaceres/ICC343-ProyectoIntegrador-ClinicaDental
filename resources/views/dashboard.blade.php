@@ -8,14 +8,18 @@
     <div class="col-md-6">
         <div class="card p-4 shadow-sm" style="height: 380px;">
             <h5 class="card-title fw-bold text-secondary mb-3">Cantidad de pagos pendientes por mes</h5>
-            <canvas id="graficoPagosPendientes"></canvas>
+            <div style="position: relative; height: 280px; width: 100%;">
+                <canvas id="graficoPagosPendientes"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="col-md-6">
         <div class="card p-4 shadow-sm" style="height: 380px;">
             <h5 class="card-title fw-bold text-secondary mb-3">pacientes registrados</h5>
-            <canvas id="graficoPacientes"></canvas>
+            <div style="position: relative; height: 280px; width: 100%;">
+                <canvas id="graficoPacientes"></canvas>
+            </div>
         </div>
     </div>
 
@@ -177,7 +181,19 @@
                         borderRadius: 4
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -198,7 +214,19 @@
                         fill: true
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -249,9 +277,9 @@
                     datasets: [{
                         data: {!! json_encode($dataVencimientos) !!},
                         backgroundColor: [
-                            '#212529', // Ya vencidos
-                            '#dc3545', // Próximos 15 días (Rojo - Peligro)
-                            '#fd7e14'  // Próximos 30 días (Naranja - Advertencia)
+                            '#003366', // Ya vencidos
+                            '#0065cbe1', // Próximos 15 días (Rojo - Peligro)
+                            '#0ea5e9'  // Próximos 30 días (Naranja - Advertencia)
                         ],
                         borderWidth: 2,
                         hoverOffset: 4

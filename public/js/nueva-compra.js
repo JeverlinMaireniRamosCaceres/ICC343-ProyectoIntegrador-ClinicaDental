@@ -135,7 +135,7 @@ modalProveedores.addEventListener("show.bs.modal", function () {
             btn.classList.remove("btn-success");
             btn.classList.add("btn-primary");
 
-            btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            btn.innerHTML = '<i class="bi bi-circle"></i>';
         }
     });
 });
@@ -224,7 +224,7 @@ document.addEventListener("click", function (e) {
             btn.classList.remove("btn-success");
             btn.classList.add("btn-primary");
 
-            btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+            btn.innerHTML = '<i class="bi bi-circle"></i>';
         }
     });
 });
@@ -238,7 +238,7 @@ document.addEventListener("click", function (e) {
         b.classList.remove("btn-success");
         b.classList.add("btn-primary");
 
-        b.innerHTML = '<i class="bi bi-check-lg"></i>';
+        b.innerHTML = '<i class="bi bi-circle"></i>';
     });
 
     btn.classList.remove("btn-primary");
