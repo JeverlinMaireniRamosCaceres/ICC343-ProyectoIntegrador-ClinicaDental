@@ -32,7 +32,7 @@
                         {{ $consulta->motivo ?? '—' }}
                     </td>
                     <td class="px-4">
-                        @if($consulta->estado == 'Finalizada')
+                        @if ($consulta->estado == 'Finalizada')
                             <span class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
                                 Finalizada
                             </span>
@@ -47,7 +47,8 @@
                         @endif
                     </td>
                     <td class="px-4 text-center">
-                        <a href="{{ route('consultas.show', $consulta->idConsulta) }}" class="btn btn-sm rounded-circle"
+                        <a href="{{ route('consultas.show', $consulta->idConsulta) }}?return={{ urlencode(request()->fullUrl()) }}"
+                            class="btn btn-sm rounded-circle"
                             style="width:34px;height:34px;background:#e8f4fd;color:#0ea5e9;border:none;">
                             <i class="bi bi-eye"></i>
                         </a>

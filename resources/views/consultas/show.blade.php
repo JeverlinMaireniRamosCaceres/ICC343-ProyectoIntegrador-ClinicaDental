@@ -7,7 +7,7 @@
 
         <!-- header -->
         <div class="d-flex align-items-center gap-3 mb-4">
-            <a href="{{ route('consultas.index') }}" class="btn btn-sm btn-light rounded-pill px-3">
+            <a href="{{ request('return', route('consultas.index')) }}" class="btn btn-sm btn-light rounded-pill px-3">
                 <i class="bi bi-arrow-left"></i>
             </a>
 
@@ -62,11 +62,11 @@
                         </div>
 
                         <!-- alergias -->
-                        @if($consulta->paciente->alergias->count() > 0)
+                        @if ($consulta->paciente->alergias->count() > 0)
                             <hr class="my-3">
                             <small class="text-muted d-block mb-2">Alergias del paciente</small>
                             <div class="d-flex flex-wrap gap-2">
-                                @foreach($consulta->paciente->alergias as $alergia)
+                                @foreach ($consulta->paciente->alergias as $alergia)
                                     <span class="badge rounded-pill px-3 py-2"
                                         style="background:#fee2e2; color:#991b1b; font-size:12px;">
                                         <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -147,7 +147,7 @@
                 </div>
 
                 <!-- procedimientos del tratamiento -->
-                @if($detallesTratamiento->count() > 0)
+                @if ($detallesTratamiento->count() > 0)
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-0">
                             <div class="px-4 py-3 border-bottom">
@@ -168,7 +168,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($detallesTratamiento as $detalle)
+                                        @foreach ($detallesTratamiento as $detalle)
                                             <tr>
                                                 <td class="px-4 fw-medium">
                                                     {{ $detalle->procedimiento->nombre ?? '—' }}
@@ -183,7 +183,8 @@
                                                     {{ $detalle->observacion ?? '—' }}
                                                 </td>
                                                 <td class="px-4">
-                                                    <span class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning">
+                                                    <span
+                                                        class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning">
                                                         {{ $detalle->estado }}
                                                     </span>
                                                 </td>
@@ -273,7 +274,7 @@
                 </div>
 
                 <!-- antecedentes -->
-                @if($consulta->paciente->antecedentes)
+                @if ($consulta->paciente->antecedentes)
                     <div class="card border-0 shadow-sm rounded-4">
                         <div class="card-body p-4">
                             <h6 class="fw-semibold mb-3 text-muted text-uppercase"
