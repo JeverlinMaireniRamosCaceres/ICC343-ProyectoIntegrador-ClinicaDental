@@ -17,7 +17,7 @@ class CajaChicaController extends Controller
      */
     public function index(Request $request)
     {
-        $porPagina = (int) $request->input('porPagina', 6);
+        $porPagina = (int) $request->input('porPagina', 10);
 
         if (!in_array($porPagina, [10, 25, 50, 100])) {
             $porPagina = 10;

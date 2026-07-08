@@ -21,7 +21,7 @@ class ComprasController extends Controller
         $estado = $request->input('estado');
         $fecha = $request->input('fecha');
 
-        $porPagina = (int) $request->input('porPagina', 6);
+        $porPagina = (int) $request->input('porPagina', 10);
 
         if (!in_array($porPagina, [10, 25, 50, 100])) {
             $porPagina = 10;

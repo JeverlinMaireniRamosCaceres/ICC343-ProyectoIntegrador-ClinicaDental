@@ -15,16 +15,45 @@ use App\Models\CajaChica;
 use App\Models\MovimientoCajaChica;
 use App\Mail\ReciboMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PagosController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $vista = in_array($request->input('vista'), ['pendientes', 'vencidos', 'recibos', 'anulados'])
+            ? $request->input('vista')
+            : 'pendientes';
+
+        $buscar = trim($request->input('buscar'));
+        $fechaDesde = $request->fecha_desde;
+        $fechaHasta = $request->fecha_hasta;
+
+        $porPagina = (int) $request->input('porPagina', 10);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
+        $pagos = match ($vista) {
+            'vencidos' => $this->paginarVencidos($buscar, $fechaDesde, $fechaHasta, $porPagina),
+            'recibos' => $this->paginarRecibos($buscar, $fechaDesde, $fechaHasta, $porPagina, 'Pagado'),
+            'anulados' => $this->paginarRecibos($buscar, $fechaDesde, $fechaHasta, $porPagina, 'Anulado'),
+            default => $this->paginarPendientes($buscar, $fechaDesde, $fechaHasta, $porPagina),
+        };
+
+        $estadisticas = $this->obtenerEstadisticas();
+
+        if ($request->ajax()) {
+            return view("pagos.partials.tabla-{$vista}", compact('pagos', 'porPagina', 'vista'))->render();
+        }
+
+        return view('pagos.index', array_merge(compact('pagos', 'buscar', 'porPagina', 'vista'), $estadisticas));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -72,7 +101,6 @@ class PagosController extends Controller
             ->whereIn('idPago', $request->pagos)
             ->get();
 
-        // Todos los pagos de esta operación compartirán este código
         $codigoRecibo = Str::uuid()->toString();
 
         DB::transaction(function () use ($request, $pagos, $metodoPago, $codigoRecibo) {
@@ -217,5 +245,109 @@ class PagosController extends Controller
         return redirect()
             ->route('facturacion.show', $pago->factura)
             ->with('success', 'Recibo enviado correctamente.');
+    }
+
+    private function paginarPendientes(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina)
+    {
+        return Pago::with(['factura.consulta.paciente.persona'])
+            ->whereNull('codigoRecibo')
+            ->where('estado', 'Pendiente')
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaVencimiento', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaVencimiento', '<=', $fechaHasta))
+            ->orderBy('fechaVencimiento')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+    }
+
+    private function paginarVencidos(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina)
+    {
+        return Pago::with(['factura.consulta.paciente.persona'])
+            ->whereNull('codigoRecibo')
+            ->where('estado', 'Pendiente')
+            ->whereDate('fechaVencimiento', '<', today())
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaVencimiento', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaVencimiento', '<=', $fechaHasta))
+            ->orderBy('fechaVencimiento')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+    }
+
+    private function paginarRecibos(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina, string $estado)
+    {
+        $grupos = Pago::selectRaw("
+            codigoRecibo,
+            MIN(idPago) as idPago,
+            SUM(monto) as montoTotal,
+            COUNT(*) as cantidadCuotas,
+            MAX(fechaRealizacion) as fechaRealizacion
+        ")
+            ->whereNotNull('codigoRecibo')
+            ->where('estado', $estado)
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaRealizacion', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaRealizacion', '<=', $fechaHasta))
+            ->groupBy('codigoRecibo')
+            ->orderByDesc('fechaRealizacion')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+
+        $primerPagos = Pago::with(['factura.consulta.paciente.persona'])
+            ->whereIn('idPago', collect($grupos->items())->pluck('idPago'))
+            ->get()
+            ->keyBy('idPago');
+
+        $grupos->getCollection()->transform(function ($grupo) use ($primerPagos) {
+            $grupo->pago = $primerPagos->get($grupo->idPago);
+            return $grupo;
+        });
+
+        return $grupos;
+    }
+
+    private function aplicarBusqueda($query, string $buscar)
+    {
+        $soloDigitos = preg_replace('/\D/', '', $buscar);
+        $codigoBuscado = str_ireplace('rcb-', '', $buscar);
+
+        return $query->where(function ($q) use ($buscar, $soloDigitos, $codigoBuscado) {
+            $q->whereHas('factura.consulta.paciente.persona', function ($q2) use ($buscar) {
+                $q2->whereRaw("CONCAT(nombre, ' ', apellido) like ?", ["%{$buscar}%"]);
+            });
+
+            if ($soloDigitos !== '') {
+                $q->orWhereRaw("LPAD(idFactura, 6, '0') like ?", ["%{$soloDigitos}%"]);
+            }
+
+            if ($codigoBuscado !== $buscar) {
+                $q->orWhere('codigoRecibo', 'like', "{$codigoBuscado}%");
+            }
+        });
+    }
+
+    private function obtenerEstadisticas(): array
+    {
+        return [
+
+            'pendientePorCobrar' => Pago::whereNull('codigoRecibo')
+                ->where('estado', 'Pendiente')
+                ->sum('monto'),
+
+            'vencidoPorCobrar' => Pago::whereNull('codigoRecibo')
+                ->where('estado', 'Pendiente')
+                ->whereDate('fechaVencimiento', '<', today())
+                ->sum('monto'),
+
+            'cobradoHoy' => Pago::where('estado', 'Pagado')
+                ->whereDate('fechaRealizacion', today())
+                ->sum('monto'),
+
+            'cobradoEsteMes' => Pago::where('estado', 'Pagado')
+                ->whereYear('fechaRealizacion', today()->year)
+                ->whereMonth('fechaRealizacion', today()->month)
+                ->sum('monto'),
+
+        ];
     }
 }

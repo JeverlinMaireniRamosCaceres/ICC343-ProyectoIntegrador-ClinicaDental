@@ -11,10 +11,8 @@
 
             <div class="d-flex align-items-center gap-3">
 
-                <a href="{{ route('facturacion.index') }}" class="btn btn-light rounded-pill px-3">
-
+                <a href="{{ request('return', route('facturacion.index')) }}" class="btn btn-sm btn-light rounded-pill px-3">
                     <i class="bi bi-arrow-left"></i>
-
                 </a>
 
                 <div>
@@ -319,10 +317,14 @@
 
                                             <td class="px-4 text-center">
 
-                                                @if ($pago->estado === 'Pagado')
+                                                @if ($pago->estado_visual === 'Pagado')
                                                     <span
                                                         class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
                                                         Pagada
+                                                    </span>
+                                                @elseif ($pago->estado_visual === 'Vencido')
+                                                    <span class="badge rounded-pill px-3 py-2 text-danger bg-danger-subtle">
+                                                        Vencida
                                                     </span>
                                                 @else
                                                     <span class="badge rounded-pill px-3 py-2"
