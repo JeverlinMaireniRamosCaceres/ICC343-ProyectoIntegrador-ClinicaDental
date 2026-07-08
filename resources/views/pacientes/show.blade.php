@@ -21,36 +21,41 @@
 
             <div class="card-body p-4">
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
 
-                    @php
-                        $nombreCompleto = $paciente->persona->nombre . ' ' . $paciente->persona->apellido;
-                    @endphp
+                    <div class="d-flex align-items-center">
 
-                    <div class="me-4">
+                        @php
+                            $nombreCompleto = $paciente->persona->nombre . ' ' . $paciente->persona->apellido;
+                        @endphp
 
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($nombreCompleto) }}&background=0ea5e9&color=fff&size=128"
-                            class="rounded-circle shadow-sm" width="80" height="80" alt="Avatar">
+                        <div class="me-4">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($nombreCompleto) }}&background=0ea5e9&color=fff&size=128"
+                                class="rounded-circle shadow-sm" width="80" height="80" alt="Avatar">
+                        </div>
+
+                        <div>
+                            <h3 class="fw-bold mb-1">
+                                {{ $nombreCompleto }}
+                            </h3>
+
+                            <span class="text-muted">
+                                Edad:
+                                @php
+                                    $edad = \Carbon\Carbon::parse($paciente->persona->fechaNacimiento)->age;
+                                @endphp
+
+                                {{ $edad }} años
+                            </span>
+                        </div>
 
                     </div>
 
-                    <div>
-
-                        <h3 class="fw-bold mb-1">
-                            {{ $nombreCompleto }}
-                        </h3>
-
-                        <span class="text-muted">
-                            Edad:
-                            @php
-                                $edad = \Carbon\Carbon::parse($paciente->persona->fechaNacimiento)->age;
-                            @endphp
-
-                            {{ $edad }} años
-
-                        </span>
-
-                    </div>
+                    <a href="{{ route('consultas.create') }}?paciente={{ $paciente->idPaciente }}&return={{ urlencode(request()->fullUrl() . '#historial') }}"
+                        class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Nueva consulta
+                    </a>
 
                 </div>
 
