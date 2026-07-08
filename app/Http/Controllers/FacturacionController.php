@@ -133,6 +133,10 @@ class FacturacionController extends Controller
 
             $factura = $this->crearFactura($consulta, $request, $totales);
 
+            $consulta->update([
+                'estado' => 'Facturada',
+            ]);
+
             $this->crearPagos(
                 $factura,
                 $request->fechasVencimiento,

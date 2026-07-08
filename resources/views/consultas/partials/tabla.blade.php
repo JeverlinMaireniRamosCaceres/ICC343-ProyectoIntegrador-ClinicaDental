@@ -32,7 +32,11 @@
                         {{ $consulta->motivo ?? '—' }}
                     </td>
                     <td class="px-4">
-                        @if ($consulta->estado == 'Finalizada')
+                        @if ($consulta->estado == 'Facturada')
+                            <span class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
+                                Facturada
+                            </span>
+                        @elseif ($consulta->estado == 'Finalizada')
                             <span class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
                                 Finalizada
                             </span>
