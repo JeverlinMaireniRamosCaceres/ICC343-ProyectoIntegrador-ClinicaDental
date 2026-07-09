@@ -47,4 +47,16 @@ class Pago extends Model
     {
         return $this->belongsTo(Usuario::class, 'idUsuario', 'idUsuario');
     }
+
+    public function getEstadoVisualAttribute()
+    {
+        if (
+            $this->estado === 'Pendiente' &&
+            $this->fechaVencimiento < now()->toDateString()
+        ) {
+            return 'Vencido';
+        }
+
+        return $this->estado;
+    }
 }

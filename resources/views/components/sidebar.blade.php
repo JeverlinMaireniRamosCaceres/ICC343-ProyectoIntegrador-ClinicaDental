@@ -144,7 +144,7 @@
             </a>
         </li>
         <li>
-            <a class="nav-link" href="#">
+            <a class="nav-link" {{ request()->routeIs('pagos.*') ? 'active' : '' }} href="{{ route('pagos.index') }}">
                 <i class="bi bi-credit-card"></i>
                 <span class="link-text">Pagos</span>
             </a>

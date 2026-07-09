@@ -42,7 +42,8 @@
 
         document.getElementById("contenedorConsultas").innerHTML = html;
 
-        window.history.replaceState({}, "", destino);
+        // Mantener el hash (#historial) al actualizar la URL
+        window.history.replaceState({}, "", destino + window.location.hash);
     }
 
     busqueda.addEventListener("input", () => cargarConsultas());
@@ -90,10 +91,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Guardar pestaña activa en la URL
+// Guardar la pestaña activa en la URL
 document.querySelectorAll("#pacienteTab button").forEach((tab) => {
     tab.addEventListener("shown.bs.tab", function (e) {
-        history.replaceState(null, null, e.target.dataset.bsTarget);
+        history.replaceState(
+            null,
+            null,
+            window.location.pathname +
+                window.location.search +
+                e.target.dataset.bsTarget,
+        );
     });
 });
 

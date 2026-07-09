@@ -13,7 +13,8 @@
                 <h2 class="fw-bold text-dark mb-1">Consultas</h2>
             </div>
 
-            <a href="{{ route('consultas.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+            <a href="{{ route('consultas.create') }}?return={{ urlencode(request()->fullUrl()) }}"
+                class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
                 <i class="bi bi-plus-lg me-1"></i>
                 Nueva
             </a>

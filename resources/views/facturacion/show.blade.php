@@ -11,10 +11,8 @@
 
             <div class="d-flex align-items-center gap-3">
 
-                <a href="{{ route('facturacion.index') }}" class="btn btn-light rounded-pill px-3">
-
+                <a href="{{ request('return', route('facturacion.index')) }}" class="btn btn-sm btn-light rounded-pill px-3">
                     <i class="bi bi-arrow-left"></i>
-
                 </a>
 
                 <div>
@@ -31,18 +29,20 @@
 
             <div class="d-flex gap-2">
 
-                <a href="{{ route('facturacion.pdf', $factura) }}" class="btn btn-light rounded-pill px-4" target="_blank"
-                    title="Imprimir factura">
-                    <i class="bi bi-printer-fill text-secondary"></i>
+                <a href="{{ route('facturacion.pdf', $factura) }}" class="btn btn-light rounded-pill px-4"
+                    style="background-color: #0ea5e9" target="_blank" title="Imprimir factura">
+                    <i class="bi bi-printer text-white"></i>
                 </a>
+
+                <button type="button" class="btn btn-light rounded-pill px-4" style="background-color: #0ea5e9"
+                    id="btnAbrirCorreo" data-correo="{{ $factura->consulta->paciente->persona->correo ?? '' }}"
+                    title="Enviar por correo">
+                    <i class="bi bi-envelope text-white"></i>
+                </button>
 
                 @if (!$factura->tiene_pagos_realizados && $factura->estado !== 'Anulada')
                     <button class="btn btn-danger rounded-pill px-4">
-
-                        <i class="bi bi-x-circle me-2"></i>
-
-                        Anular
-
+                        <i class="bi bi-x-circle"></i>
                     </button>
                 @endif
 
@@ -295,34 +295,36 @@
                                 <tbody>
 
                                     @forelse ($factura->pagos as $pago)
+                                        @if ($pago->estado === 'Anulado')
+                                            @continue
+                                        @endif
+
                                         <tr>
 
                                             <td class="px-4">
-
                                                 {{ $pago->numeroCuota }}
-
                                             </td>
 
                                             <td class="px-4">
-
                                                 {{ \Carbon\Carbon::parse($pago->fechaVencimiento)->format('d/m/Y') }}
-
                                             </td>
 
                                             <td class="px-4 text-end fw-semibold">
-
                                                 RD$ {{ number_format($pago->monto, 2) }}
-
                                             </td>
 
                                             <td class="px-4 text-center">
 
-                                                @if ($pago->estado === 'Pagado')
+                                                @if ($pago->estado_visual === 'Pagado')
                                                     <span
                                                         class="badge rounded-pill px-3 py-2 text-success bg-success-subtle">
                                                         Pagada
                                                     </span>
-                                                @else
+                                                @elseif ($pago->estado_visual === 'Vencido')
+                                                    <span class="badge rounded-pill px-3 py-2 text-danger bg-danger-subtle">
+                                                        Vencida
+                                                    </span>
+                                                @elseif ($pago->estado_visual === 'Pendiente')
                                                     <span class="badge rounded-pill px-3 py-2"
                                                         style="background-color: #FFE5B4; color: #D97706;">
                                                         Pendiente
@@ -334,20 +336,29 @@
                                             <td class="px-4">
 
                                                 @if ($pago->estado === 'Pagado')
-                                                   
+                                                    <div class="d-flex gap-2">
 
-                                                    <a href="{{ route('pagos.pdf', $pago) }}" target="_blank"
-                                                        class="btn btn-sm btn-light border rounded-pill px-3"
-                                                        title="Imprimir recibo">
+                                                        <a href="{{ route('pagos.pdf', $pago) }}"
+                                                            class="btn btn-sm rounded-pill px-3"
+                                                            style="background-color: #0ea5e9;" target="_blank"
+                                                            title="Imprimir recibo">
 
-                                                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i>
+                                                            <i class="bi bi-printer text-white"></i>
 
+                                                        </a>
 
-                                                    </a>
-                                                @else
-                                                    <span class="text-muted">
+                                                        <button type="button"
+                                                            class="btn btn-sm rounded-pill px-3 btnAbrirCorreoRecibo"
+                                                            style="background-color: #0ea5e9;"
+                                                            data-correo="{{ $factura->consulta->paciente->persona->correo ?? '' }}"
+                                                            data-action="{{ route('pagos.correo', $pago) }}"
+                                                            title="Enviar recibo por correo">
 
-                                                    </span>
+                                                            <i class="bi bi-envelope text-white"></i>
+
+                                                        </button>
+
+                                                    </div>
                                                 @endif
 
                                             </td>
@@ -554,5 +565,88 @@
     </div>
 
     @include('pagos.partials.modal-registrar-pago')
+    @include('facturacion.partials.modal-acciones-documento')
+    @include('facturacion.partials.modal-enviar-correo')
+
+    @if (session('mostrarModalDocumento'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalDocumento = new bootstrap.Modal(
+                    document.getElementById('modalDocumento')
+                );
+
+                modalDocumento.show();
+            });
+        </script>
+    @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const modalDocumento = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById('modalDocumento')
+            );
+
+            const modalCorreo = bootstrap.Modal.getOrCreateInstance(
+                document.getElementById('modalEnviarCorreo')
+            );
+
+            document.getElementById('btnDocumentoCorreo').addEventListener('click', function() {
+
+                // Aquí cargaremos el correo del paciente
+                document.getElementById('correoDocumento').value = this.dataset.correo ?? '';
+
+                document.getElementById('modalDocumento')
+                    .addEventListener('hidden.bs.modal', function abrirCorreo() {
+
+                        modalCorreo.show();
+
+                        this.removeEventListener('hidden.bs.modal', abrirCorreo);
+
+                    }, {
+                        once: true
+                    });
+
+                modalDocumento.hide();
+
+            });
+
+            document.getElementById('btnAbrirCorreo')?.addEventListener('click', function() {
+
+                document.getElementById('correoDocumento').value =
+                    this.dataset.correo ?? '';
+
+                modalCorreo.show();
+
+            });
+
+            const btnPdf = document.getElementById('btnDocumentoImprimir');
+
+            if (btnPdf) {
+                btnPdf.addEventListener('click', function() {
+
+                    window.open(this.dataset.url, '_blank');
+
+                });
+            }
+
+            document.querySelectorAll('.btnAbrirCorreoRecibo').forEach(function(btn) {
+
+                btn.addEventListener('click', function() {
+
+                    document.getElementById('correoDocumento').value =
+                        this.dataset.correo ?? '';
+
+                    document.getElementById('formEnviarCorreo').action =
+                        this.dataset.action;
+
+                    modalCorreo.show();
+
+                });
+
+            });
+
+        });
+    </script>
 
 @endsection

@@ -13,16 +13,47 @@ use Illuminate\Support\Str;
 use App\Models\MetodoPago;
 use App\Models\CajaChica;
 use App\Models\MovimientoCajaChica;
+use App\Mail\ReciboMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PagosController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $vista = in_array($request->input('vista'), ['pendientes', 'vencidos', 'recibos', 'anulados'])
+            ? $request->input('vista')
+            : 'pendientes';
+
+        $buscar = trim($request->input('buscar'));
+        $fechaDesde = $request->fecha_desde;
+        $fechaHasta = $request->fecha_hasta;
+
+        $porPagina = (int) $request->input('porPagina', 10);
+
+        if (!in_array($porPagina, [10, 25, 50, 100])) {
+            $porPagina = 10;
+        }
+
+        $pagos = match ($vista) {
+            'vencidos' => $this->paginarVencidos($buscar, $fechaDesde, $fechaHasta, $porPagina),
+            'recibos' => $this->paginarRecibos($buscar, $fechaDesde, $fechaHasta, $porPagina, 'Pagado'),
+            'anulados' => $this->paginarRecibos($buscar, $fechaDesde, $fechaHasta, $porPagina, 'Anulado'),
+            default => $this->paginarPendientes($buscar, $fechaDesde, $fechaHasta, $porPagina),
+        };
+
+        $estadisticas = $this->obtenerEstadisticas();
+
+        if ($request->ajax()) {
+            return view("pagos.partials.tabla-{$vista}", compact('pagos', 'porPagina', 'vista'))->render();
+        }
+
+        return view('pagos.index', array_merge(compact('pagos', 'buscar', 'porPagina', 'vista'), $estadisticas));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -70,7 +101,6 @@ class PagosController extends Controller
             ->whereIn('idPago', $request->pagos)
             ->get();
 
-        // Todos los pagos de esta operación compartirán este código
         $codigoRecibo = Str::uuid()->toString();
 
         DB::transaction(function () use ($request, $pagos, $metodoPago, $codigoRecibo) {
@@ -79,12 +109,12 @@ class PagosController extends Controller
 
                 $pago->update([
                     'idMetodoPago' => $request->idMetodoPago,
-                    'idUsuario' => Auth::id(),
+                    'idUsuario' => auth()->user()->idUsuario,
                     'fechaRealizacion' => Carbon::today(),
                     'referenciaPago' => $request->referenciaPago,
                     'observacion' => $request->observacion,
                     'estado' => 'Pagado',
-                    'idTransaccion' => $codigoRecibo,
+                    'codigoRecibo' => $codigoRecibo,
                 ]);
             }
 
@@ -97,7 +127,7 @@ class PagosController extends Controller
                 $total = $pagos->sum('monto');
 
                 MovimientoCajaChica::create([
-                    'idUsuario' => Auth::id(),
+                    'idUsuario' => auth()->user()->idUsuario,
                     'idCajaChica' => $caja->idCajaChica,
                     'hora' => now()->format('H:i:s'),
                     'monto' => $total,
@@ -113,8 +143,15 @@ class PagosController extends Controller
         $this->actualizarEstadoFactura($factura);
 
         return redirect()
-            ->route('facturacion.show', $factura->idFactura)
-            ->with('success', 'Pago registrado correctamente.');
+            ->route('facturacion.show', $factura)
+            ->with([
+                'success' => 'Pago registrado correctamente.',
+                'mostrarModalDocumento' => true,
+                'tipoDocumento' => 'recibo',
+                'codigoRecibo' => $codigoRecibo,
+                'montoRecibo' => $pagos->sum('monto'),
+                'idPago' => $pagos->first()->idPago,
+            ]);
     }
 
     /**
@@ -193,5 +230,204 @@ class PagosController extends Controller
         return $pdf->stream(
             'REC-' . str_pad($pagos->first()->idPago, 6, '0', STR_PAD_LEFT) . '.pdf'
         );
+    }
+
+    public function enviarCorreo(Request $request, Pago $pago)
+    {
+        $request->validate([
+            'correo' => ['required', 'email'],
+        ]);
+
+        Mail::to($request->correo)->send(
+            new ReciboMail($pago)
+        );
+
+        return redirect()
+            ->route('facturacion.show', $pago->factura)
+            ->with('success', 'Recibo enviado correctamente.');
+    }
+
+    private function paginarPendientes(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina)
+    {
+        return Pago::with(['factura.consulta.paciente.persona'])
+            ->whereNull('codigoRecibo')
+            ->where('estado', 'Pendiente')
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaVencimiento', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaVencimiento', '<=', $fechaHasta))
+            ->orderBy('fechaVencimiento')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+    }
+
+    private function paginarVencidos(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina)
+    {
+        return Pago::with(['factura.consulta.paciente.persona'])
+            ->whereNull('codigoRecibo')
+            ->where('estado', 'Pendiente')
+            ->whereDate('fechaVencimiento', '<', today())
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaVencimiento', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaVencimiento', '<=', $fechaHasta))
+            ->orderBy('fechaVencimiento')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+    }
+
+    private function paginarRecibos(?string $buscar, ?string $fechaDesde, ?string $fechaHasta, int $porPagina, string $estado)
+    {
+        $grupos = Pago::selectRaw("
+            codigoRecibo,
+            MIN(idPago) as idPago,
+            SUM(monto) as montoTotal,
+            COUNT(*) as cantidadCuotas,
+            MAX(fechaRealizacion) as fechaRealizacion
+        ")
+            ->whereNotNull('codigoRecibo')
+            ->where('estado', $estado)
+            ->when($buscar, fn($q) => $this->aplicarBusqueda($q, $buscar))
+            ->when($fechaDesde, fn($q) => $q->whereDate('fechaRealizacion', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('fechaRealizacion', '<=', $fechaHasta))
+            ->groupBy('codigoRecibo')
+            ->orderByDesc('fechaRealizacion')
+            ->paginate($porPagina)
+            ->appends(request()->except('page'));
+
+        $primerPagos = Pago::with(['factura.consulta.paciente.persona'])
+            ->whereIn('idPago', collect($grupos->items())->pluck('idPago'))
+            ->get()
+            ->keyBy('idPago');
+
+        $cuotas = Pago::whereIn('codigoRecibo', collect($grupos->items())->pluck('codigoRecibo'))
+            ->orderBy('numeroCuota')
+            ->get()
+            ->groupBy('codigoRecibo');
+
+        $grupos->getCollection()->transform(function ($grupo) use ($primerPagos, $cuotas) {
+            $grupo->pago = $primerPagos->get($grupo->idPago);
+            $grupo->cuotas = $cuotas->get($grupo->codigoRecibo);
+
+            return $grupo;
+        });
+
+        return $grupos;
+    }
+
+    private function aplicarBusqueda($query, string $buscar)
+    {
+        $soloDigitos = preg_replace('/\D/', '', $buscar);
+        $codigoBuscado = str_ireplace('rcb-', '', $buscar);
+
+        return $query->where(function ($q) use ($buscar, $soloDigitos, $codigoBuscado) {
+            $q->whereHas('factura.consulta.paciente.persona', function ($q2) use ($buscar) {
+                $q2->whereRaw("CONCAT(nombre, ' ', apellido) like ?", ["%{$buscar}%"]);
+            });
+
+            if ($soloDigitos !== '') {
+                $q->orWhereRaw("LPAD(idFactura, 6, '0') like ?", ["%{$soloDigitos}%"]);
+            }
+
+            if ($codigoBuscado !== $buscar) {
+                $q->orWhere('codigoRecibo', 'like', "{$codigoBuscado}%");
+            }
+        });
+    }
+
+    private function obtenerEstadisticas(): array
+    {
+        return [
+
+            'pendientePorCobrar' => Pago::whereNull('codigoRecibo')
+                ->where('estado', 'Pendiente')
+                ->sum('monto'),
+
+            'vencidoPorCobrar' => Pago::whereNull('codigoRecibo')
+                ->where('estado', 'Pendiente')
+                ->whereDate('fechaVencimiento', '<', today())
+                ->sum('monto'),
+
+            'cobradoHoy' => Pago::where('estado', 'Pagado')
+                ->whereDate('fechaRealizacion', today())
+                ->sum('monto'),
+
+            'cobradoEsteMes' => Pago::where('estado', 'Pagado')
+                ->whereYear('fechaRealizacion', today()->year)
+                ->whereMonth('fechaRealizacion', today()->month)
+                ->sum('monto'),
+
+        ];
+    }
+
+    public function anular(Request $request, string $codigoRecibo)
+    {
+        $request->validate([
+            'observacion' => 'required|string|max:255',
+        ]);
+
+        $pagos = Pago::with(['factura', 'metodoPago',])
+            ->where('codigoRecibo', $codigoRecibo)
+            ->where('estado', 'Pagado')
+            ->get();
+
+        if ($pagos->isEmpty()) {
+            return back()->with('error', 'No se encontró el recibo.');
+        }
+
+        $factura = $pagos->first()->factura;
+        $metodoPago = $pagos->first()->metodoPago;
+
+        DB::transaction(function () use ($pagos, $request, $factura, $metodoPago) {
+
+            foreach ($pagos as $pago) {
+
+                $pago->update([
+                    'estado' => 'Anulado',
+                    'observacion' => $request->observacion,
+                ]);
+
+                Pago::create([
+                    'idFactura' => $pago->idFactura,
+                    'idMetodoPago' => null,
+                    'idUsuario' => null,
+                    'fechaVencimiento' => $pago->fechaVencimiento,
+                    'monto' => $pago->monto,
+                    'numeroCuota' => $pago->numeroCuota,
+                    'fechaRealizacion' => null,
+                    'referenciaPago' => null,
+                    'observacion' => null,
+                    'estado' => 'Pendiente',
+                ]);
+            }
+
+            if ($metodoPago?->descripcion === 'Efectivo') {
+
+                $caja = CajaChica::whereDate('fecha', today())
+                    ->where('estado', 'Abierta')
+                    ->first();
+
+                if ($caja) {
+
+                    $total = $pagos->sum('monto');
+
+                    MovimientoCajaChica::create([
+                        'idUsuario' => auth()->user()->idUsuario,
+                        'idCajaChica' => $caja->idCajaChica,
+                        'hora' => now()->format('H:i:s'),
+                        'monto' => $total,
+                        'tipo' => 'Egreso',
+                        'descripcion' => 'Anulación de recibo RCB-' .
+                            substr($pagos->first()->codigoRecibo, 0, 8),
+                    ]);
+
+                    $caja->decrement('monto', $total);
+                }
+            }
+
+            $this->actualizarEstadoFactura($factura);
+        });
+
+        return redirect(
+            $request->input('return', route('pagos.index', ['vista' => 'recibos']))
+        )->with('success', 'Recibo anulado correctamente.');
     }
 }

@@ -296,7 +296,7 @@
                 <tr>
                     <td>{{ $p->numeroCuota ? 'Cuota ' . $p->numeroCuota : 'Pago único' }}</td>
                     <td>{{ \Carbon\Carbon::parse($p->fechaVencimiento)->format('d/m/Y') }}</td>
-                    <td class="right">RD$ {{ number_format($p->monto, 2) }}</td>
+                    <td class="left">RD$ {{ number_format($p->monto, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>

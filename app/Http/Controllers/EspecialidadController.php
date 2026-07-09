@@ -11,7 +11,7 @@ class EspecialidadController extends Controller
     {
         $buscar = $request->input('buscar');
 
-        $porPagina = (int) $request->input('porPagina', 6);
+        $porPagina = (int) $request->input('porPagina', 10);
 
         if (!in_array($porPagina, [10, 25, 50, 100])) {
             $porPagina = 10;

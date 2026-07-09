@@ -62,7 +62,7 @@
 
                         <div class="d-flex gap-2">
 
-                            <a href="{{ route('facturacion.show', $factura->idFactura) }}"
+                            <a href="{{ route('facturacion.show', $factura->idFactura) }}?return={{ urlencode(request()->fullUrl()) }}"
                                 class="btn btn-sm btn-secondary rounded-pill px-3" title="Ver detalle">
                                 <i class="bi bi-eye-fill"></i>
                             </a>
