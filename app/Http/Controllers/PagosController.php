@@ -109,7 +109,7 @@ class PagosController extends Controller
 
                 $pago->update([
                     'idMetodoPago' => $request->idMetodoPago,
-                    'idUsuario' => Auth::id(),
+                    'idUsuario' => auth()->user()->idUsuario,
                     'fechaRealizacion' => Carbon::today(),
                     'referenciaPago' => $request->referenciaPago,
                     'observacion' => $request->observacion,
@@ -127,7 +127,7 @@ class PagosController extends Controller
                 $total = $pagos->sum('monto');
 
                 MovimientoCajaChica::create([
-                    'idUsuario' => Auth::id(),
+                    'idUsuario' => auth()->user()->idUsuario,
                     'idCajaChica' => $caja->idCajaChica,
                     'hora' => now()->format('H:i:s'),
                     'monto' => $total,
@@ -298,8 +298,15 @@ class PagosController extends Controller
             ->get()
             ->keyBy('idPago');
 
-        $grupos->getCollection()->transform(function ($grupo) use ($primerPagos) {
+        $cuotas = Pago::whereIn('codigoRecibo', collect($grupos->items())->pluck('codigoRecibo'))
+            ->orderBy('numeroCuota')
+            ->get()
+            ->groupBy('codigoRecibo');
+
+        $grupos->getCollection()->transform(function ($grupo) use ($primerPagos, $cuotas) {
             $grupo->pago = $primerPagos->get($grupo->idPago);
+            $grupo->cuotas = $cuotas->get($grupo->codigoRecibo);
+
             return $grupo;
         });
 
@@ -349,5 +356,78 @@ class PagosController extends Controller
                 ->sum('monto'),
 
         ];
+    }
+
+    public function anular(Request $request, string $codigoRecibo)
+    {
+        $request->validate([
+            'observacion' => 'required|string|max:255',
+        ]);
+
+        $pagos = Pago::with(['factura', 'metodoPago',])
+            ->where('codigoRecibo', $codigoRecibo)
+            ->where('estado', 'Pagado')
+            ->get();
+
+        if ($pagos->isEmpty()) {
+            return back()->with('error', 'No se encontró el recibo.');
+        }
+
+        $factura = $pagos->first()->factura;
+        $metodoPago = $pagos->first()->metodoPago;
+
+        DB::transaction(function () use ($pagos, $request, $factura, $metodoPago) {
+
+            foreach ($pagos as $pago) {
+
+                $pago->update([
+                    'estado' => 'Anulado',
+                    'observacion' => $request->observacion,
+                ]);
+
+                Pago::create([
+                    'idFactura' => $pago->idFactura,
+                    'idMetodoPago' => null,
+                    'idUsuario' => null,
+                    'fechaVencimiento' => $pago->fechaVencimiento,
+                    'monto' => $pago->monto,
+                    'numeroCuota' => $pago->numeroCuota,
+                    'fechaRealizacion' => null,
+                    'referenciaPago' => null,
+                    'observacion' => null,
+                    'estado' => 'Pendiente',
+                ]);
+            }
+
+            if ($metodoPago?->descripcion === 'Efectivo') {
+
+                $caja = CajaChica::whereDate('fecha', today())
+                    ->where('estado', 'Abierta')
+                    ->first();
+
+                if ($caja) {
+
+                    $total = $pagos->sum('monto');
+
+                    MovimientoCajaChica::create([
+                        'idUsuario' => auth()->user()->idUsuario,
+                        'idCajaChica' => $caja->idCajaChica,
+                        'hora' => now()->format('H:i:s'),
+                        'monto' => $total,
+                        'tipo' => 'Egreso',
+                        'descripcion' => 'Anulación de recibo RCB-' .
+                            substr($pagos->first()->codigoRecibo, 0, 8),
+                    ]);
+
+                    $caja->decrement('monto', $total);
+                }
+            }
+
+            $this->actualizarEstadoFactura($factura);
+        });
+
+        return redirect(
+            $request->input('return', route('pagos.index', ['vista' => 'recibos']))
+        )->with('success', 'Recibo anulado correctamente.');
     }
 }

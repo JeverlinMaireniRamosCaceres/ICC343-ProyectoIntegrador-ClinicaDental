@@ -191,3 +191,16 @@ async function cargarFiltros() {
 
     window.history.pushState({}, "", url);
 }
+
+document.addEventListener("click", function (e) {
+    const boton = e.target.closest(".btnAnularPago");
+
+    if (!boton) return;
+
+    const codigo = boton.dataset.codigo;
+
+    document.getElementById("formAnularPago").action =
+        `/pagos/${codigo}/anular`;
+
+    document.getElementById("observacionAnulacion").value = "";
+});

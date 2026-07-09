@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Container\Attributes\Auth as AttributesAuth;
 
 class CajaChicaController extends Controller
 {
@@ -155,7 +156,7 @@ class CajaChicaController extends Controller
         DB::transaction(function () use ($request, $caja) {
 
             MovimientoCajaChica::create([
-                'idUsuario' => 1, // Cambiar luego por auth()->user()->idUsuario
+                'idUsuario' => auth()->user()->idUsuario,
                 'idCajaChica' => $caja->idCajaChica,
                 'hora' => now()->format('H:i:s'),
                 'monto' => $request->monto,

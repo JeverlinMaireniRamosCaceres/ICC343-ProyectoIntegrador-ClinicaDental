@@ -17,7 +17,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h2 class="fw-bold page-title mb-1">
-                    Historial de Pagos
+                    Historial de pagos
                 </h2>
             </div>
         </div>
@@ -42,10 +42,7 @@
 
                             </div>
 
-                            <div class="rounded-circle bg-warning-subtle d-flex align-items-center justify-content-center"
-                                style="width:40px;height:40px;">
-                                <i class="bi bi-hourglass-split text-warning fs-4"></i>
-                            </div>
+                            <i class="bi bi-hourglass-split text-warning fs-4"></i>
 
                         </div>
 
@@ -71,10 +68,7 @@
 
                             </div>
 
-                            <div class="rounded-circle bg-danger-subtle d-flex align-items-center justify-content-center"
-                                style="width:40px;height:40px;">
-                                <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
-                            </div>
+                            <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
 
                         </div>
 
@@ -100,10 +94,7 @@
 
                             </div>
 
-                            <div class="rounded-circle bg-success-subtle d-flex align-items-center justify-content-center"
-                                style="width:40px;height:40px;">
-                                <i class="bi bi-cash-stack text-success fs-4"></i>
-                            </div>
+                            <i class="bi bi-cash-stack text-success fs-4"></i>
 
                         </div>
 
@@ -129,10 +120,7 @@
 
                             </div>
 
-                            <div class="rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center"
-                                style="width:40px;height:40px;">
-                                <i class="bi bi-calendar-check-fill text-primary fs-4"></i>
-                            </div>
+                            <i class="bi bi-calendar-check-fill fs-4" style="color: #0ea5e9;"></i>
 
                         </div>
 
@@ -161,7 +149,7 @@
 
                                 <input type="text" name="buscar" id="buscarPago" value="{{ request('buscar') }}"
                                     class="form-control rounded-pill ps-5 border-light-subtle bg-light-subtle py-2"
-                                    placeholder="Buscar paciente, factura o recibo...">
+                                    placeholder="Buscar paciente o factura...">
 
                             </form>
 
@@ -235,8 +223,7 @@
 
     </div>
 
-
-
+    @include('pagos.partials.modal-anular-recibo')
     <script src="{{ asset('js/pago.js') }}"></script>
 
 @endsection

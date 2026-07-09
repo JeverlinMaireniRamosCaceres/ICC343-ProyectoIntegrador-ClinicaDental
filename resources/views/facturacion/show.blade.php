@@ -295,24 +295,22 @@
                                 <tbody>
 
                                     @forelse ($factura->pagos as $pago)
+                                        @if ($pago->estado === 'Anulado')
+                                            @continue
+                                        @endif
+
                                         <tr>
 
                                             <td class="px-4">
-
                                                 {{ $pago->numeroCuota }}
-
                                             </td>
 
                                             <td class="px-4">
-
                                                 {{ \Carbon\Carbon::parse($pago->fechaVencimiento)->format('d/m/Y') }}
-
                                             </td>
 
                                             <td class="px-4 text-end fw-semibold">
-
                                                 RD$ {{ number_format($pago->monto, 2) }}
-
                                             </td>
 
                                             <td class="px-4 text-center">
@@ -326,7 +324,7 @@
                                                     <span class="badge rounded-pill px-3 py-2 text-danger bg-danger-subtle">
                                                         Vencida
                                                     </span>
-                                                @else
+                                                @elseif ($pago->estado_visual === 'Pendiente')
                                                     <span class="badge rounded-pill px-3 py-2"
                                                         style="background-color: #FFE5B4; color: #D97706;">
                                                         Pendiente
@@ -361,8 +359,6 @@
                                                         </button>
 
                                                     </div>
-                                                @else
-                                                    <span class="text-muted"></span>
                                                 @endif
 
                                             </td>

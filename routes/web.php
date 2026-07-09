@@ -172,6 +172,8 @@ Route::middleware('auth')->group(function () {
         ->name('pagos.pdf');
     Route::post('/pagos/{pago}/correo', [PagosController::class, 'enviarCorreo'])
         ->name('pagos.correo');
+    Route::patch('/pagos/{codigoRecibo}/anular', [PagosController::class, 'anular'])
+        ->name('pagos.anular');
     Route::resource('pagos', PagosController::class);
 });
 

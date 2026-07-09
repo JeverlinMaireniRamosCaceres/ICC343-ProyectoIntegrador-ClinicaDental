@@ -294,7 +294,7 @@ class FacturacionController extends Controller
             Pago::create([
                 'idFactura' => $factura->idFactura,
                 'idMetodoPago' => null,
-                'idUsuario' => Auth::id(),
+                'idUsuario' => null,
                 'fechaVencimiento' => $fechaVencimiento,
                 'monto' => $monto,
                 'numeroCuota' => $i + 1,
