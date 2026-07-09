@@ -89,7 +89,7 @@
             <li>
                 <hr class="sidebar-divider">
             </li>
-            
+
             <li><span class="sidebar-section-label">Inventario</span></li>
 
             <li>
@@ -180,7 +180,7 @@
             </li>
         @endif
 
-        @if ($rol === 'Administrador' || $rol === 'Doctor')
+        @if ($rol === 'Administrador')
             {{-- SISTEMA --}}
             <li>
                 <hr class="sidebar-divider">
@@ -198,41 +198,37 @@
                 </a>
                 <ul class="collapse submenu {{ request()->routeIs('usuarios.*') || request()->routeIs('procedimientos.*') || request()->routeIs('alergias.*') || request()->routeIs('especialidades.*') ? 'show' : '' }}"
                     id="configSubmenu">
-                    @if ($rol === 'Administrador')
-                        <li>
-                            <a href="{{ route('usuarios.index') }}"
-                                class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
-                                <i class="bi bi-people"></i>
-                                <span class="link-text">Usuarios</span>
-                            </a>
-                        </li>
+                    <li>
+                        <a href="{{ route('usuarios.index') }}"
+                            class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
+                            <i class="bi bi-people"></i>
+                            <span class="link-text">Usuarios</span>
+                        </a>
+                    </li>
 
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('procedimientos.*') ? 'active' : '' }}"
-                                href="{{ route('procedimientos.index') }}">
-                                <i class="bi bi-clipboard2-plus"></i>
-                                <span class="link-text">Procedimientos</span>
-                            </a>
-                        </li>
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('procedimientos.*') ? 'active' : '' }}"
+                            href="{{ route('procedimientos.index') }}">
+                            <i class="bi bi-clipboard2-plus"></i>
+                            <span class="link-text">Procedimientos</span>
+                        </a>
+                    </li>
 
-                        <li>
-                            <a class="nav-link {{ request()->routeIs('especialidades.*') ? 'active' : '' }}"
-                                href="{{ route('especialidades.index') }}">
-                                <i class="bi bi-award"></i>
-                                <span class="link-text">Especialidades</span>
-                            </a>
-                        </li>
-                    @endif
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('especialidades.*') ? 'active' : '' }}"
+                            href="{{ route('especialidades.index') }}">
+                            <i class="bi bi-award"></i>
+                            <span class="link-text">Especialidades</span>
+                        </a>
+                    </li>
 
-                    @if ($rol === 'Administrador' || $rol === 'Doctor')
-                        <li>
-                            <a href="{{ route('alergias.index') }}"
-                                class="nav-link {{ request()->routeIs('alergias.*') ? 'active' : '' }}">
-                                <i class="bi bi-exclamation-triangle"></i>
-                                <span class="link-text">Alergias</span>
-                            </a>
-                        </li>
-                    @endif
+                    <li>
+                        <a href="{{ route('alergias.index') }}"
+                            class="nav-link {{ request()->routeIs('alergias.*') ? 'active' : '' }}">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span class="link-text">Alergias</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endif
