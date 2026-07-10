@@ -10,27 +10,24 @@
             <div class="modal-body pt-4">
                 <div class="row g-3">
 
-                    <!-- paciente - readonly, se llena automatico -->
+                    <!-- paciente / readonly, se llena automatico -->
                     <div class="col-12">
                         <label class="form-label">Paciente</label>
-                        <input type="text" id="tratamientoPacienteNombre"
-                            class="form-control consulta-readonly" readonly
-                            placeholder="Selecciona un paciente primero">
+                        <input type="text" id="tratamientoPacienteNombre" class="form-control consulta-readonly"
+                            readonly placeholder="Selecciona un paciente primero">
                     </div>
 
                     <!-- nombre del tratamiento -->
                     <div class="col-12">
                         <label class="form-label">Nombre del tratamiento</label>
-                        <input type="text" id="tratamientoNombre"
-                            class="form-control consulta-input"
+                        <input type="text" id="tratamientoNombre" class="form-control consulta-input"
                             placeholder="Ej: Ortodoncia, Implante, Blanqueamiento...">
                     </div>
 
                     <!-- fecha de inicio -->
                     <div class="col-md-6">
                         <label class="form-label">Fecha de inicio</label>
-                        <input type="date" id="tratamientoFechaInicio"
-                            class="form-control consulta-input"
+                        <input type="date" id="tratamientoFechaInicio" class="form-control consulta-input"
                             value="{{ now()->format('Y-m-d') }}">
                     </div>
 
@@ -44,14 +41,44 @@
                         </select>
                     </div>
 
+                    <h6 class="mt-4">Procedimientos planificados</h6>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Procedimiento</th>
+                                    <th>Cantidad</th>
+                                    <th>Observación</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="cuerpoPlanTratamiento">
+
+                                <tr id="filaVaciaPlan">
+                                    <td colspan="4" class="text-center text-muted">
+                                        No hay procedimientos agregados.
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary rounded-pill"
+                        onclick="abrirAgregarProcedimiento('planTratamiento')">
+
+                        Agregar procedimiento
+
+                    </button>
+
                 </div>
             </div>
 
             <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4"
-                    data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary rounded-pill px-4"
-                    id="btnGuardarTratamiento">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" id="btnGuardarTratamiento">
                     Guardar tratamiento
                 </button>
             </div>

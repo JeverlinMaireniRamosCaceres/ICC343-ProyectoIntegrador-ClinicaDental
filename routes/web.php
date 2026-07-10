@@ -214,6 +214,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('consultas', ConsultaController::class)
         ->only(['index', 'show', 'create', 'store'])
         ->middleware('rol:Administrador,Doctor');
+    Route::get('/tratamientos/{id}/procedimientos',
+        [TratamientoController::class, 'procedimientos']);
 
 
     // Alergias
