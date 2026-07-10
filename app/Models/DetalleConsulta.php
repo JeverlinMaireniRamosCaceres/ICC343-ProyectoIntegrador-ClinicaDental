@@ -13,6 +13,7 @@ class DetalleConsulta extends Model
     protected $fillable = [
         'idConsulta',
         'idProcedimiento',
+        'idDetalleTratamiento',
         'cantidadProcedimiento',
         'subtotal',
     ];
@@ -32,6 +33,15 @@ class DetalleConsulta extends Model
             Procedimiento::class,
             'idProcedimiento',
             'idProcedimiento'
+        );
+    }
+
+    public function detalleTratamiento()
+    {
+        return $this->belongsTo(
+            DetalleTratamiento::class,
+            'idDetalleTratamiento',
+            'idDetalleTratamiento'
         );
     }
 }

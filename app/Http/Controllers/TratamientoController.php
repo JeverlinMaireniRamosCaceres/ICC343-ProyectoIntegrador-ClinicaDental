@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Tratamiento;
+use App\Models\DetalleTratamiento;
 
 
 class TratamientoController extends Controller
@@ -28,6 +29,15 @@ class TratamientoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    public function procedimientos($id)
+    {
+        $procedimientos = DetalleTratamiento::with('procedimiento')
+            ->where('idTratamiento', $id)
+            ->get();
+
+        return response()->json($procedimientos);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -35,6 +45,10 @@ class TratamientoController extends Controller
             'nombre' => 'required|string|max:100',
             'fechaInicio' => 'required|date',
             'estado' => 'required|string',
+
+            'procedimientos' => 'array',
+            'procedimientos.*.idProcedimiento' => 'required|exists:procedimientos,idProcedimiento',
+            'procedimientos.*.cantidad' => 'required|integer|min:1',
         ]);
 
         $tratamiento = Tratamiento::create([
@@ -43,6 +57,19 @@ class TratamientoController extends Controller
             'fechaInicio' => $request->fechaInicio,
             'estado' => $request->estado,
         ]);
+
+        foreach ($request->procedimientos ?? [] as $procedimiento) {
+
+            DetalleTratamiento::create([
+                'idTratamiento' => $tratamiento->idTratamiento,
+                'idProcedimiento' => $procedimiento['idProcedimiento'],
+                'cantidadProcedimiento' => $procedimiento['cantidad'],
+                'observacion' => $procedimiento['observacion'] ?? null,
+                'estado' => 'Pendiente',
+                'idConsulta' => null,
+            ]);
+
+        }
 
         if ($request->ajax()) {
             return response()->json([
@@ -53,6 +80,7 @@ class TratamientoController extends Controller
 
         return redirect()->route('tratamientos.index')
             ->with('success', 'Tratamiento creado correctamente.');
+
     }
 
     /**

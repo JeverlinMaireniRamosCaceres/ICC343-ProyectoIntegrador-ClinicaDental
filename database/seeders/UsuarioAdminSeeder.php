@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Rol;
 use App\Models\Usuario;
+use App\Models\Persona;
+use App\Models\Odontologo;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,15 +18,37 @@ class UsuarioAdminSeeder extends Seeder
     {
         $rol = Rol::where('nombre', 'Administrador')->firstOrFail();
 
-        Usuario::firstOrCreate(
+        $persona = Persona::firstOrCreate(
+            ['cedula' => '00000000000'],
             [
-                'username' => 'admin',
-            ],
-            [
-                'idPersona' => null,
-                'idRol' => $rol->idRol,
-                'password' => Hash::make('admin'),
+                'nombre' => 'Administrador',
+                'apellido' => 'Sistema',
+                'fechaNacimiento' => '1990-01-01',
+                'sexo' => 'Masculino',
+                'telefono' => '000-000-0000',
+                'correo' => null,
             ]
         );
+
+        $odontologo = Odontologo::firstOrCreate(
+            ['idPersona' => $persona->idPersona],
+            [
+                'exequatur' => 'ADMIN-001',
+            ]
+        );
+
+        $usuario = Usuario::firstOrCreate(
+            ['username' => 'admin'],
+            [
+                'password' => Hash::make('admin'),
+                'idRol' => $rol->idRol,
+            ]
+        );
+
+        
+        $usuario->update([
+            'idPersona' => $persona->idPersona,
+            'idRol' => $rol->idRol,
+        ]);
     }
 }

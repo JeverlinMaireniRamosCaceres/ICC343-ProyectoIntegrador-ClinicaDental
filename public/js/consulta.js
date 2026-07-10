@@ -1,6 +1,8 @@
+let destinoProcedimiento = 'independiente';
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    let destinoProcedimiento = 'independiente';
+
 
     // buscador de consultas
     const buscar = document.getElementById('buscarConsulta');
@@ -43,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('contenedorTablaConsultas').innerHTML = await response.text();
     });
 
-    // buscador de pacientes (solo existe en create) — ya NO corta el script con return
+    // buscador de pacientes (solo existe en create) 
     const inputPaciente = document.getElementById('paciente_nombre');
     const resultadosPacientes = document.getElementById('resultadosPacientes');
     const pacienteId = document.getElementById('paciente_id');
@@ -158,16 +160,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+
     function agregarProcedimiento(id, nombre, precio) {
+
         if (destinoProcedimiento === 'tratamiento') {
+
             agregarProcedimientoTratamiento(id, nombre, precio);
+
+        } else if (destinoProcedimiento === 'planTratamiento') {
+
+            agregarProcedimientoPlanTratamiento(id, nombre, precio);
+
         } else {
+
             agregarProcedimientoIndependiente(id, nombre, precio);
+
         }
 
-        bootstrap.Modal.getInstance(
+
+        const modalAgregar = bootstrap.Modal.getInstance(
             document.getElementById('modalAgregarProcedimiento')
-        )?.hide();
+        );
+
+        modalAgregar.hide();
+
     }
 
     // buscador dentro del modal de procedimientos
@@ -270,6 +286,54 @@ document.addEventListener('DOMContentLoaded', function () {
         actualizarSubtotales();
     }
 
+    // agregar fila a la tabla de procedimientos del plan de tratamiento
+    function agregarProcedimientoPlanTratamiento(id, nombre, precio) {
+
+        const tbody = document.getElementById('cuerpoPlanTratamiento');
+        const filaVacia = document.getElementById('filaVaciaPlan');
+
+        if (document.querySelector(`#cuerpoPlanTratamiento tr[data-proc-id="${id}"]`)) return;
+
+        if (filaVacia) filaVacia.remove();
+
+        const fila = document.createElement('tr');
+        fila.setAttribute('data-proc-id', id);
+
+        fila.innerHTML = `
+        <td class="fw-medium">
+            ${nombre}
+            <input type="hidden" name="idProcedimientoPlan[]" value="${id}">
+        </td>
+
+        <td width="130">
+            <input
+                type="number"
+                name="cantidadProcedimientoPlan[]"
+                class="form-control consulta-input"
+                value="1"
+                min="1">
+        </td>
+
+        <td>
+            <input
+                type="text"
+                name="observacionPlan[]"
+                class="form-control consulta-input"
+                placeholder="Observación...">
+        </td>
+
+        <td class="text-center">
+            <button
+                type="button"
+                class="btn btn-sm btn-danger rounded-pill px-3 btn-eliminar-plan">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </td>
+    `;
+
+        tbody.appendChild(fila);
+    }
+
     // actualizar subtotal cuando cambia la cantidad (independientes)
     document.addEventListener('input', function (e) {
         if (!e.target.classList.contains('input-cantidad')) return;
@@ -324,56 +388,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    function actualizarSubtotales() {
-        let total = 0;
-        let totalTrat = 0;
-
-        document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]').forEach(fila => {
-            const cantidad = parseInt(fila.querySelector('.input-cantidad').value) || 1;
-            const precio = parseFloat(fila.querySelector('.input-cantidad').getAttribute('data-precio'));
-            const subtotal = cantidad * precio;
-
-            fila.querySelector('.subtotal').textContent =
-                'RD$ ' + subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2 });
-
-            total += subtotal;
-        });
-
-        document.querySelectorAll('#cuerpoProcTratamiento tr[data-proc-id]').forEach(fila => {
-            const cantidad = parseInt(fila.querySelector('.input-cantidad-trat').value) || 1;
-            const precio = parseFloat(fila.querySelector('.input-cantidad-trat').getAttribute('data-precio'));
-            const subtotal = cantidad * precio;
-
-            const celdaSubtotal = fila.querySelector('.subtotal-trat');
-            if (celdaSubtotal) {
-                celdaSubtotal.textContent = 'RD$ ' + subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2 });
-            }
-
-            total += subtotal;
-            totalTrat += subtotal;
-        });
-
-        const totalEl = document.getElementById('totalProcedimientos');
-        if (totalEl) {
-            totalEl.textContent = 'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
-        }
-
-        const totalTratEl = document.getElementById('totalProcTratamiento');
-        if (totalTratEl) {
-            totalTratEl.textContent = 'RD$ ' + totalTrat.toLocaleString('es-DO', { minimumFractionDigits: 2 });
-        }
-
-        const filas = document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]');
-        const filasTrat = document.querySelectorAll('#cuerpoProcTratamiento tr[data-proc-id]');
-
-        const resumenProc = document.getElementById('resumenProcedimientos');
-        if (resumenProc) resumenProc.textContent = filas.length + filasTrat.length;
-
-        const resumenTotal = document.getElementById('resumenTotal');
-        if (resumenTotal) resumenTotal.textContent =
-            'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
-    }
-
     // toggle entre tipo de procedimientos
     document.querySelectorAll('.btn-tipo-proc').forEach(btn => {
         btn.addEventListener('click', function () {
@@ -402,6 +416,20 @@ document.addEventListener('DOMContentLoaded', function () {
         const fechaInicio = document.getElementById('tratamientoFechaInicio').value;
         const estado = document.getElementById('tratamientoEstado').value;
 
+        const procedimientos = [];
+
+        document.querySelectorAll('#cuerpoPlanTratamiento tr[data-proc-id]')
+            .forEach(fila => {
+
+                procedimientos.push({
+                    idProcedimiento: fila.dataset.procId,
+                    cantidad: fila.querySelector('[name="cantidadProcedimientoPlan[]"]').value,
+                    observacion: fila.querySelector('[name="observacionPlan[]"]').value
+                });
+
+            });
+
+
         if (!idPaciente) {
             alert('Debes seleccionar un paciente primero.');
             return;
@@ -419,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            body: JSON.stringify({ idPaciente, nombre, fechaInicio, estado })
+            body: JSON.stringify({ idPaciente, nombre, fechaInicio, estado, procedimientos })
         });
 
         const data = await response.json();
@@ -460,19 +488,173 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // actualizar subtotales
+    function actualizarSubtotales() {
+        let total = 0;
+        let totalTrat = 0;
+
+        document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]').forEach(fila => {
+            const cantidad = parseInt(fila.querySelector('.input-cantidad').value) || 1;
+            const precio = parseFloat(fila.querySelector('.input-cantidad').getAttribute('data-precio'));
+            const subtotal = cantidad * precio;
+
+            fila.querySelector('.subtotal').textContent =
+                'RD$ ' + subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+
+            total += subtotal;
+        });
+
+        document.querySelectorAll('#cuerpoProcTratamiento .proc-checkbox:checked:not(:disabled)').forEach(check => {
+
+            const fila = check.closest('tr');
+
+            const cantidad = parseInt(fila.dataset.cantidad);
+            const precio = parseFloat(fila.dataset.precio);
+
+            const subtotal = cantidad * precio;
+
+            total += subtotal;
+            totalTrat += subtotal;
+
+        });
+
+        const totalEl = document.getElementById('totalProcedimientos');
+        if (totalEl) {
+            totalEl.textContent = 'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+        }
+
+        const totalTratEl = document.getElementById('totalProcTratamiento');
+        if (totalTratEl) {
+            totalTratEl.textContent = 'RD$ ' + totalTrat.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+        }
+
+        const filas = document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]');
+        const filasTrat = document.querySelectorAll(
+            '#cuerpoProcTratamiento .proc-checkbox:checked:not(:disabled)'
+        );
+
+        const resumenProc = document.getElementById('resumenProcedimientos');
+        if (resumenProc) resumenProc.textContent = filas.length + filasTrat.length;
+
+        const resumenTotal = document.getElementById('resumenTotal');
+        if (resumenTotal) resumenTotal.textContent =
+            'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+    }
+
+    window.seleccionarTratamiento = function (el, id) {
+
+        document.querySelectorAll('.tratamiento-item').forEach(item => {
+            item.style.border = '2px solid #e2e8f0';
+            item.style.background = '';
+        });
+
+        el.style.border = '2px solid #0ea5e9';
+        el.style.background = '#f0f9ff';
+
+
+        document.getElementById('tratamiento_id').value = id;
+
+
+        document.getElementById('procTratSinTratamiento').style.display = 'none';
+        document.getElementById('procTratConTratamiento').style.display = 'block';
+
+
+        cargarProcedimientosTratamiento(id);
+
+    };
+
+    function cargarProcedimientosTratamiento(id) {
+
+        console.log("Cargando procedimientos del tratamiento:", id);
+
+        fetch(`/tratamientos/${id}/procedimientos`)
+            .then(response => response.json())
+            .then(procedimientos => {
+
+                console.log(procedimientos);
+
+                const tbody = document.getElementById('cuerpoProcTratamiento');
+
+                tbody.innerHTML = '';
+
+                procedimientos.forEach(proc => {
+
+                    tbody.innerHTML += `
+
+                <tr
+                    data-precio="${proc.procedimiento.precio}"
+                    data-cantidad="${proc.cantidadProcedimiento}">
+
+                    <td>
+                        ${proc.procedimiento.nombre}
+                    </td>
+
+                    <td>
+                        ${proc.cantidadProcedimiento}
+                    </td>
+
+                    <td>
+                        <span class="badge ${proc.estado === 'Realizado'
+                            ? 'bg-success'
+                            : 'bg-warning'
+                        }">
+                            ${proc.estado}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${proc.observacion ?? '-'}
+                    </td>
+
+                    <td class="text-center">
+
+                    <input
+                        type="checkbox"
+                        class="form-check-input proc-checkbox"
+                        name="procedimientos_realizados[]"
+                        value="${proc.idDetalleTratamiento}"
+                        ${proc.estado === 'Realizado' ? 'checked disabled' : ''}>
+
+                    </td>
+
+                </tr>
+
+                `;
+
+                });
+
+                document.querySelectorAll('.proc-checkbox').forEach(check => {
+                    check.addEventListener('change', actualizarSubtotales);
+                });
+
+                actualizarSubtotales();
+
+            });
+
+    }
+
 });
 
-window.seleccionarTratamiento = function (el, id) {
-    document.querySelectorAll('.tratamiento-item').forEach(item => {
-        item.style.border = '2px solid #e2e8f0';
-        item.style.background = '';
-    });
 
-    el.style.border = '2px solid #0ea5e9';
-    el.style.background = '#f0f9ff';
+window.abrirAgregarProcedimiento = function (destino) {
 
-    document.getElementById('tratamiento_id').value = id;
+    destinoProcedimiento = destino;
 
-    document.getElementById('procTratSinTratamiento').style.display = 'none';
-    document.getElementById('procTratConTratamiento').style.display = 'block';
+    const modalElemento = document.getElementById('modalAgregarProcedimiento');
+
+    const modal = new bootstrap.Modal(modalElemento);
+
+    modalElemento.style.zIndex = "1060";
+
+    modal.show();
+
+    setTimeout(() => {
+
+        const backdrop = document.querySelector('.modal-backdrop:last-child');
+
+        if (backdrop) {
+            backdrop.style.zIndex = "1055";
+        }
+
+    }, 100);
 };
