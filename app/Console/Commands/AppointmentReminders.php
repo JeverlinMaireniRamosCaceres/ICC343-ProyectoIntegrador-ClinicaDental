@@ -30,6 +30,7 @@ class AppointmentReminders extends Command
         $citas = Cita::with('odontologo.persona')
             ->where('estado', 'Pendiente')
             ->where('recordatorioWhatsappEnviado', false)
+            ->whereIn('medioRecordatorio', ['whatsapp', 'ambos'])
             ->whereNotNull('telefono')
             ->whereRaw(
                 'TIMESTAMP(fecha, hora) >= ?',

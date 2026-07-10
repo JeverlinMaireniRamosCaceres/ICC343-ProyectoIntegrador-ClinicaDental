@@ -86,6 +86,27 @@
                                 placeholder="Ej: paciente@email.com">
                         </div>
 
+                        <div class="col-12">
+                            <label class="form-label">¿Por dónde desea recibir el recordatorio?</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="medioRecordatorio"
+                                        id="medioCorreo" value="correo" checked>
+                                    <label class="form-check-label" for="medioCorreo">Correo</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="medioRecordatorio"
+                                        id="medioWhatsapp" value="whatsapp">
+                                    <label class="form-check-label" for="medioWhatsapp">WhatsApp</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="medioRecordatorio"
+                                        id="medioAmbos" value="ambos">
+                                    <label class="form-check-label" for="medioAmbos">Ambos</label>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
