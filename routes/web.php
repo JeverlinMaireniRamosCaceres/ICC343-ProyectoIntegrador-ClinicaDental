@@ -134,6 +134,8 @@ Route::middleware('auth')->group(function () {
         ->name('consultas.alergiasPaciente');
     Route::get('/consultas/paciente-tratamientos/{id}', [ConsultaController::class, 'tratamientosPaciente'])
         ->name('consultas.tratamientosPaciente');
+    Route::get('/tratamientos/{id}/procedimientos',
+        [TratamientoController::class, 'procedimientos']);
     Route::resource('consultas', ConsultaController::class);
 
 

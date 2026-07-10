@@ -130,32 +130,41 @@ class ConsultaController extends Controller
                 }
             }
 
-            // guardar procedimientos del tratamiento
-            if ($request->has('idProcedimientoTrat') && $request->idTratamiento) {
+            // guardar procedimientos realizados del tratamiento
+            if ($request->filled('procedimientos_realizados')) {
 
-                foreach ($request->idProcedimientoTrat as $i => $idProc) {
+                foreach ($request->procedimientos_realizados as $idDetalle) {
 
-                    $cantidad = $request->cantidadProcedimientoTrat[$i] ?? 1;
-                    $observacion = $request->observacionTrat[$i] ?? null;
-                    $precio = Procedimiento::find($idProc)?->precio ?? 0;
-                    $subtotal = $cantidad * $precio;
+                    $detalle = DetalleTratamiento::find($idDetalle);
 
-                    DetalleTratamiento::create([
+                    if (!$detalle) {
+                        continue;
+                    }
+
+                    if ($detalle->estado === 'Realizado') {
+                        continue;
+                    }
+
+                    $precio = Procedimiento::find($detalle->idProcedimiento)?->precio ?? 0;
+                    $subtotal = $detalle->cantidadProcedimiento * $precio;
+
+                    $detalle->update([
                         'idConsulta' => $consulta->idConsulta,
-                        'idTratamiento' => $request->idTratamiento,
-                        'idProcedimiento' => $idProc,
-                        'cantidadProcedimiento' => $cantidad,
-                        'observacion' => $observacion,
-                        'estado' => 'En proceso',
+                        'estado' => 'Realizado',
                     ]);
 
                     $consulta->detalles()->create([
-                        'idProcedimiento' => $idProc,
-                        'cantidadProcedimiento' => $cantidad,
+                        'idProcedimiento' => $detalle->idProcedimiento,
+                        'idDetalleTratamiento' => $detalle->idDetalleTratamiento,
+                        'cantidadProcedimiento' => $detalle->cantidadProcedimiento,
                         'subtotal' => $subtotal,
                     ]);
 
-                    $this->descontarStock($idProc, $cantidad, $consulta->idConsulta);
+                    $this->descontarStock(
+                        $detalle->idProcedimiento,
+                        $detalle->cantidadProcedimiento,
+                        $consulta->idConsulta
+                    );
                 }
             }
 
@@ -227,23 +236,36 @@ class ConsultaController extends Controller
             'paciente.alergias',
             'odontologo.persona',
             'detalles.procedimiento',
+            'detalles.detalleTratamiento.tratamiento'
         ])->findOrFail($id);
 
-        $detallesTratamiento = DetalleTratamiento::with([
-            'procedimiento',
-            'tratamiento'
-        ])
-            ->where('idConsulta', $id)
-            ->get();
+
+        $detallesTratamiento = $consulta->detalles
+            ->whereNotNull('idDetalleTratamiento');
+
+
+        $detallesIndependientes = $consulta->detalles
+            ->whereNull('idDetalleTratamiento');
+
 
         $subtotalTratamiento = $detallesTratamiento->sum(function ($detalle) {
-            return $detalle->cantidadProcedimiento * $detalle->procedimiento->precio;
+            return $detalle->cantidadProcedimiento *
+                $detalle->procedimiento->precio;
         });
+
+
+        $subtotalIndependientes = $detallesIndependientes->sum(function ($detalle) {
+            return $detalle->cantidadProcedimiento *
+                $detalle->procedimiento->precio;
+        });
+
 
         return view('consultas.show', compact(
             'consulta',
             'detallesTratamiento',
-            'subtotalTratamiento'
+            'detallesIndependientes',
+            'subtotalTratamiento',
+            'subtotalIndependientes'
         ));
     }
 

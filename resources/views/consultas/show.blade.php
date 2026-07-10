@@ -121,7 +121,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($consulta->detalles as $detalle)
+                                    @forelse($detallesIndependientes as $detalle)
                                         <tr>
                                             <td class="px-4 fw-medium">
                                                 {{ $detalle->procedimiento->nombre ?? '—' }}
@@ -174,18 +174,17 @@
                                                     {{ $detalle->procedimiento->nombre ?? '—' }}
                                                 </td>
                                                 <td class="px-4 text-muted">
-                                                    {{ $detalle->tratamiento->nombre ?? '—' }}
+                                                    {{ $detalle->detalleTratamiento->tratamiento->nombre ?? '—' }}
                                                 </td>
                                                 <td class="px-4 text-muted">
                                                     {{ $detalle->cantidadProcedimiento }}
                                                 </td>
                                                 <td class="px-4 text-muted">
-                                                    {{ $detalle->observacion ?? '—' }}
+                                                    {{ $detalle->detalleTratamiento->observacion ?? '—' }}
                                                 </td>
                                                 <td class="px-4">
-                                                    <span
-                                                        class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning">
-                                                        {{ $detalle->estado }}
+                                                    <span class="badge rounded-pill px-3 py-2 bg-warning-subtle text-warning">
+                                                        {{ $detalle->detalleTratamiento->estado ?? '—' }}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -222,7 +221,7 @@
                                     Independientes
                                 </span>
                                 <span class="fw-semibold">
-                                    {{ $consulta->detalles->count() }}
+                                    {{ $detallesIndependientes->count() }}
                                 </span>
                             </div>
 
@@ -243,7 +242,7 @@
                                 </span>
                                 <span class="fw-semibold">
                                     RD$
-                                    {{ number_format($consulta->detalles->sum('subtotal'), 2) }}
+                                    {{ number_format($detallesIndependientes->sum('subtotal'), 2) }}
                                 </span>
                             </div>
 
@@ -265,7 +264,7 @@
                                 </span>
                                 <span class="fw-bold text-primary fs-5">
                                     RD$
-                                    {{ number_format($consulta->detalles->sum('subtotal') + $subtotalTratamiento, 2) }}
+                                    {{ number_format($subtotalIndependientes + $subtotalTratamiento, 2) }}
                                 </span>
                             </div>
 

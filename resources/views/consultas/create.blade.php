@@ -87,8 +87,7 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Fecha</label>
 
-                                    <input type="date" name="fecha"
-                                        class="form-control consulta-input consulta-readonly"
+                                    <input type="date" name="fecha" class="form-control consulta-input consulta-readonly"
                                         value="{{ now()->format('Y-m-d') }}" readonly>
                                 </div>
 
@@ -319,19 +318,14 @@
                                                 <tr>
                                                     <th>Procedimiento</th>
                                                     <th>Cantidad</th>
-                                                    <th>Precio</th>
-                                                    <th>Subtotal</th>
+                                                    <th>Estado</th>
                                                     <th>Observación</th>
                                                     <th class="text-center">Acción</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="cuerpoProcTratamiento">
-                                                <tr id="filaVaciaTrat">
-                                                    <td colspan="6" class="text-center py-4 text-muted">
-                                                        <i class="bi bi-clipboard2-x fs-3 d-block mb-2"></i>
-                                                        No hay procedimientos del tratamiento.
-                                                    </td>
-                                                </tr>
+
+                                            
                                             </tbody>
                                         </table>
 
