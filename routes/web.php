@@ -179,13 +179,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('pagos', PagosController::class);
 });
 
-// Ruta temporal para probar el envío de correos
-Route::get('/probar-correo', function () {
+// rutas para confirmar o cancelar citas desde el correo electrónico
+Route::get('/citas/{cita}/confirmar', [CitaController::class, 'confirmarPublico'])
+    ->name('citas.confirmar.publico')
+    ->middleware('signed');
 
-    Mail::raw('Si recibes este correo, Laravel está enviando correos correctamente.', function ($message) {
-        $message->to('jeverlinpucmm@gmail.com')
-            ->subject('Prueba de correo Laravel');
-    });
-
-    return 'Correo enviado.';
-});
+Route::get('/citas/{cita}/cancelar', [CitaController::class, 'cancelarPublico'])
+    ->name('citas.cancelar.publico')
+    ->middleware('signed');

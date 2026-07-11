@@ -38,8 +38,10 @@ class CitaController extends Controller
             'fecha' => 'required|date',
             'hora' => 'required',
             'nombrePersona' => 'required|string|max:100',
-            'telefono' => 'nullable|string|max:20',
-            'correo' => 'nullable|email|max:100',
+            'medioRecordatorio' => 'required|in:correo,whatsapp,ambos',
+
+            'telefono' => 'required_if:medioRecordatorio,whatsapp,ambos|nullable|string|max:20',
+            'correo' => 'required_if:medioRecordatorio,correo,ambos|nullable|email|max:100',
         ]);
 
         $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
@@ -64,6 +66,7 @@ class CitaController extends Controller
             'nombrePersona' => $request->nombrePersona,
             'telefono' => $request->telefono,
             'correo' => $request->correo,
+            'medioRecordatorio' => $request->medioRecordatorio,
             'estado' => 'Pendiente',
         ]);
 
@@ -125,9 +128,10 @@ class CitaController extends Controller
             'fecha' => 'required|date',
             'hora' => 'required',
             'nombrePersona' => 'required|string|max:100',
-            'telefono' => 'nullable|string|max:20',
-            'correo' => 'nullable|email|max:100',
-            'estado' => 'required|string',
+            'medioRecordatorio' => 'required|in:correo,whatsapp,ambos',
+
+            'telefono' => 'required_if:medioRecordatorio,whatsapp,ambos|nullable|string|max:20',
+            'correo' => 'required_if:medioRecordatorio,correo,ambos|nullable|email|max:100',
         ]);
 
         $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
@@ -154,6 +158,7 @@ class CitaController extends Controller
             'telefono' => $request->telefono,
             'correo' => $request->correo,
             'estado' => $request->estado,
+            'medioRecordatorio' => $request->medioRecordatorio,
         ]);
 
         return redirect()->route('citas.index')
@@ -186,6 +191,30 @@ class CitaController extends Controller
             ->get();
 
         return response()->json($odontologos);
+    }
+
+    public function confirmarPublico(Cita $cita)
+    {
+        if ($cita->estado === 'Pendiente') {
+            $cita->update(['estado' => 'Confirmada']);
+            $mensaje = 'Tu cita ha sido confirmada correctamente.';
+        } else {
+            $mensaje = 'Esta cita ya no puede confirmarse (estado actual: ' . $cita->estado . ').';
+        }
+
+        return view('citas.respuesta-publica', compact('mensaje'));
+    }
+
+    public function cancelarPublico(Cita $cita)
+    {
+        if ($cita->estado !== 'Cancelada') {
+            $cita->update(['estado' => 'Cancelada']);
+            $mensaje = 'Tu cita ha sido cancelada correctamente.';
+        } else {
+            $mensaje = 'Esta cita ya estaba cancelada.';
+        }
+
+        return view('citas.respuesta-publica', compact('mensaje'));
     }
 
 }

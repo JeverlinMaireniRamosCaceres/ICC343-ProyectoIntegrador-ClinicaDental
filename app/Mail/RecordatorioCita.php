@@ -6,6 +6,7 @@ use App\Models\Cita;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\URL;
 
 class RecordatorioCita extends Mailable
 {
@@ -20,7 +21,25 @@ class RecordatorioCita extends Mailable
 
     public function build()
     {
-        return $this->subject('Recordatorio de cita')
-                    ->view('emails.recordatorio-cita');
+        $urlConfirmar = URL::temporarySignedRoute(
+            'citas.confirmar.publico',
+            now()->addDays(2), 
+            ['cita' => $this->cita->idCita]
+        );
+
+        $urlCancelar = URL::temporarySignedRoute(
+            'citas.cancelar.publico',
+            now()->addDays(2),
+            ['cita' => $this->cita->idCita]
+        );
+
+        return $this->view('emails.recordatorio-cita')
+            ->with([
+                'cita' => $this->cita,
+                'urlConfirmar' => $urlConfirmar,
+                'urlCancelar' => $urlCancelar,
+            ]);
     }
+
+
 }
