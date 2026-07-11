@@ -21,12 +21,12 @@
                 <h2 class="fw-bold page-title mb-1">Odontólogos</h2>
             </div>
 
-            <a href="{{ route('odontologos.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
-
-                <i class="bi bi-plus-lg me-1"></i>
-                Nuevo
-
-            </a>
+            @rol('Administrador')
+                <a href="{{ route('odontologos.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Nuevo
+                </a>
+            @endrol
 
         </div>
 

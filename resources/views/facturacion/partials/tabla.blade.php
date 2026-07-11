@@ -67,13 +67,15 @@
                                 <i class="bi bi-eye-fill"></i>
                             </a>
 
-                            @if ($factura->estado === 'Pendiente')
-                                <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 btnAnularFactura"
-                                    data-bs-toggle="modal" data-bs-target="#modalAnularFactura"
-                                    data-id="{{ $factura->idFactura }}" title="Anular factura">
-                                    <i class="bi bi-x-octagon"></i>
-                                </button>
-                            @endif
+                            @rol('Administrador')
+                                @if ($factura->estado === 'Pendiente')
+                                    <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 btnAnularFactura"
+                                        data-bs-toggle="modal" data-bs-target="#modalAnularFactura"
+                                        data-id="{{ $factura->idFactura }}" title="Anular factura">
+                                        <i class="bi bi-x-octagon"></i>
+                                    </button>
+                                @endif
+                            @endrol
 
                         </div>
 

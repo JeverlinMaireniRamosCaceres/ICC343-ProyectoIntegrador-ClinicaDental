@@ -22,7 +22,6 @@ class CitaController extends Controller
             ->groupBy('fecha');
 
         return view('citas.index', compact('odontologos', 'citas'));
-
     }
 
     public function create()
@@ -69,8 +68,6 @@ class CitaController extends Controller
 
         return redirect()->route('citas.index')
             ->with('success', 'Cita registrada correctamente.');
-
-
     }
 
     public function show($id)
@@ -83,8 +80,22 @@ class CitaController extends Controller
     {
         $fecha = $request->get('fecha');
 
-        $citas = Cita::with('odontologo.persona')
-            ->where('fecha', $fecha)
+        $query = Cita::with('odontologo.persona')
+            ->where('fecha', $fecha);
+
+        if (auth()->user()->rol->nombre === 'Doctor') {
+
+            $odontologo = Odontologo::where('idPersona', auth()->user()->idPersona)
+                ->first();
+
+            if ($odontologo) {
+                $query->where('idOdontologo', $odontologo->idOdontologo);
+            } else {
+                return response()->json([]);
+            }
+        }
+
+        $citas = $query
             ->orderBy('hora')
             ->get();
 
@@ -96,19 +107,31 @@ class CitaController extends Controller
         $year = $request->get('year', now()->year);
         $month = $request->get('month', now()->month);
 
-        $citas = Cita::with('odontologo.persona')
+        $query = Cita::with('odontologo.persona')
             ->whereYear('fecha', $year)
-            ->whereMonth('fecha', $month)
+            ->whereMonth('fecha', $month);
+
+        if (auth()->user()->rol->nombre === 'Doctor') {
+
+            $odontologo = Odontologo::where('idPersona', auth()->user()->idPersona)
+                ->first();
+
+            if ($odontologo) {
+                $query->where('idOdontologo', $odontologo->idOdontologo);
+            } else {
+                return response()->json([]);
+            }
+        }
+
+        $citas = $query
             ->get()
             ->groupBy('fecha');
 
-        // devolver solo fechas y cantidad de citas por dia
+        // devolver solo fechas y cantidad de citas por día
         $resultado = $citas->map(fn($citasDia) => $citasDia->count());
 
         return response()->json($resultado);
     }
-
-
 
     public function edit($id)
     {
@@ -187,5 +210,4 @@ class CitaController extends Controller
 
         return response()->json($odontologos);
     }
-
 }

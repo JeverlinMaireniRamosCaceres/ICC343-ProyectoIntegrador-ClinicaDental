@@ -51,11 +51,13 @@
 
                     </div>
 
-                    <a href="{{ route('consultas.create') }}?paciente={{ $paciente->idPaciente }}&return={{ urlencode(request()->fullUrl() . '#historial') }}"
-                        class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
-                        <i class="bi bi-plus-lg me-1"></i>
-                        Nueva consulta
-                    </a>
+                    @rol('Administrador', 'Doctor')
+                        <a href="{{ route('consultas.create') }}?paciente={{ $paciente->idPaciente }}&return={{ urlencode(request()->fullUrl() . '#historial') }}"
+                            class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Nueva consulta
+                        </a>
+                    @endrol
 
                 </div>
 
@@ -76,11 +78,13 @@
                         </button>
                     </li>
 
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historial" type="button">
-                            Historial clínico
-                        </button>
-                    </li>
+                    @rol('Administrador', 'Doctor')
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#historial" type="button">
+                                Historial clínico
+                            </button>
+                        </li>
+                    @endrol
 
                 </ul>
 
@@ -218,212 +222,213 @@
 
                 </div>
 
-                {{-- Historial Clínico --}}
-                <div class="tab-pane fade" id="historial">
+                @rol('Administrador', 'Doctor')
+                    {{-- Historial Clínico --}}
+                    <div class="tab-pane fade" id="historial">
 
-                    <div class="row g-4">
+                        <div class="row g-4">
 
-                        {{--  filtros y consultas --}}
-                        <div class="col-lg-7 col-xl-8">
+                            {{--  filtros y consultas --}}
+                            <div class="col-lg-7 col-xl-8">
 
-                            {{-- Filtros --}}
-                            <div class="border rounded-4 p-3 mb-3 bg-light bg-opacity-50">
+                                {{-- Filtros --}}
+                                <div class="border rounded-4 p-3 mb-3 bg-light bg-opacity-50">
 
-                                {{-- Buscador --}}
-                                <div class="position-relative mb-3">
+                                    {{-- Buscador --}}
+                                    <div class="position-relative mb-3">
 
-                                    <i
-                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                        <i
+                                            class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                                    <input type="text" id="filtroBusqueda" class="form-control ps-5"
-                                        placeholder="Buscar por motivo o diagnóstico...">
+                                        <input type="text" id="filtroBusqueda" class="form-control ps-5"
+                                            placeholder="Buscar por motivo o diagnóstico...">
 
-                                </div>
+                                    </div>
 
-                                {{-- Filtros secundarios --}}
-                                <div class="row g-2 align-items-end">
+                                    {{-- Filtros secundarios --}}
+                                    <div class="row g-2 align-items-end">
 
-                                    <div class="col-md-5">
+                                        <div class="col-md-5">
 
-                                        <label class="form-label small fw-bold text-muted mb-1">
-                                            Doctor
-                                        </label>
+                                            <label class="form-label small fw-bold text-muted mb-1">
+                                                Doctor
+                                            </label>
 
-                                        <select id="filtroDoctor" class="form-select form-select-sm">
+                                            <select id="filtroDoctor" class="form-select form-select-sm">
 
-                                            <option value="">
-                                                Todos
-                                            </option>
-
-                                            @foreach ($doctores as $doctor)
-                                                <option value="{{ $doctor }}">
-                                                    {{ $doctor }}
+                                                <option value="">
+                                                    Todos
                                                 </option>
-                                            @endforeach
 
-                                        </select>
+                                                @foreach ($doctores as $doctor)
+                                                    <option value="{{ $doctor }}">
+                                                        {{ $doctor }}
+                                                    </option>
+                                                @endforeach
 
-                                    </div>
+                                            </select>
 
-                                    <div class="col-md-2">
+                                        </div>
 
-                                        <label class="form-label small fw-bold text-muted mb-1">
-                                            Desde
-                                        </label>
+                                        <div class="col-md-2">
 
-                                        <input type="date" id="filtroDesde" class="form-control form-control-sm">
+                                            <label class="form-label small fw-bold text-muted mb-1">
+                                                Desde
+                                            </label>
 
-                                    </div>
+                                            <input type="date" id="filtroDesde" class="form-control form-control-sm">
 
-                                    <div class="col-md-2">
+                                        </div>
 
-                                        <label class="form-label small fw-bold text-muted mb-1">
-                                            Hasta
-                                        </label>
+                                        <div class="col-md-2">
 
-                                        <input type="date" id="filtroHasta" class="form-control form-control-sm">
+                                            <label class="form-label small fw-bold text-muted mb-1">
+                                                Hasta
+                                            </label>
 
-                                    </div>
+                                            <input type="date" id="filtroHasta" class="form-control form-control-sm">
 
-                                    <div class="col-md-2">
+                                        </div>
 
-                                        <label class="form-label small fw-bold text-muted mb-1">
-                                            Mostrar
-                                        </label>
+                                        <div class="col-md-2">
 
-                                        <select id="porPagina" class="form-select form-select-sm">
+                                            <label class="form-label small fw-bold text-muted mb-1">
+                                                Mostrar
+                                            </label>
 
-                                            <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>
-                                                10
-                                            </option>
+                                            <select id="porPagina" class="form-select form-select-sm">
 
-                                            <option value="15" {{ $porPagina == 15 ? 'selected' : '' }}>
-                                                15
-                                            </option>
+                                                <option value="10" {{ $porPagina == 10 ? 'selected' : '' }}>
+                                                    10
+                                                </option>
 
-                                            <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
-                                                20
-                                            </option>
+                                                <option value="15" {{ $porPagina == 15 ? 'selected' : '' }}>
+                                                    15
+                                                </option>
 
-                                            <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
-                                                25
-                                            </option>
+                                                <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
+                                                    20
+                                                </option>
 
-                                        </select>
+                                                <option value="20" {{ $porPagina == 20 ? 'selected' : '' }}>
+                                                    25
+                                                </option>
 
-                                    </div>
+                                            </select>
 
-                                    <div class="col-md-1 d-flex align-items-end">
+                                        </div>
 
-                                        <button type="button" id="filtroLimpiar"
-                                            class="btn bg-white border w-100 form-control form-control-sm d-flex align-items-center justify-content-center"
-                                            title="Limpiar filtros">
+                                        <div class="col-md-1 d-flex align-items-end">
 
-                                            <i class="bi bi-brush"></i>
+                                            <button type="button" id="filtroLimpiar"
+                                                class="btn bg-white border w-100 form-control form-control-sm d-flex align-items-center justify-content-center"
+                                                title="Limpiar filtros">
 
-                                        </button>
+                                                <i class="bi bi-brush"></i>
+
+                                            </button>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
 
-                            </div>
-
-                            <div id="contenedorConsultas">
-                                @include('pacientes.partials.consultas')
-                            </div>
-
-                        </div>
-
-                        {{-- Tratamientos --}}
-                        <div class="col-lg-5 col-xl-4">
-                            <div class="border rounded-4 p-3 sticky-top" style="top: 1rem; background-color: #f8fafc;">
-
-
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h6 class="fw-bold mb-0">
-                                        Tratamientos
-                                    </h6>
-                                    <span class="badge rounded-pill  bg-opacity-10  px-2"
-                                        style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
-                                        {{ $paciente->tratamientos->count() }}
-                                    </span>
+                                <div id="contenedorConsultas">
+                                    @include('pacientes.partials.consultas')
                                 </div>
 
-                                <div class="d-flex flex-column gap-2">
+                            </div>
 
-                                    @if ($paciente->tratamientos->count())
+                            {{-- Tratamientos --}}
+                            <div class="col-lg-5 col-xl-4">
+                                <div class="border rounded-4 p-3 sticky-top" style="top: 1rem; background-color: #f8fafc;">
 
-                                        @foreach ($paciente->tratamientos as $tratamiento)
-                                            <a href="{{ route('tratamientos.show', $tratamiento->idTratamiento) }}"
-                                                class="text-decoration-none text-dark d-block tratamiento-link">
 
-                                                <div class="card mb-2 shadow-sm">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="fw-bold mb-0">
+                                            Tratamientos
+                                        </h6>
+                                        <span class="badge rounded-pill  bg-opacity-10  px-2"
+                                            style="background-color: rgba(14,165,233,0.1); color: #0ea5e9;">
+                                            {{ $paciente->tratamientos->count() }}
+                                        </span>
+                                    </div>
 
-                                                    <div class="card-body">
+                                    <div class="d-flex flex-column gap-2">
 
-                                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                        @if ($paciente->tratamientos->count())
+                                            @foreach ($paciente->tratamientos as $tratamiento)
+                                                <a href="{{ route('tratamientos.show', $tratamiento->idTratamiento) }}"
+                                                    class="text-decoration-none text-dark d-block tratamiento-link">
 
-                                                            <span class="fw-semibold">
-                                                                {{ $tratamiento->nombre }}
-                                                            </span>
+                                                    <div class="card mb-2 shadow-sm">
 
-                                                            @if ($tratamiento->estado == 'Completado')
-                                                                <span
-                                                                    class="badge rounded-pill px-2 py-1 text-success bg-success-subtle">
-                                                                    {{ $tratamiento->estado }}
+                                                        <div class="card-body">
+
+                                                            <div class="d-flex justify-content-between align-items-start mb-3">
+
+                                                                <span class="fw-semibold">
+                                                                    {{ $tratamiento->nombre }}
                                                                 </span>
-                                                            @elseif ($tratamiento->estado == 'En Proceso')
-                                                                <span
-                                                                    class="badge rounded-pill px-2 py-1 bg-warning-subtle"
-                                                                    style="color: rgb(181, 151, 43)">
-                                                                    {{ $tratamiento->estado }}
-                                                                </span>
-                                                            @else
-                                                                <span
-                                                                    class="badge rounded-pill px-2 py-1 text-secondary bg-secondary-subtle">
-                                                                    {{ $tratamiento->estado }}
-                                                                </span>
-                                                            @endif
 
-                                                        </div>
+                                                                @if ($tratamiento->estado == 'Completado')
+                                                                    <span
+                                                                        class="badge rounded-pill px-2 py-1 text-success bg-success-subtle">
+                                                                        {{ $tratamiento->estado }}
+                                                                    </span>
+                                                                @elseif ($tratamiento->estado == 'En Proceso')
+                                                                    <span
+                                                                        class="badge rounded-pill px-2 py-1 bg-warning-subtle"
+                                                                        style="color: rgb(181, 151, 43)">
+                                                                        {{ $tratamiento->estado }}
+                                                                    </span>
+                                                                @else
+                                                                    <span
+                                                                        class="badge rounded-pill px-2 py-1 text-secondary bg-secondary-subtle">
+                                                                        {{ $tratamiento->estado }}
+                                                                    </span>
+                                                                @endif
 
-                                                        <div class="text-muted small">
+                                                            </div>
 
-                                                            <i class="bi bi-calendar-event me-1"></i>
+                                                            <div class="text-muted small">
 
-                                                            Fecha de inicio:
-                                                            {{ \Carbon\Carbon::parse($tratamiento->fechaInicio)->format('d/m/Y') }}
+                                                                <i class="bi bi-calendar-event me-1"></i>
+
+                                                                Fecha de inicio:
+                                                                {{ \Carbon\Carbon::parse($tratamiento->fechaInicio)->format('d/m/Y') }}
+
+                                                            </div>
 
                                                         </div>
 
                                                     </div>
 
-                                                </div>
+                                                </a>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center py-4">
 
-                                            </a>
-                                        @endforeach
-                                    @else
-                                        <div class="text-center py-4">
+                                                <i class="bi bi-clipboard2-x text-muted fs-1"></i>
 
-                                            <i class="bi bi-clipboard2-x text-muted fs-1"></i>
+                                                <p class="text-muted mb-0 mt-2">
+                                                    No hay tratamientos registrados.
+                                                </p>
 
-                                            <p class="text-muted mb-0 mt-2">
-                                                No hay tratamientos registrados.
-                                            </p>
+                                            </div>
+                                        @endif
 
-                                        </div>
-
-                                    @endif
+                                    </div>
 
                                 </div>
-
                             </div>
+
                         </div>
 
                     </div>
 
-                </div>
+                @endrol
 
             </div>
 

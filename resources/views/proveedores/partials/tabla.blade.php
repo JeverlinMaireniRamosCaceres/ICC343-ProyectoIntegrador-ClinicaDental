@@ -77,30 +77,32 @@
 
                             </a>
 
-                            <!-- activar/desactivar -->
-                            @if (!$proveedor->trashed())
-                                @csrf
-                                @method('DELETE')
+                            @rol('Administrador')
+                                @if (!$proveedor->trashed())
+                                    @csrf
+                                    @method('DELETE')
 
-                                <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3"
-                                    title="Desactivar" data-bs-toggle="modal" data-bs-target="#modalEliminarProveedor"
-                                    data-id="{{ $proveedor->idProveedor }}" data-nombre="{{ $proveedor->nombre }}">
+                                    <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3"
+                                        title="Desactivar" data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminarProveedor" data-id="{{ $proveedor->idProveedor }}"
+                                        data-nombre="{{ $proveedor->nombre }}">
 
-                                    <i class="bi bi-x-octagon"></i>
+                                        <i class="bi bi-x-octagon"></i>
 
-                                </button>
-                            @else
-                                @csrf
-                                @method('PUT')
+                                    </button>
+                                @else
+                                    @csrf
+                                    @method('PUT')
 
-                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" title="Activar"
-                                    data-bs-toggle="modal" data-bs-target="#modalActivarProveedor"
-                                    data-id="{{ $proveedor->idProveedor }}" data-nombre="{{ $proveedor->nombre }}">
+                                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3"
+                                        title="Activar" data-bs-toggle="modal" data-bs-target="#modalActivarProveedor"
+                                        data-id="{{ $proveedor->idProveedor }}" data-nombre="{{ $proveedor->nombre }}">
 
-                                    <i class="bi bi-patch-check"></i>
+                                        <i class="bi bi-patch-check"></i>
 
-                                </button>
-                            @endif
+                                    </button>
+                                @endif
+                            @endrol
 
                         </div>
 
