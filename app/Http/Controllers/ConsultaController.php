@@ -10,6 +10,8 @@ use App\Models\Procedimiento;
 use App\Models\Tratamiento;
 use App\Models\DetalleConsulta;
 use App\Models\DetalleTratamiento;
+use App\Models\DetalleCompra;
+use App\Models\Producto;
 use App\Models\MovimientoInventario;
 use App\Models\ProductoProcedimiento;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +23,8 @@ class ConsultaController extends Controller
     {
         $buscar = $request->buscar;
         $porPagina = $request->porPagina ?? 10;
+        $fechaDesde = $request->fecha_desde;
+        $fechaHasta = $request->fecha_hasta;
 
         $query = Consulta::with(['paciente.persona', 'odontologo.persona']);
 
@@ -43,7 +47,17 @@ class ConsultaController extends Controller
                         ->orWhere('apellido', 'like', "%{$buscar}%");
                 });
             })
+
+            ->when($fechaDesde, function ($query) use ($fechaDesde) {
+                $query->whereDate('fecha', '>=', $fechaDesde);
+            })
+
+            ->when($fechaHasta, function ($query) use ($fechaHasta) {
+                $query->whereDate('fecha', '<=', $fechaHasta);
+            })
+
             ->orderBy('fecha', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate($porPagina)
             ->withQueryString();
 
@@ -91,22 +105,62 @@ class ConsultaController extends Controller
 
             $cantidadADescontar = $pp->cantidad * $cantidadProcedimiento;
 
-            $producto->stockActual = max(
-                0,
-                $producto->stockActual - $cantidadADescontar
-            );
+            $this->descontarDeLotes($producto, $cantidadADescontar, $idConsulta, $idProcedimiento);
+        }
+    }
 
-            $producto->save();
+    private function descontarDeLotes(
+        Producto $producto,
+        int $cantidadADescontar,
+        int $idConsulta,
+        int $idProcedimiento
+    ): void {
+        $restante = $cantidadADescontar;
+
+        $lotes = DetalleCompra::where('idProducto', $producto->idProducto)
+            ->where('cantidadDisponible', '>', 0)
+            ->orderByRaw('fechaVencimiento IS NULL')
+            ->orderBy('fechaVencimiento', 'asc')
+            ->lockForUpdate()
+            ->get();
+
+        foreach ($lotes as $lote) {
+            if ($restante <= 0) {
+                break;
+            }
+
+            $tomarDeEsteLote = min($lote->cantidadDisponible, $restante);
+
+            $lote->cantidadDisponible -= $tomarDeEsteLote;
+            $lote->save();
 
             MovimientoInventario::create([
                 'idProducto' => $producto->idProducto,
+                'idDetalleCompra' => $lote->idDetalleCompra,
                 'tipo' => 'SALIDA',
-                'cantidad' => $cantidadADescontar,
+                'cantidad' => $tomarDeEsteLote,
                 'motivo' => 'Procedimiento',
                 'idConsulta' => $idConsulta,
                 'idProcedimiento' => $idProcedimiento,
             ]);
+
+            $restante -= $tomarDeEsteLote;
         }
+
+        if ($restante > 0) {
+            MovimientoInventario::create([
+                'idProducto' => $producto->idProducto,
+                'idDetalleCompra' => null,
+                'tipo' => 'SALIDA',
+                'cantidad' => $restante,
+                'motivo' => 'Procedimiento (sin lote - stock inconsistente)',
+                'idConsulta' => $idConsulta,
+                'idProcedimiento' => $idProcedimiento,
+            ]);
+        }
+
+        $producto->stockActual = max(0, $producto->stockActual - $cantidadADescontar);
+        $producto->save();
     }
 
     public function store(Request $request)

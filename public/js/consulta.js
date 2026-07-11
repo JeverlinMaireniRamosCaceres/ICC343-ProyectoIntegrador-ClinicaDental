@@ -3,46 +3,65 @@ let destinoProcedimiento = "independiente";
 document.addEventListener("DOMContentLoaded", function () {
     // buscador de consultas
     const buscar = document.getElementById("buscarConsulta");
+    const porPagina = document.getElementById("porPagina");
+    const fechaDesde = document.getElementById("filtroFechaDesde");
+    const fechaHasta = document.getElementById("filtroFechaHasta");
 
-    if (buscar) {
-        buscar.addEventListener("keyup", async function () {
-            const texto = this.value;
-            const porPagina = document.getElementById("porPagina").value;
+    async function cargarConsultas(url = null) {
+        const params = new URLSearchParams();
 
-            const response = await fetch(
-                `/consultas?buscar=${encodeURIComponent(texto)}&porPagina=${porPagina}`,
-                { headers: { "X-Requested-With": "XMLHttpRequest" } },
-            );
+        params.append("buscar", buscar?.value || "");
+        params.append("porPagina", porPagina?.value || 10);
+        params.append("fecha_desde", fechaDesde?.value || "");
+        params.append("fecha_hasta", fechaHasta?.value || "");
 
-            document.getElementById("contenedorTablaConsultas").innerHTML =
-                await response.text();
+        const ruta = url || `/consultas?${params.toString()}`;
+
+        const response = await fetch(ruta, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
         });
+
+        document.getElementById("contenedorTablaConsultas").innerHTML =
+            await response.text();
     }
 
-    // paginacion de consultas
-    document.addEventListener("click", async function (e) {
-        const link = e.target.closest(".pagination a");
-        if (!link) return;
-        e.preventDefault();
-        const response = await fetch(link.href, {
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
-        document.getElementById("contenedorTablaConsultas").innerHTML =
-            await response.text();
+    // buscador
+    let timeout;
+
+    buscar?.addEventListener("input", () => {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            cargarConsultas();
+        }, 300);
     });
 
-    document.addEventListener("change", async function (e) {
-        if (e.target.id !== "porPagina") return;
+    // cambiar cantidad por página
+    porPagina?.addEventListener("change", () => {
+        cargarConsultas();
+    });
 
-        const buscarVal = document.getElementById("buscarConsulta").value;
+    // filtro fecha desde
+    fechaDesde?.addEventListener("change", () => {
+        cargarConsultas();
+    });
 
-        const response = await fetch(
-            `/consultas?buscar=${encodeURIComponent(buscarVal)}&porPagina=${e.target.value}`,
-            { headers: { "X-Requested-With": "XMLHttpRequest" } },
-        );
+    // filtro fecha hasta
+    fechaHasta?.addEventListener("change", () => {
+        cargarConsultas();
+    });
 
-        document.getElementById("contenedorTablaConsultas").innerHTML =
-            await response.text();
+    // paginación
+    document.addEventListener("click", function (e) {
+        const link = e.target.closest(".pagination a");
+
+        if (!link) return;
+
+        e.preventDefault();
+
+        cargarConsultas(link.href);
     });
 
     // buscador de pacientes (solo existe en create)
@@ -325,12 +344,13 @@ document.addEventListener("DOMContentLoaded", function () {
         </td>
 
         <td width="130">
-            <input
-                type="number"
-                name="cantidadProcedimientoPlan[]"
-                class="form-control consulta-input"
-                value="1"
-                min="1">
+        <input
+            type="number"
+            name="cantidadProcedimientoPlan[]"
+            class="form-control consulta-input input-cantidad-plan"
+            value="1"
+            min="1"
+            data-precio="${precio}">
         </td>
 
         <td>
@@ -351,6 +371,35 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
 
         tbody.appendChild(fila);
+        actualizarTotalPlanTratamiento();
+    }
+
+    // actualizar total del plan de tratamiento
+    function actualizarTotalPlanTratamiento() {
+        let total = 0;
+
+        document
+            .querySelectorAll("#cuerpoPlanTratamiento tr[data-proc-id]")
+            .forEach((fila) => {
+                const cantidad =
+                    parseInt(
+                        fila.querySelector(".input-cantidad-plan").value,
+                    ) || 1;
+
+                const precio =
+                    parseFloat(
+                        fila.querySelector(".input-cantidad-plan").dataset
+                            .precio,
+                    ) || 0;
+
+                total += cantidad * precio;
+            });
+
+        document.getElementById("totalPlanTratamiento").textContent =
+            `RD$ ${total.toLocaleString("es-DO", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            })}`;
     }
 
     // actualizar subtotal cuando cambia la cantidad (independientes)
@@ -404,6 +453,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     </td>
                 </tr>
             `;
+        }
+    });
+
+    // eliminar fila del plan de tratamiento
+    document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn-eliminar-plan");
+        if (!btn) return;
+
+        btn.closest("tr").remove();
+        actualizarTotalPlanTratamiento();
+
+        const tbody = document.getElementById("cuerpoPlanTratamiento");
+
+        if (tbody.querySelectorAll("tr").length === 0) {
+            tbody.innerHTML = `
+            <tr id="filaVaciaPlan">
+                <td colspan="4" class="text-center text-muted">
+                    No hay procedimientos agregados.
+                </td>
+            </tr>
+        `;
+        }
+    });
+
+    document.addEventListener("input", function (e) {
+        if (e.target.classList.contains("input-cantidad-plan")) {
+            actualizarTotalPlanTratamiento();
         }
     });
 

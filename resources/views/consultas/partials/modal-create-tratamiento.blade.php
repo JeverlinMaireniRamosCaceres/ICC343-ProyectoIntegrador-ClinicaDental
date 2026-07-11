@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalCrearTratamiento" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow rounded-4">
 
             <div class="modal-header border-0 pb-0">
@@ -41,7 +41,13 @@
                         </select>
                     </div>
 
-                    <h6 class="mt-4">Procedimientos planificados</h6>
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+                        <h6 class="mb-0">Procedimientos planificados</h6>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3"
+                            onclick="abrirAgregarProcedimiento('planTratamiento')">
+                            <i class="bi bi-plus-lg me-1"></i> Agregar procedimiento
+                        </button>
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table align-middle">
@@ -53,32 +59,32 @@
                                     <th></th>
                                 </tr>
                             </thead>
-
                             <tbody id="cuerpoPlanTratamiento">
-
                                 <tr id="filaVaciaPlan">
                                     <td colspan="4" class="text-center text-muted">
                                         No hay procedimientos agregados.
                                     </td>
                                 </tr>
-
                             </tbody>
                         </table>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <h5 class="mb-0">
+                                Total estimado:
+                                <span id="totalPlanTratamiento" class="text-primary fw-bold">
+                                    RD$ 0.00
+                                </span>
+                            </h5>
+                        </div>
+
                     </div>
-
-                    <button type="button" class="btn btn-outline-primary rounded-pill"
-                        onclick="abrirAgregarProcedimiento('planTratamiento')">
-
-                        Agregar procedimiento
-
-                    </button>
 
                 </div>
             </div>
 
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary rounded-pill px-4" id="btnGuardarTratamiento">
+                <button type="button" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;" id="btnGuardarTratamiento">
                     Guardar tratamiento
                 </button>
             </div>

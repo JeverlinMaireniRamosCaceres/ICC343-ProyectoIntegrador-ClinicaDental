@@ -234,6 +234,7 @@ class ComprasController extends Controller
                 'idCompras' => $compra->idCompras,
                 'idProducto' => $idProducto,
                 'cantidad' => $cantidad,
+                'cantidadDisponible' => $cantidad,
                 'costoTotal' => $costoTotal,
                 'fechaVencimiento' => $request->fechaVencimiento[$i] ?? null
             ]);
@@ -278,17 +279,7 @@ class ComprasController extends Controller
     private function revertirStockYEliminarDetalles(Compra $compra)
     {
         foreach ($compra->detalles as $detalle) {
-            $producto = Producto::find($detalle->idProducto);
-            if ($producto) {
-                $producto->stockActual -= $detalle->cantidad;
-                $producto->save();
-                MovimientoInventario::create([
-                    'idProducto' => $producto->idProducto,
-                    'tipo' => 'SALIDA',
-                    'cantidad' => $detalle->cantidad,
-                    'motivo' => 'Edición de compra',
-                ]);
-            }
+            $this->revertirLote($detalle, 'Edición de compra');
         }
         DetalleCompra::where('idCompras', $compra->idCompras)->delete();
     }
@@ -296,16 +287,35 @@ class ComprasController extends Controller
     private function revertirStockCompra(Compra $compra)
     {
         foreach ($compra->detalles as $detalle) {
-            $producto = Producto::findOrFail($detalle->idProducto);
-            $producto->stockActual -= $detalle->cantidad;
-            $producto->save();
-            MovimientoInventario::create([
-                'idProducto' => $producto->idProducto,
-                'tipo' => 'SALIDA',
-                'cantidad' => $detalle->cantidad,
-                'motivo' => 'Compra anulada',
-            ]);
+            $this->revertirLote($detalle, 'Compra anulada');
         }
+    }
+    private function revertirLote(DetalleCompra $detalle, string $motivo): void
+    {
+        $producto = Producto::find($detalle->idProducto);
+        if (!$producto) {
+            return;
+        }
+
+        $aRevertir = $detalle->cantidadDisponible;
+
+        if ($aRevertir <= 0) {
+            return;
+        }
+
+        $producto->stockActual = max(0, $producto->stockActual - $aRevertir);
+        $producto->save();
+
+        $detalle->cantidadDisponible = 0;
+        $detalle->save();
+
+        MovimientoInventario::create([
+            'idProducto' => $producto->idProducto,
+            'idDetalleCompra' => $detalle->idDetalleCompra,
+            'tipo' => 'SALIDA',
+            'cantidad' => $aRevertir,
+            'motivo' => $motivo,
+        ]);
     }
 
     public function marcarCompraPagada(Request $request, $id)

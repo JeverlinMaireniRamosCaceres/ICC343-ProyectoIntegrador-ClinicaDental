@@ -12,6 +12,7 @@ class MovimientoInventario extends Model
 
     protected $fillable = [
         'idProducto',
+        'idDetalleCompra',
         'tipo',
         'cantidad',
         'motivo',
@@ -22,6 +23,11 @@ class MovimientoInventario extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'idProducto', 'idProducto');
+    }
+
+    public function detalleCompra()
+    {
+        return $this->belongsTo(DetalleCompra::class, 'idDetalleCompra', 'idDetalleCompra');
     }
 
     public function consulta()
