@@ -56,6 +56,7 @@ class InventarioController extends Controller
         $sinStock = Producto::where('stockActual', '<=', 0)->count();
 
         $porVencer = DetalleCompra::whereNotNull('fechaVencimiento')
+            ->where('cantidadDisponible', '>', 0)
             ->where('fechaVencimiento', '>=', now())
             ->where('fechaVencimiento', '<=', now()->addDays(30))
             ->distinct('idProducto')
@@ -71,6 +72,7 @@ class InventarioController extends Controller
 
         $alertasVencimiento = DetalleCompra::with('producto')
             ->whereNotNull('fechaVencimiento')
+            ->where('cantidadDisponible', '>', 0)
             ->where('fechaVencimiento', '>=', now())
             ->where('fechaVencimiento', '<=', now()->addDays(30))
             ->orderBy('fechaVencimiento', 'asc')
@@ -101,12 +103,14 @@ class InventarioController extends Controller
             ->get()
             ->map(fn($m) => [
                 'fecha' => $m->created_at,
-                'producto' => $m->producto->nombre ?? '—',
+                'producto' => $m->producto->nombre ?? '-',
                 'tipo' => 'SALIDA',
                 'cantidad' => $m->cantidad,
-                'motivo' => $m->procedimiento
-                    ? 'Procedimiento: ' . $m->procedimiento->nombre
-                    : $m->motivo,
+                'motivo' => str_contains($m->motivo, 'inconsistente')
+                    ? $m->motivo
+                    : ($m->procedimiento
+                        ? 'Procedimiento: ' . $m->procedimiento->nombre
+                        : $m->motivo),
             ]);
 
         // ajustes
@@ -179,23 +183,50 @@ class InventarioController extends Controller
     {
         $request->validate([
             'idProducto' => 'required|exists:productos,idProducto',
+            'idDetalleCompra' => 'nullable|exists:detalle_compras,idDetalleCompra',
             'nuevoStock' => 'required|integer|min:0',
             'motivo' => 'required|string',
         ]);
 
         $producto = Producto::findOrFail($request->idProducto);
 
-        Ajuste::create([
-            'idProducto' => $producto->idProducto,
-            'idUsuario' => auth()->id(),
-            'stockAnterior' => $producto->stockActual,
-            'stockNuevo' => $request->nuevoStock,
-            'motivo' => $request->motivo,
-            'observacion' => $request->observacion,
-        ]);
+        if ($request->filled('idDetalleCompra')) {
+            $lote = DetalleCompra::where('idDetalleCompra', $request->idDetalleCompra)
+                ->where('idProducto', $producto->idProducto)
+                ->firstOrFail();
 
-        $producto->stockActual = $request->nuevoStock;
-        $producto->save();
+            $diferencia = $request->nuevoStock - $lote->cantidadDisponible;
+
+            Ajuste::create([
+                'idProducto' => $producto->idProducto,
+                'idDetalleCompra' => $lote->idDetalleCompra,
+                'idUsuario' => auth()->id(),
+                'stockAnterior' => $lote->cantidadDisponible,
+                'stockNuevo' => $request->nuevoStock,
+                'motivo' => $request->motivo,
+                'observacion' => $request->observacion,
+            ]);
+
+            $lote->cantidadDisponible = $request->nuevoStock;
+            $lote->save();
+
+            $producto->stockActual = max(0, $producto->stockActual + $diferencia);
+            $producto->save();
+
+        } else {
+            Ajuste::create([
+                'idProducto' => $producto->idProducto,
+                'idDetalleCompra' => null,
+                'idUsuario' => auth()->id(),
+                'stockAnterior' => $producto->stockActual,
+                'stockNuevo' => $request->nuevoStock,
+                'motivo' => $request->motivo,
+                'observacion' => $request->observacion,
+            ]);
+
+            $producto->stockActual = $request->nuevoStock;
+            $producto->save();
+        }
 
         return redirect()->route('inventario.index')
             ->with('success', "Stock de \"{$producto->nombre}\" ajustado correctamente.");
@@ -219,12 +250,15 @@ class InventarioController extends Controller
     public function lotes($id)
     {
         $lotes = DetalleCompra::where('idProducto', $id)
+            ->where('cantidadDisponible', '>', 0)
             ->with('compra.proveedor')
+            ->orderByRaw('fechaVencimiento IS NULL')
             ->orderBy('fechaVencimiento', 'asc')
             ->get()
             ->map(fn($d) => [
                 'idDetalleCompra' => $d->idDetalleCompra,
-                'cantidad' => $d->cantidad,
+                'cantidad' => $d->cantidadDisponible,
+                'cantidadOriginal' => $d->cantidad,
                 'fechaVencimiento' => $d->fechaVencimiento
                     ? \Carbon\Carbon::parse($d->fechaVencimiento)->format('d/m/Y')
                     : 'Sin fecha',

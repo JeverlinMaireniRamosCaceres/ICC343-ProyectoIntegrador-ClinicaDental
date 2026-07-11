@@ -21,6 +21,7 @@
 
                     $proximoVencimiento = $producto->detallesCompra
                         ->whereNotNull('fechaVencimiento')
+                        ->where('cantidadDisponible', '>', 0)
                         ->filter(fn($d) => \Carbon\Carbon::parse($d->fechaVencimiento)->gte(now()->subMonth()))
                         ->sortBy('fechaVencimiento')
                         ->first();
