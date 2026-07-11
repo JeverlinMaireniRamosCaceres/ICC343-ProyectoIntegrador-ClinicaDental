@@ -151,6 +151,17 @@ class ConsultaController extends Controller
             'motivo' => 'required|string',
             'diagnostico' => 'required|string',
             'receta' => 'nullable|string',
+            'idProcedimiento' => [
+                'required_without:procedimientos_realizados',
+                'array',
+            ],
+            'procedimientos_realizados' => [
+                'required_without:idProcedimiento',
+                'array',
+            ],
+        ], [
+            'idProcedimiento.required_without' => 'Debe agregar al menos un procedimiento a la consulta.',
+            'procedimientos_realizados.required_without' => 'Debe agregar al menos un procedimiento a la consulta.',
         ]);
 
         DB::transaction(function () use ($request) {
