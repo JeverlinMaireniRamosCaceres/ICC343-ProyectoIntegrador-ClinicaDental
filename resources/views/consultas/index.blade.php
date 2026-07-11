@@ -27,18 +27,44 @@
             <div class="card-body p-0">
 
                 <div class="p-4 border-bottom">
-                    <div class="position-relative" style="max-width: 350px;">
-                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" id="buscarConsulta" value="{{ request('buscar') }}"
-                            class="form-control rounded-pill ps-5 search-input" placeholder="Buscar por paciente...">
+
+                    <div class="d-flex gap-3 flex-wrap align-items-center">
+
+                        <div class="position-relative" style="width: 350px;">
+
+                            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+
+                            <input type="text" id="buscarConsulta" value="{{ request('buscar') }}"
+                                class="form-control rounded-pill ps-5 search-input" placeholder="Buscar por paciente...">
+
+                        </div>
+
+                        <div class="d-flex gap-3 ms-auto flex-wrap align-items-center">
+
+                            <div class="d-flex align-items-center gap-2 bg-light p-1 rounded-pill border border-light-subtle"
+                                style="width: 310px; height: 38px;">
+
+                                <input type="date" id="filtroFechaDesde"
+                                    class="form-control form-control-sm border-0 bg-transparent rounded-pill px-2"
+                                    value="{{ request('fecha_desde') }}" style="width:125px; box-shadow:none;">
+
+                                <span class="text-muted opacity-50 fw-bold">→</span>
+
+                                <input type="date" id="filtroFechaHasta"
+                                    class="form-control form-control-sm border-0 bg-transparent rounded-pill px-2"
+                                    value="{{ request('fecha_hasta') }}" style="width:125px; box-shadow:none;">
+                            </div>
+
+                        </div>
+
                     </div>
+
                 </div>
 
                 <!-- tabla con consultas -->
                 <div id="contenedorTablaConsultas">
                     @include('consultas.partials.tabla')
                 </div>
-
 
             </div>
 
