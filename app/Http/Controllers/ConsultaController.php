@@ -21,6 +21,8 @@ class ConsultaController extends Controller
     {
         $buscar = $request->buscar;
         $porPagina = $request->porPagina ?? 10;
+        $fechaDesde = $request->fecha_desde;
+        $fechaHasta = $request->fecha_hasta;
 
         $consultas = Consulta::with(['paciente.persona', 'odontologo.persona'])
             ->when($buscar, function ($query) use ($buscar) {
@@ -29,7 +31,17 @@ class ConsultaController extends Controller
                         ->orWhere('apellido', 'like', "%{$buscar}%");
                 });
             })
+
+            ->when($fechaDesde, function ($query) use ($fechaDesde) {
+                $query->whereDate('fecha', '>=', $fechaDesde);
+            })
+
+            ->when($fechaHasta, function ($query) use ($fechaHasta) {
+                $query->whereDate('fecha', '<=', $fechaHasta);
+            })
+
             ->orderBy('fecha', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate($porPagina)
             ->withQueryString();
 
