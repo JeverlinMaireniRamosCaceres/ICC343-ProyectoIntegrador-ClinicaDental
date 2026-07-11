@@ -14,6 +14,7 @@ class DetalleCompra extends Model
         'idCompras',
         'idProducto',
         'cantidad',
+        'cantidadDisponible',
         'costoTotal',
         'fechaVencimiento'
     ];
