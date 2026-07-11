@@ -490,21 +490,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // actualizar subtotales
     function actualizarSubtotales() {
-        let total = 0;
+
+        let totalIndependientes = 0;
         let totalTrat = 0;
 
+        // Procedimientos independientes
         document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]').forEach(fila => {
+
             const cantidad = parseInt(fila.querySelector('.input-cantidad').value) || 1;
-            const precio = parseFloat(fila.querySelector('.input-cantidad').getAttribute('data-precio'));
+            const precio = parseFloat(
+                fila.querySelector('.input-cantidad').getAttribute('data-precio')
+            );
+
             const subtotal = cantidad * precio;
 
             fila.querySelector('.subtotal').textContent =
-                'RD$ ' + subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+                'RD$ ' + subtotal.toLocaleString('es-DO', {
+                    minimumFractionDigits: 2
+                });
 
-            total += subtotal;
+            totalIndependientes += subtotal;
         });
 
-        document.querySelectorAll('#cuerpoProcTratamiento .proc-checkbox:checked:not(:disabled)').forEach(check => {
+        // Procedimientos del tratamiento
+        document.querySelectorAll(
+            '#cuerpoProcTratamiento .proc-checkbox:checked:not(:disabled)'
+        ).forEach(check => {
 
             const fila = check.closest('tr');
 
@@ -513,32 +524,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const subtotal = cantidad * precio;
 
-            total += subtotal;
             totalTrat += subtotal;
-
         });
 
+        // Total de procedimientos independientes
         const totalEl = document.getElementById('totalProcedimientos');
         if (totalEl) {
-            totalEl.textContent = 'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+            totalEl.textContent =
+                'RD$ ' + totalIndependientes.toLocaleString('es-DO', {
+                    minimumFractionDigits: 2
+                });
         }
 
+        // Total de procedimientos del tratamiento
         const totalTratEl = document.getElementById('totalProcTratamiento');
         if (totalTratEl) {
-            totalTratEl.textContent = 'RD$ ' + totalTrat.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+            totalTratEl.textContent =
+                'RD$ ' + totalTrat.toLocaleString('es-DO', {
+                    minimumFractionDigits: 2
+                });
         }
 
+        // Resumen
         const filas = document.querySelectorAll('#cuerpoTablaProc tr[data-proc-id]');
         const filasTrat = document.querySelectorAll(
             '#cuerpoProcTratamiento .proc-checkbox:checked:not(:disabled)'
         );
 
         const resumenProc = document.getElementById('resumenProcedimientos');
-        if (resumenProc) resumenProc.textContent = filas.length + filasTrat.length;
+        if (resumenProc) {
+            resumenProc.textContent = filas.length + filasTrat.length;
+        }
+
+        const totalGeneral = totalIndependientes + totalTrat;
 
         const resumenTotal = document.getElementById('resumenTotal');
-        if (resumenTotal) resumenTotal.textContent =
-            'RD$ ' + total.toLocaleString('es-DO', { minimumFractionDigits: 2 });
+        if (resumenTotal) {
+            resumenTotal.textContent =
+                'RD$ ' + totalGeneral.toLocaleString('es-DO', {
+                    minimumFractionDigits: 2
+                });
+        }
     }
 
     window.seleccionarTratamiento = function (el, id) {

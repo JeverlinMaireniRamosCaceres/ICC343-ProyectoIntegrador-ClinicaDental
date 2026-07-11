@@ -46,6 +46,7 @@ class EnviarCorreosAutomaticos implements ShouldQueue
 
         Cita::with('odontologo.persona')
             ->whereNull('recordatorioCorreoEnviadoAt')
+            ->whereIn('medioRecordatorio', ['correo', 'ambos'])
             ->get()
             ->filter(function ($cita) {
 
