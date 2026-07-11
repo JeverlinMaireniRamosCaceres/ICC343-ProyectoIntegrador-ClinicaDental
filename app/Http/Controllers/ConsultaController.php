@@ -54,7 +54,7 @@ class ConsultaController extends Controller
         return view('consultas.index', compact('consultas', 'porPagina'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $odontologo = Odontologo::with('persona')
             ->where('idPersona', Auth::user()->idPersona)
@@ -62,7 +62,18 @@ class ConsultaController extends Controller
 
         $procedimientos = Procedimiento::orderBy('nombre')->get();
 
-        return view('consultas.create', compact('odontologo', 'procedimientos'));
+        $paciente = null;
+
+        if ($request->filled('paciente')) {
+            $paciente = Paciente::with('persona')
+                ->find($request->paciente);
+        }
+
+        return view('consultas.create', compact(
+            'odontologo',
+            'procedimientos',
+            'paciente'
+        ));
     }
 
     private function descontarStock(int $idProcedimiento, int $cantidadProcedimiento, int $idConsulta): void

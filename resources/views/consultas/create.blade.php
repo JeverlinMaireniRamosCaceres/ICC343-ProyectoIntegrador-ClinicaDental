@@ -60,6 +60,7 @@
 
                                     <div class="position-relative">
                                         <input type="text" id="paciente_nombre" class="form-control pe-5"
+                                            value="{{ $paciente ? $paciente->persona->nombre . ' ' . $paciente->persona->apellido : '' }}"
                                             placeholder="Buscar paciente..." autocomplete="off">
 
                                         <i
@@ -71,7 +72,8 @@
                                         </div>
                                     </div>
 
-                                    <input type="hidden" name="idPaciente" id="paciente_id">
+                                    <input type="hidden" name="idPaciente" id="paciente_id"
+                                        value="{{ $paciente?->idPaciente }}">
                                 </div>
 
                                 <!-- odontologo fijo desde sesion -->
