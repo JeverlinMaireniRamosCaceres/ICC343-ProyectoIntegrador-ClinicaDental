@@ -38,6 +38,7 @@
                     <div id="secDatosGenerales" class="accordion-collapse collapse show"
                         data-bs-parent="#consultaAccordion">
                         <div class="accordion-body px-3 py-3">
+                            <input type="hidden" name="return" value="{{ request('return') }}">
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
@@ -87,7 +88,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Fecha</label>
 
-                                    <input type="date" name="fecha" class="form-control consulta-input consulta-readonly"
+                                    <input type="date" name="fecha"
+                                        class="form-control consulta-input consulta-readonly"
                                         value="{{ now()->format('Y-m-d') }}" readonly>
                                 </div>
 
@@ -325,7 +327,7 @@
                                             </thead>
                                             <tbody id="cuerpoProcTratamiento">
 
-                                            
+
                                             </tbody>
                                         </table>
 

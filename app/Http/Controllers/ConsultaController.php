@@ -180,6 +180,11 @@ class ConsultaController extends Controller
             }
         });
 
+        if ($request->filled('return')) {
+            return redirect($request->return)
+                ->with('success', 'Consulta registrada correctamente.');
+        }
+
         return redirect()->route('consultas.index')
             ->with('success', 'Consulta registrada correctamente.');
     }
