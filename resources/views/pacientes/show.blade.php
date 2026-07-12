@@ -161,6 +161,23 @@
 
                     <hr>
 
+                    <div class="d-flex justify-content-between align-items-center mt-1 mb-3">
+
+                        <h5 class="fw-bold mb-0">
+                            Información clínica
+                        </h5>
+
+                        @rol('Administrador', 'Doctor')
+                            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-toggle="modal"
+                                data-bs-target="#modalEditarInfoClinica">
+
+                                <i class="bi bi-pencil"></i>
+
+                            </button>
+                        @endrol
+
+                    </div>
+
                     <div class="row g-4 mt-1">
 
                         {{-- Alergias --}}
@@ -451,6 +468,118 @@
 
         </div>
 
+    </div>
+
+    <div class="modal fade" id="modalEditarInfoClinica" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+
+                <div class="modal-header border-0 pb-0">
+
+                    <div>
+                        <h5 class="fw-bold mb-0">
+                            Editar información clínica
+                        </h5>
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <form action="{{ route('pacientes.updateInformacionClinica', $paciente) }}" method="POST">
+
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-body pt-4">
+
+                        <div class="row g-4">
+
+                            {{-- Alergias --}}
+                            <div class="col-md-6">
+
+                                <label class="form-label text-muted fw-semibold small">
+                                    Alergias
+                                </label>
+
+                                <div class="row g-2">
+
+                                    @foreach ($alergias as $alergia)
+                                        <div class="col-md-6">
+
+                                            <label for="editAlergia{{ $alergia->idAlergia }}"
+                                                class="border rounded-4 p-3 d-block h-100">
+
+                                                <div class="form-check m-0">
+
+                                                    <input class="form-check-input" type="checkbox" name="alergias[]"
+                                                        value="{{ $alergia->idAlergia }}"
+                                                        id="editAlergia{{ $alergia->idAlergia }}"
+                                                        @checked(in_array($alergia->idAlergia, old('alergias', $paciente->alergias->pluck('idAlergia')->toArray())))>
+
+                                                    <span class="form-check-label fw-medium">
+                                                        {{ $alergia->nombre }}
+                                                    </span>
+
+                                                </div>
+
+                                            </label>
+
+                                        </div>
+                                    @endforeach
+
+                                    @error('alergias')
+                                        <div class="text-danger small mt-2">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+
+                                </div>
+
+                            </div>
+
+                            {{-- Antecedentes médicos --}}
+                            <div class="col-md-6">
+
+                                <label class="form-label text-muted fw-semibold small">
+                                    Antecedentes médicos
+                                </label>
+
+                                <textarea name="antecedentesMedicos" class="form-control @error('antecedentesMedicos') is-invalid @enderror"
+                                    rows="8" placeholder="Diabetes, hipertensión, enfermedades cardíacas, etc.">{{ old('antecedentesMedicos', $paciente->antecedentes) }}</textarea>
+
+                                @error('antecedentesMedicos')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-0">
+
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <button type="submit" class="btn rounded-pill px-4 text-white"
+                            style="background-color: #0ea5e9;">
+
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Actualizar
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
     </div>
 
     <script src="{{ asset('js/pacientes-show.js') }}"></script>

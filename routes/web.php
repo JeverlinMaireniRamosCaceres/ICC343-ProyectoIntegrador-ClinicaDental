@@ -74,6 +74,9 @@ Route::middleware('auth')->group(function () {
     // Pacientes
     Route::get('/pacientes/buscar-persona', [PacientesController::class, 'buscarPersona'])
         ->name('pacientes.buscar-persona');
+    Route::put('/pacientes/{paciente}/informacion-clinica', [PacientesController::class, 'updateInformacionClinica'])
+        ->middleware('rol:Administrador,Doctor')
+        ->name('pacientes.updateInformacionClinica');
     Route::resource('pacientes', PacientesController::class);
 
     // Proveedores
@@ -214,8 +217,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('consultas', ConsultaController::class)
         ->only(['index', 'show', 'create', 'store'])
         ->middleware('rol:Administrador,Doctor');
-    Route::get('/tratamientos/{id}/procedimientos',
-        [TratamientoController::class, 'procedimientos']);
+    Route::get(
+        '/tratamientos/{id}/procedimientos',
+        [TratamientoController::class, 'procedimientos']
+    );
 
 
     // Alergias
