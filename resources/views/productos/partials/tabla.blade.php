@@ -23,13 +23,15 @@
                                 style="height: 32px;" title="Editar">
                                 <i class="bi bi-pencil-fill small"></i>
                             </a>
-                            <button type="button"
-                                class="btn btn-sm btn-danger rounded-pill px-3 d-flex align-items-center justify-content-center"
-                                style="height: 32px;" title="Eliminar" data-bs-toggle="modal"
-                                data-bs-target="#modalEliminar" data-id="{{ $producto->idProducto }}"
-                                data-nombre="{{ $producto->nombre }}">
-                                <i class="bi bi-trash3-fill small"></i>
-                            </button>
+                            @rol('Administrador')
+                                <button type="button"
+                                    class="btn btn-sm btn-danger rounded-pill px-3 d-flex align-items-center justify-content-center"
+                                    style="height: 32px;" title="Eliminar" data-bs-toggle="modal"
+                                    data-bs-target="#modalEliminar" data-id="{{ $producto->idProducto }}"
+                                    data-nombre="{{ $producto->nombre }}">
+                                    <i class="bi bi-trash3-fill small"></i>
+                                </button>
+                            @endrol
                         </div>
                     </td>
                 </tr>

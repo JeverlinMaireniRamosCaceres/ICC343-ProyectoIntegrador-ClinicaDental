@@ -30,11 +30,12 @@
 
                     <td class="px-4 text-center">
                         @if ($odontologo->especialidades->count() > 0)
-                            <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background-color:#EDE9FE; color:#6D28D9;">
+                            <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                style="background-color:#EDE9FE; color:#6D28D9;">
                                 {{ $odontologo->especialidades->first()->nombre }}
 
                                 @if ($odontologo->especialidades->count() > 1)
-                                        +{{ $odontologo->especialidades->count() - 1 }}
+                                    +{{ $odontologo->especialidades->count() - 1 }}
                                 @endif
                             </span>
                         @else
@@ -61,31 +62,34 @@
                                 <i class="bi bi-eye-fill"></i>
                             </a>
 
-                            @if (!$odontologo->trashed())
-                                <a href="{{ route('odontologos.edit', $odontologo->idOdontologo) }}"
-                                    class="btn btn-sm btn-warning rounded-pill px-3 text-white" title="Editar">
+                            @rol('Administrador')
+                                @if (!$odontologo->trashed())
+                                    <a href="{{ route('odontologos.edit', $odontologo->idOdontologo) }}"
+                                        class="btn btn-sm btn-warning rounded-pill px-3 text-white" title="Editar">
 
-                                    <i class="bi bi-pencil"></i>
+                                        <i class="bi bi-pencil"></i>
 
-                                </a>
-                                <button type="button" class="btn btn-sm btn-danger rounded-pill px-3"
-                                    data-bs-toggle="modal" data-bs-target="#modalEliminarOdontologo"
-                                    data-id="{{ $odontologo->idOdontologo }}"
-                                    data-nombre="{{ $odontologo->persona->nombre }}" title="Desactivar">
+                                    </a>
 
-                                    <i class="bi bi-ban"></i>
+                                    <button type="button" class="btn btn-sm btn-danger rounded-pill px-3"
+                                        data-bs-toggle="modal" data-bs-target="#modalEliminarOdontologo"
+                                        data-id="{{ $odontologo->idOdontologo }}"
+                                        data-nombre="{{ $odontologo->persona->nombre }}" title="Desactivar">
 
-                                </button>
-                            @else
-                                <button type="button" class="btn btn-sm btn-success rounded-pill px-3"
-                                    data-bs-toggle="modal" data-bs-target="#modalActivarOdontologo"
-                                    data-id="{{ $odontologo->idOdontologo }}"
-                                    data-nombre="{{ $odontologo->persona->nombre }}" title="Activar">
+                                        <i class="bi bi-ban"></i>
 
-                                    <i class="bi bi-check-lg"></i>
+                                    </button>
+                                @else
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3"
+                                        data-bs-toggle="modal" data-bs-target="#modalActivarOdontologo"
+                                        data-id="{{ $odontologo->idOdontologo }}"
+                                        data-nombre="{{ $odontologo->persona->nombre }}" title="Activar">
 
-                                </button>
-                            @endif
+                                        <i class="bi bi-check-lg"></i>
+
+                                    </button>
+                                @endif
+                            @endrol
 
                         </div>
 

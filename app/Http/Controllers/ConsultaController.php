@@ -26,7 +26,21 @@ class ConsultaController extends Controller
         $fechaDesde = $request->fecha_desde;
         $fechaHasta = $request->fecha_hasta;
 
-        $consultas = Consulta::with(['paciente.persona', 'odontologo.persona'])
+        $query = Consulta::with(['paciente.persona', 'odontologo.persona']);
+
+        if (auth()->user()->rol->nombre === 'Doctor') {
+
+            $odontologo = Odontologo::where('idPersona', auth()->user()->idPersona)
+                ->first();
+
+            if ($odontologo) {
+                $query->where('idOdontologo', $odontologo->idOdontologo);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        $consultas = $query
             ->when($buscar, function ($query) use ($buscar) {
                 $query->whereHas('paciente.persona', function ($q) use ($buscar) {
                     $q->where('nombre', 'like', "%{$buscar}%")
@@ -52,20 +66,28 @@ class ConsultaController extends Controller
         }
 
         return view('consultas.index', compact('consultas', 'porPagina'));
-
     }
 
-    public function create()
+    public function create(Request $request)
     {
-
         $odontologo = Odontologo::with('persona')
             ->where('idPersona', Auth::user()->idPersona)
             ->firstOrFail();
 
         $procedimientos = Procedimiento::orderBy('nombre')->get();
 
-        return view('consultas.create', compact('odontologo', 'procedimientos'));
+        $paciente = null;
 
+        if ($request->filled('paciente')) {
+            $paciente = Paciente::with('persona')
+                ->find($request->paciente);
+        }
+
+        return view('consultas.create', compact(
+            'odontologo',
+            'procedimientos',
+            'paciente'
+        ));
     }
 
     private function descontarStock(int $idProcedimiento, int $cantidadProcedimiento, int $idConsulta): void
@@ -232,8 +254,12 @@ class ConsultaController extends Controller
                     );
                 }
             }
-
         });
+
+        if ($request->filled('return')) {
+            return redirect($request->return)
+                ->with('success', 'Consulta registrada correctamente.');
+        }
 
         return redirect()->route('consultas.index')
             ->with('success', 'Consulta registrada correctamente.');
@@ -248,7 +274,6 @@ class ConsultaController extends Controller
 
                 $q->where('nombre', 'like', "%{$texto}%")
                     ->orWhere('apellido', 'like', "%{$texto}%");
-
             })
             ->limit(10)
             ->get();
@@ -272,7 +297,6 @@ class ConsultaController extends Controller
             ->get();
 
         return response()->json($pacientes);
-
     }
 
     public function alergiasPaciente($id)
@@ -296,13 +320,27 @@ class ConsultaController extends Controller
 
     public function show($id)
     {
-        $consulta = Consulta::with([
+        $query = Consulta::with([
             'paciente.persona',
             'paciente.alergias',
             'odontologo.persona',
             'detalles.procedimiento',
             'detalles.detalleTratamiento.tratamiento'
-        ])->findOrFail($id);
+        ]);
+
+        if (auth()->user()->rol->nombre === 'Doctor') {
+
+            $odontologo = Odontologo::where('idPersona', auth()->user()->idPersona)
+                ->first();
+
+            if ($odontologo) {
+                $query->where('idOdontologo', $odontologo->idOdontologo);
+            } else {
+                abort(403);
+            }
+        }
+
+        $consulta = $query->findOrFail($id);
 
 
         $detallesTratamiento = $consulta->detalles
@@ -333,6 +371,4 @@ class ConsultaController extends Controller
             'subtotalIndependientes'
         ));
     }
-
-
 }

@@ -38,6 +38,7 @@
                     <div id="secDatosGenerales" class="accordion-collapse collapse show"
                         data-bs-parent="#consultaAccordion">
                         <div class="accordion-body px-3 py-3">
+                            <input type="hidden" name="return" value="{{ request('return') }}">
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
@@ -59,6 +60,7 @@
 
                                     <div class="position-relative">
                                         <input type="text" id="paciente_nombre" class="form-control pe-5"
+                                            value="{{ $paciente ? $paciente->persona->nombre . ' ' . $paciente->persona->apellido : '' }}"
                                             placeholder="Buscar paciente..." autocomplete="off">
 
                                         <i
@@ -70,7 +72,8 @@
                                         </div>
                                     </div>
 
-                                    <input type="hidden" name="idPaciente" id="paciente_id">
+                                    <input type="hidden" name="idPaciente" id="paciente_id"
+                                        value="{{ $paciente?->idPaciente }}">
                                 </div>
 
                                 <!-- odontologo fijo desde sesion -->
@@ -87,7 +90,8 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Fecha</label>
 
-                                    <input type="date" name="fecha" class="form-control consulta-input consulta-readonly"
+                                    <input type="date" name="fecha"
+                                        class="form-control consulta-input consulta-readonly"
                                         value="{{ now()->format('Y-m-d') }}" readonly>
                                 </div>
 
@@ -325,7 +329,7 @@
                                             </thead>
                                             <tbody id="cuerpoProcTratamiento">
 
-                                            
+
                                             </tbody>
                                         </table>
 

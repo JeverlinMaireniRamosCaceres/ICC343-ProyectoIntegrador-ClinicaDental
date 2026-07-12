@@ -107,7 +107,9 @@
 
     </div>
 
-    @include('facturacion.partials.modal-anular-factura')
+    @rol('Administrador')
+        @include('facturacion.partials.modal-anular-factura')
+    @endrol
 
     <script src="{{ asset('js/historial-factura.js') }}"></script>
 @endsection

@@ -157,7 +157,9 @@ class PacientesController extends Controller
                 ->render();
         }
 
-        return view('pacientes.show', compact('paciente', 'consultas', 'doctores', 'porPagina'));
+        $alergias = Alergia::orderBy('nombre')->get();
+
+        return view('pacientes.show', compact('paciente', 'consultas', 'doctores', 'porPagina', 'alergias'));
     }
 
     /**
@@ -317,5 +319,33 @@ class PacientesController extends Controller
                 'correo' => $persona->correo,
             ]
         ]);
+    }
+
+    public function updateInformacionClinica(Request $request, Paciente $paciente)
+    {
+        $datos = $request->validate(
+            [
+                'antecedentesMedicos' => 'nullable|string',
+                'alergias' => 'nullable|array',
+                'alergias.*' => 'exists:alergias,idAlergia',
+            ],
+            [
+                'alergias.array' => 'Las alergias seleccionadas no son válidas.',
+                'alergias.*.exists' => 'Una de las alergias seleccionadas no existe.',
+            ]
+        );
+
+        $paciente->update([
+            'antecedentes' => $datos['antecedentesMedicos'] ?? null,
+        ]);
+
+        $paciente->alergias()->sync(
+            $datos['alergias'] ?? []
+        );
+
+        return back()->with(
+            'success',
+            'Información clínica actualizada correctamente.'
+        );
     }
 }

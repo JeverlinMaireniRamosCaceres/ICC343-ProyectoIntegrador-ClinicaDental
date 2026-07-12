@@ -19,7 +19,7 @@
                         <div class="d-flex gap-2">
                             <a href="{{ route('pacientes.show', $paciente->idPaciente) }}?return={{ urlencode(request()->fullUrl()) }}"
                                 class="btn btn-sm btn-secondary rounded-pill px-3" title="Ver detalle">
-                                <i class="bi bi-eye-fill"></i>
+                                <i class="bi bi-file-medical-fill"></i>
                             </a>
                             <a href="{{ route('pacientes.edit', $paciente->idPaciente) }}?return={{ urlencode(request()->fullUrl()) }}"
                                 class="btn btn-sm btn-warning rounded-pill px-3" style="color:white;" title="Editar">

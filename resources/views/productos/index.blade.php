@@ -30,7 +30,7 @@
             </a>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-3">
+        <div class="card border-0 shadow-sm rounded-4">
 
             <div class="p-4 border-bottom">
                 <div class="position-relative" style="max-width: 350px;">

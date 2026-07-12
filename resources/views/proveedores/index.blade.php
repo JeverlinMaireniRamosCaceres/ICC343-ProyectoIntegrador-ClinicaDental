@@ -3,7 +3,7 @@
 @section('title', 'Proveedores')
 
 @section('content')
-<div class="container-fluid py-2 px-2">
+    <div class="container-fluid py-2 px-2">
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 border-0 mb-4" role="alert">
@@ -14,19 +14,19 @@
             </div>
         @endif
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h2 class="fw-bold page-title mb-1">Proveedores</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="fw-bold page-title mb-1">Proveedores</h2>
+            </div>
+
+            @rol('Administrador')
+                <a href="{{ route('proveedores.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Nuevo
+                </a>
+            @endrol
+
         </div>
-
-        <a href="{{ route('proveedores.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
-
-            <i class="bi bi-plus-lg me-1"></i>
-            Nuevo
-
-        </a>
-
-    </div>
 
         <!-- card -->
         <div class="card border-0 shadow-sm rounded-4">
@@ -38,15 +38,10 @@
 
                     <div class="position-relative" style="max-width: 350px;">
 
-                        <i
-                            class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                            <input type="text"
-                                name="buscar"
-                                id="buscarProveedor"
-                                value="{{ request('buscar') }}"
-                                class="form-control rounded-pill ps-5 search-input"
-                                placeholder="Buscar proveedor...">
+                        <input type="text" name="buscar" id="buscarProveedor" value="{{ request('buscar') }}"
+                            class="form-control rounded-pill ps-5 search-input" placeholder="Buscar proveedor...">
 
                     </div>
 
