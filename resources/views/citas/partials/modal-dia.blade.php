@@ -2,7 +2,8 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 shadow rounded-4">
 
-            <div class="modal-header border-0 pb-0 align-items-start">
+            <div class="modal-header border-0 pb-0 align-items-start justify-content-between">
+
                 <div>
                     <h5 class="fw-bold mb-1">Citas del día</h5>
                     <small class="text-muted" id="modalCitasDiaFecha">
@@ -10,11 +11,23 @@
                     </small>
                 </div>
 
-                <button type="button"
-                    class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                    style="width: 36px; height: 36px;" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
-                </button>
+                <div class="d-flex align-items-center gap-2">
+
+                    @rol('Administrador', 'Secretaria')
+                        <button type="button" class="btn btn-medical-primary rounded-pill px-3"
+                            id="btnNuevaCitaDesdeModal">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    @endrol
+
+                    <button type="button"
+                        class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 36px; height: 36px;" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                </div>
+
             </div>
 
             <div class="modal-body pt-4">

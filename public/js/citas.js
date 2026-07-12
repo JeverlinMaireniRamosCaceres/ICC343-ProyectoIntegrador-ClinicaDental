@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
     let selectedDate = new Date(today);
+    let fechaModalCitas = null;
 
     const months = [
         "Enero",
@@ -163,6 +164,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function openDayAppointmentsModal(date) {
+        fechaModalCitas = new Date(date);
+
         const modalFecha = document.getElementById("modalCitasDiaFecha");
         const modalCuerpo = document.getElementById("modalCitasDiaContenido");
 
@@ -339,6 +342,22 @@ document.addEventListener("DOMContentLoaded", function () {
         ?.addEventListener("click", function () {
             currentDate.setMonth(currentDate.getMonth() - 1);
             cargarCitasMes(currentDate.getFullYear(), currentDate.getMonth());
+        });
+
+    document
+        .getElementById("btnNuevaCitaDesdeModal")
+        ?.addEventListener("click", function () {
+            if (!fechaModalCitas) return;
+
+            const modalCitas = bootstrap.Modal.getInstance(
+                document.getElementById("modalCitasDia"),
+            );
+
+            modalCitas.hide();
+
+            setTimeout(() => {
+                openCreateModal(new Date(fechaModalCitas));
+            }, 250);
         });
 
     document
