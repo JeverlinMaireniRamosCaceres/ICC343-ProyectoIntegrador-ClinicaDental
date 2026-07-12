@@ -17,13 +17,6 @@
 
                     <div class="appointment-summary rounded-4 p-3 mb-4">
 
-                        @if ($errors->has('hora'))
-                            <div class="alert alert-danger rounded-3 py-2 px-3 mb-3" style="font-size:13px;">
-                                <i class="bi bi-exclamation-circle me-1"></i>
-                                {{ $errors->first('hora') }}
-                            </div>
-                        @endif
-
                         <div class="row g-3">
 
                             <div class="col-md-6">
@@ -47,7 +40,16 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Hora</label>
-                            <input type="time" name="hora" class="form-control border-secondary-subtle bg-white">
+
+                            <input type="time" name="hora"
+                                class="form-control border-secondary-subtle bg-white @error('hora') is-invalid @enderror"
+                                value="{{ old('hora') }}">
+
+                            @error('hora')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6">
@@ -69,21 +71,44 @@
 
                         <div class="col-12">
                             <label class="form-label">Nombre de la persona</label>
-                            <input type="text" name="nombrePersona"
-                                class="form-control border-secondary-subtle bg-white" placeholder="Ej: Ana Martínez">
+
+                            <input type="text" name="nombrePersona" value="{{ old('nombrePersona') }}"
+                                class="form-control border-secondary-subtle bg-white @error('nombrePersona') is-invalid @enderror"
+                                placeholder="Ej: Ana Martínez">
+
+                            @error('nombrePersona')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
-                            <input type="text" name="telefono"
-                                class="form-control border-secondary-subtle bg-white mask-telefono-rd"
+
+                            <input type="text" name="telefono" value="{{ old('telefono') }}"
+                                class="form-control border-secondary-subtle bg-white mask-telefono-rd @error('telefono') is-invalid @enderror"
                                 placeholder="Ej: 809-555-1234">
+
+                            @error('telefono')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Correo</label>
-                            <input type="email" name="correo" class="form-control border-secondary-subtle bg-white"
+
+                            <input type="email" name="correo" value="{{ old('correo') }}"
+                                class="form-control border-secondary-subtle bg-white @error('correo') is-invalid @enderror"
                                 placeholder="Ej: paciente@email.com">
+
+                            @error('correo')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-12">
@@ -116,7 +141,8 @@
                         Cancelar
                     </button>
 
-                    <button type="submit" class="btn rounded-pill px-4 text-white" style="background-color: #0ea5e9;">
+                    <button type="submit" class="btn rounded-pill px-4 text-white"
+                        style="background-color: #0ea5e9;">
                         <i class="bi bi-floppy"></i>
                         Guardar
                     </button>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Cita;
 use App\Models\Odontologo;
 use App\Services\WhatsAppService;
+use Carbon\Carbon;
 
 class CitaController extends Controller
 {
@@ -101,6 +102,10 @@ class CitaController extends Controller
         $citas = $query
             ->orderBy('hora')
             ->get();
+
+        $citas->each(function ($cita) {
+            $cita->esPasada = Carbon::parse($cita->fecha . ' ' . $cita->hora)->isPast();
+        });
 
         return response()->json($citas);
     }
@@ -239,5 +244,4 @@ class CitaController extends Controller
 
         return view('citas.respuesta-publica', compact('mensaje'));
     }
-    
 }

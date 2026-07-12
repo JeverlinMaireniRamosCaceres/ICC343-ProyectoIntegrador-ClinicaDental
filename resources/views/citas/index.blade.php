@@ -58,7 +58,7 @@
     @rol('Administrador', 'Secretaria')
         @include('citas.partials.modal-create')
     @endrol
-    
+
     @include('citas.partials.modal-dia')
 
     <script>
@@ -71,7 +71,25 @@
         @if ($errors->any())
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var modal = new bootstrap.Modal(document.getElementById('modalNuevaCita'));
+                    const fecha = @json(old('fecha'));
+
+                    if (fecha) {
+                        document.getElementById('modalFechaInput').value = fecha;
+
+                        const fechaTexto = new Date(fecha + 'T00:00:00');
+
+                        const opciones = {
+                            weekday: 'long',
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        };
+
+                        document.getElementById('modalFechaTexto').textContent =
+                            fechaTexto.toLocaleDateString('es-DO', opciones);
+                    }
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalNuevaCita'));
                     modal.show();
                 });
             </script>

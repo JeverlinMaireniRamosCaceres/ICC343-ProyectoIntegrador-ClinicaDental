@@ -224,20 +224,20 @@ document.addEventListener("DOMContentLoaded", function () {
                             </span>
 
                             ${
-                                window.puedeGestionarCitas
+                                window.puedeGestionarCitas && !cita.esPasada
                                     ? `
-                                <a href="/citas/${cita.idCita}/edit"
-                                    class="btn btn-sm btn-warning rounded-pill px-3 text-white">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
+                                        <a href="/citas/${cita.idCita}/edit"
+                                            class="btn btn-sm btn-warning rounded-pill px-3 text-white">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
 
-                                <button type="button"
-                                    class="btn btn-sm btn-danger rounded-pill px-3 btn-eliminar-cita"
-                                    data-id="${cita.idCita}"
-                                    data-nombre="${cita.nombrePersona}">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            `
+                                        <button type="button"
+                                            class="btn btn-sm btn-danger rounded-pill px-3 btn-eliminar-cita"
+                                            data-id="${cita.idCita}"
+                                            data-nombre="${cita.nombrePersona}">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    `
                                     : ""
                             }
                         </div>
