@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/data', [DashboardController::class, 'obtenerDatosFiltrados'])->name('dashboard.data');
 
     // Procedimientos
     Route::resource('procedimientos', ProcedimientoController::class)
