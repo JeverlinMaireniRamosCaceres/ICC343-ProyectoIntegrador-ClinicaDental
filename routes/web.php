@@ -149,20 +149,29 @@ Route::middleware('auth')->group(function () {
         ->except(['index', 'show'])
         ->middleware('rol:Administrador,Secretaria');
 
-
     // Caja chica
     // Caja chica
     Route::get('/caja-chica/verificar', [CajaChicaController::class, 'verificar'])
         ->middleware('rol:Administrador,Secretaria')
         ->name('caja-chica.verificar');
 
-    Route::resource('caja-chica', CajaChicaController::class)
-        ->only(['index', 'show'])
-        ->middleware('rol:Administrador,Secretaria');
+    // Rutas exclusivas del administrador
+    Route::get('/caja-chica/create', [CajaChicaController::class, 'create'])
+        ->middleware('rol:Administrador')
+        ->name('caja-chica.create');
 
-    Route::resource('caja-chica', CajaChicaController::class)
-        ->only(['create', 'store'])
-        ->middleware('rol:Administrador');
+    Route::post('/caja-chica', [CajaChicaController::class, 'store'])
+        ->middleware('rol:Administrador')
+        ->name('caja-chica.store');
+
+    // Rutas compartidas
+    Route::get('/caja-chica', [CajaChicaController::class, 'index'])
+        ->middleware('rol:Administrador,Secretaria')
+        ->name('caja-chica.index');
+
+    Route::get('/caja-chica/{caja_chica}', [CajaChicaController::class, 'show'])
+        ->middleware('rol:Administrador,Secretaria')
+        ->name('caja-chica.show');
 
     Route::post('/caja-chica/{caja}/egreso', [CajaChicaController::class, 'registrarEgreso'])
         ->middleware('rol:Administrador,Secretaria')
