@@ -21,12 +21,14 @@
                 <h2 class="fw-bold page-title mb-1">Historial de cajas chicas</h2>
             </div>
 
+            @rol('Administrador')
             <a href="{{ route('caja-chica.create') }}" class="btn btn-medical-primary rounded-pill px-4 shadow-sm">
 
                 <i class="bi bi-cash-coin"></i>
                 Abrir caja
 
             </a>
+            @endrol
 
         </div>
 
