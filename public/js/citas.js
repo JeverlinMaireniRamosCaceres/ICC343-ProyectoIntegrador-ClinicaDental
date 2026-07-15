@@ -11,6 +11,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     const odontologoId = document.getElementById("odontologo_id");
 
+    const odontologoNombreHidden = document.getElementById(
+        "odontologo_nombre_hidden",
+    );
+
+    if (odontologoNombreHidden && odontologoNombreHidden.value) {
+        inputOdontologo.value = odontologoNombreHidden.value;
+    }
+
     if (inputOdontologo) {
         inputOdontologo.addEventListener("keyup", async function () {
             let texto = this.value;
@@ -48,6 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     window.seleccionarOdontologo = function (id, nombre) {
         inputOdontologo.value = nombre;
         odontologoId.value = id;
+
+        document.getElementById("odontologo_nombre_hidden").value = nombre;
+
         resultadosOdontologos.innerHTML = "";
     };
 
@@ -227,7 +238,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             </span>
 
                             ${
-                                window.puedeGestionarCitas && !cita.esPasada && cita.estado !== "Cancelada"
+                                window.puedeGestionarCitas &&
+                                !cita.esPasada &&
+                                cita.estado !== "Cancelada"
                                     ? `
                                         <a href="/citas/${cita.idCita}/edit"
                                             class="btn btn-sm btn-warning rounded-pill px-3 text-white">
