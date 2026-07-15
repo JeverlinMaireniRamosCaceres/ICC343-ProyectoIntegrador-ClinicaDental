@@ -151,8 +151,7 @@
                                     <i
                                         class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
 
-                                    <input type="text" name="buscar" id="buscarProducto"
-                                        value="{{ request('buscar') }}"
+                                    <input type="text" name="buscar" id="buscarProducto" value="{{ request('buscar') }}"
                                         class="form-control rounded-pill ps-5 search-input"
                                         placeholder="Buscar producto...">
 
@@ -266,6 +265,26 @@
                                                 <span class="fw-normal">
                                                     — {{ \Carbon\Carbon::parse($d->fechaVencimiento)->format('d/m/Y') }}
                                                 </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($alertasSoloVencido->count() > 0)
+                                <div>
+                                    <p class="text-muted fw-semibold mb-2 text-uppercase"
+                                        style="letter-spacing:.05em; font-size:11px;">
+                                        <i class="bi bi-shield-exclamation me-1" style="color:#e03131;"></i>
+                                        Stock solo en lotes vencidos
+                                    </p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($alertasSoloVencido as $p)
+                                            <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+                                                style="background:#fdecea; color:#e03131; font-size:13px;">
+                                                <strong>{{ $p->nombre }}</strong>
+                                                <span class="fw-normal">— {{ $p->stockActual }} {{ $p->unidadMedida }} (no
+                                                    utilizable)</span>
                                             </div>
                                         @endforeach
                                     </div>

@@ -5,12 +5,15 @@
 @section('content')
     <div class="container-fluid py-4 px-5">
 
-        @error('hora')
+        @if ($errors->any() && !$errors->has('hora'))
             <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:13px;">
-                <i class="bi bi-exclamation-circle me-1"></i>
-                {{ $message }}
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-        @enderror
+        @endif
 
         <!-- Header -->
         <div class="d-flex align-items-center mb-4">
@@ -117,6 +120,15 @@
                     </div>
 
                 </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Medio de recordatorio</label>
+                <select name="medioRecordatorio" class="form-select border-secondary-subtle bg-white">
+                    <option value="correo" {{ $cita->medioRecordatorio == 'correo' ? 'selected' : '' }}>Correo</option>
+                    <option value="whatsapp" {{ $cita->medioRecordatorio == 'whatsapp' ? 'selected' : '' }}>WhatsApp</option>
+                    <option value="ambos" {{ $cita->medioRecordatorio == 'ambos' ? 'selected' : '' }}>Ambos</option>
+                </select>
             </div>
 
             <!-- Botones -->

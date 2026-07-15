@@ -79,9 +79,21 @@ class InventarioController extends Controller
             ->get()
             ->unique('idProducto');
 
+        $alertasSoloVencido = Producto::where('stockActual', '>', 0)
+            ->whereHas('detallesCompra')
+            ->whereDoesntHave('detallesCompra', function ($q) {
+                $q->where('cantidadDisponible', '>', 0)
+                    ->where(function ($q2) {
+                        $q2->whereNull('fechaVencimiento')
+                            ->orWhere('fechaVencimiento', '>=', now()->startOfDay());
+                    });
+            })
+            ->get(['idProducto', 'nombre', 'stockActual', 'unidadMedida']);
+
         $totalAlertas = $alertasSinStock->count()
             + $alertasStockBajo->count()
-            + $alertasVencimiento->count();
+            + $alertasVencimiento->count()
+            + $alertasSoloVencido->count();
 
         // entradas
         $entradas = MovimientoInventario::with('producto')
@@ -172,6 +184,7 @@ class InventarioController extends Controller
             'alertasSinStock',
             'alertasStockBajo',
             'alertasVencimiento',
+            'alertasSoloVencido',
             'totalAlertas',
             'movimientosPag',
             'todosProductos',

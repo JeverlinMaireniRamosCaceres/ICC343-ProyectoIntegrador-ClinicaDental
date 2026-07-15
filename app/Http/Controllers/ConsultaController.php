@@ -117,8 +117,14 @@ class ConsultaController extends Controller
     ): void {
         $restante = $cantidadADescontar;
 
+        // FEFO: el que vence primero, sale primero.
+        // Se excluyen lotes ya vencidos (fechaVencimiento < hoy).
         $lotes = DetalleCompra::where('idProducto', $producto->idProducto)
             ->where('cantidadDisponible', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('fechaVencimiento')
+                    ->orWhere('fechaVencimiento', '>=', now()->startOfDay());
+            })
             ->orderByRaw('fechaVencimiento IS NULL')
             ->orderBy('fechaVencimiento', 'asc')
             ->lockForUpdate()
@@ -153,7 +159,7 @@ class ConsultaController extends Controller
                 'idDetalleCompra' => null,
                 'tipo' => 'SALIDA',
                 'cantidad' => $restante,
-                'motivo' => 'Procedimiento (sin lote - stock inconsistente)',
+                'motivo' => 'Procedimiento (sin lote — stock inconsistente)',
                 'idConsulta' => $idConsulta,
                 'idProcedimiento' => $idProcedimiento,
             ]);
