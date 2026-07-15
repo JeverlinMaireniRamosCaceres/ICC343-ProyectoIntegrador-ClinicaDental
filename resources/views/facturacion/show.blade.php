@@ -40,11 +40,6 @@
                     <i class="bi bi-envelope text-white"></i>
                 </button>
 
-                @if (!$factura->tiene_pagos_realizados && $factura->estado !== 'Anulada')
-                    <button class="btn btn-danger rounded-pill px-4">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
-                @endif
 
             </div>
 

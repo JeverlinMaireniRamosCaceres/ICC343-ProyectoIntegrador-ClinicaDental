@@ -57,7 +57,8 @@
 
                             <div class="position-relative">
                                 <input type="text" id="odontologo_nombre" class="form-control pe-5"
-                                    placeholder="Buscar odontólogo..." autocomplete="off">
+                                    placeholder="Buscar odontólogo..." autocomplete="off"
+                                    value="{{ old('nombreOdontologo') }}">
 
                                 <i
                                     class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
@@ -66,7 +67,10 @@
                             <div id="resultadosOdontologos" class="list-group mt-1 shadow-sm">
                             </div>
 
-                            <input type="hidden" name="idOdontologo" id="odontologo_id">
+                            <input type="hidden" name="idOdontologo" id="odontologo_id"
+                                value="{{ old('idOdontologo') }}">
+                            <input type="hidden" name="nombreOdontologo" id="odontologo_nombre_hidden"
+                                value="{{ old('nombreOdontologo') }}">
                         </div>
 
                         <div class="col-12">
@@ -116,17 +120,20 @@
                             <div class="d-flex gap-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="medioRecordatorio"
-                                        id="medioCorreo" value="correo" checked>
+                                        id="medioCorreo" value="correo"
+                                        {{ old('medioRecordatorio', 'correo') == 'correo' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="medioCorreo">Correo</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="medioRecordatorio"
-                                        id="medioWhatsapp" value="whatsapp">
+                                        id="medioWhatsapp" value="whatsapp"
+                                        {{ old('medioRecordatorio') == 'whatsapp' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="medioWhatsapp">WhatsApp</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="medioRecordatorio"
-                                        id="medioAmbos" value="ambos">
+                                        id="medioAmbos" value="ambos"
+                                        {{ old('medioRecordatorio') == 'ambos' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="medioAmbos">Ambos</label>
                                 </div>
                             </div>
