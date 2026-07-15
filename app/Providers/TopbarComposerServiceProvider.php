@@ -17,7 +17,8 @@ class TopbarComposerServiceProvider extends ServiceProvider
                 $view->with('totalAlertasTopbar', 0)
                     ->with('alertasSinStockTopbar', collect())
                     ->with('alertasStockBajoTopbar', collect())
-                    ->with('alertasVencimientoTopbar', collect());
+                    ->with('alertasVencimientoTopbar', collect())
+                    ->with('alertasSoloVencidoTopbar', collect());
                 return;
             }
 
@@ -37,14 +38,27 @@ class TopbarComposerServiceProvider extends ServiceProvider
                 ->get()
                 ->unique('idProducto');
 
+            $alertasSoloVencido = Producto::where('stockActual', '>', 0)
+                ->whereHas('detallesCompra')
+                ->whereDoesntHave('detallesCompra', function ($q) {
+                    $q->where('cantidadDisponible', '>', 0)
+                        ->where(function ($q2) {
+                            $q2->whereNull('fechaVencimiento')
+                                ->orWhere('fechaVencimiento', '>=', now()->startOfDay());
+                        });
+                })
+                ->get(['idProducto', 'nombre']);
+
             $total = $alertasSinStock->count()
                 + $alertasStockBajo->count()
-                + $alertasVencimiento->count();
+                + $alertasVencimiento->count()
+                + $alertasSoloVencido->count();
 
             $view->with('totalAlertasTopbar', $total)
                 ->with('alertasSinStockTopbar', $alertasSinStock)
                 ->with('alertasStockBajoTopbar', $alertasStockBajo)
-                ->with('alertasVencimientoTopbar', $alertasVencimiento);
+                ->with('alertasVencimientoTopbar', $alertasVencimiento)
+                ->with('alertasSoloVencidoTopbar', $alertasSoloVencido);
         });
     }
 }

@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </span>
 
                             ${
-                                window.puedeGestionarCitas && !cita.esPasada
+                                window.puedeGestionarCitas && !cita.esPasada && cita.estado !== "Cancelada"
                                     ? `
                                         <a href="/citas/${cita.idCita}/edit"
                                             class="btn btn-sm btn-warning rounded-pill px-3 text-white">
