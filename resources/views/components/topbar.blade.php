@@ -62,6 +62,13 @@
                             </a>
                         @endforeach
 
+                        @foreach($alertasSoloVencidoTopbar as $p)
+                            <a href="{{ route('inventario.index') }}#tab-alertas" class="dropdown-item rounded-3 py-2 small">
+                                <i class="bi bi-clock-fill me-2" style="color:#7c3aed;"></i>
+                                <strong>{{ $p->nombre }}</strong> | todo vencido
+                            </a>
+                        @endforeach
+
                     </div>
                 @endif
 
