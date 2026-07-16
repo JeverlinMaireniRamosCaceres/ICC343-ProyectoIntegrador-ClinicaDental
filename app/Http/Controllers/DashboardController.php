@@ -26,63 +26,7 @@ class DashboardController extends Controller
             $fin = Carbon::now()->addMonth()->endOfMonth();
         }
 
-        $mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        $labelsDinamicos = [];
-        $mesesIncluidos = [];
-
-        $tempInicio = $inicio->copy()->startOfMonth();
-        while ($tempInicio->lte($fin)) {
-            $mesNum = $tempInicio->month;
-            $anioNum = $tempInicio->year;
-            $key = $anioNum . '-' . $mesNum;
-
-            if (!isset($mesesIncluidos[$key])) {
-                $mesesIncluidos[$key] = [
-                    'num' => $mesNum,
-                    'anio' => $anioNum,
-                    'label' => $mesesAnio[$mesNum - 1] . ($fechaInicioInput ? ' ' . substr($anioNum, -2) : '')
-                ];
-            }
-            $tempInicio->addMonth();
-        }
-
-        $pagosQuery = Consulta::selectRaw('MONTH(fecha) as mes, YEAR(fecha) as anio, COUNT(*) as cantidad')
-            ->where('estado', 'pendiente');
-        
-        if ($fechaInicioInput && $fechaFinInput) {
-            $pagosQuery->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()]);
-        } else {
-            $pagosQuery->whereBetween('fecha', [Carbon::now()->startOfYear()->toDateString(), $fin->toDateString()]);
-        }
-
-        $pagosPendientes = $pagosQuery->groupBy('anio', 'mes')->get();
-
-        $dataPendientes = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $pagosPendientes->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataPendientes[] = $registro ? $registro->cantidad : 0;
-            $labelsDinamicos[] = $mesInfo['label'];
-        }
-
-        $pacientesQuery = Paciente::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, COUNT(*) as cantidad');
-
-        if ($fechaInicioInput && $fechaFinInput) {
-            $pacientesQuery->whereBetween('created_at', [$inicio, $fin]);
-        } else {
-            $pacientesQuery->whereBetween('created_at', [Carbon::now()->startOfYear(), $fin]);
-        }
-
-        $pacientesRegistrados = $pacientesQuery->groupBy('anio', 'mes')->get();
-
-        $dataPacientes = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $pacientesRegistrados->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataPacientes[] = $registro ? $registro->cantidad : 0;
-        }
+        $metricas = $this->obtenerMetricasDashboard($inicio, $fin);
 
         $hoy = Carbon::now();
         $refString = $hoy->toDateString();
@@ -102,58 +46,15 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($detalle) use ($hoy) {
                 $fechaVenc = Carbon::parse($detalle->fechaVencimiento)->startOfDay();
-                $hoyActual = $hoy->copy()->startOfDay(); 
+                $hoyActual = $hoy->copy()->startOfDay();
                 $detalle->diasRestantes = $hoyActual->diffInDays($fechaVenc, false);
                 return $detalle;
             });
 
-        $ingresosQuery = Pago::selectRaw('MONTH(fechaRealizacion) as mes, YEAR(fechaRealizacion) as anio, SUM(monto) as total_ingresos')
-            ->where('estado', 'Pagado');
-            
-        if ($fechaInicioInput && $fechaFinInput) {
-            $ingresosQuery->whereBetween('fechaRealizacion', [$inicio->toDateString(), $fin->toDateString()]);
-        } else {
-            $ingresosQuery->whereBetween('fechaRealizacion', [Carbon::now()->startOfYear()->toDateString(), $fin->toDateString()]);
-        }
-
-        $ingresos = $ingresosQuery->groupBy('anio', 'mes')->get();
-
-        $dataIngresos = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $ingresos->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataIngresos[] = $registro ? $registro->total_ingresos : 0;
-        }
-
-        $consumoQuery = MovimientoCajaChica::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, SUM(monto) as total_consumo')
-            ->where('tipo', 'Egreso');
-            
-        if ($fechaInicioInput && $fechaFinInput) {
-            $consumoQuery->whereBetween('created_at', [$inicio, $fin]);
-        } else {
-            $consumoQuery->whereBetween('created_at', [Carbon::now()->startOfYear(), $fin]);
-        }
-
-        $consumos = $consumoQuery->groupBy('anio', 'mes')->get();
-
-        $dataConsumoCaja = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $consumos->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataConsumoCaja[] = $registro ? $registro->total_consumo : 0;
-        }
-
-        return view('dashboard', [
-            'labels' => $labelsDinamicos,
-            'dataPendientes' => $dataPendientes,
-            'dataPacientes' => $dataPacientes,
+        return view('dashboard', array_merge($metricas, [
             'dataVencimientos' => $dataVencimientos,
             'productosVencimiento' => $productosVencimiento,
-            'dataIngresos' => $dataIngresos,
-            'dataConsumoCaja' => $dataConsumoCaja
-        ]);
+        ]));
     }
 
     public function obtenerDatosFiltrados(Request $request)
@@ -176,7 +77,10 @@ class DashboardController extends Controller
                     $fechaInicio = Carbon::now()->startOfYear();
                     break;
                 case 'historico':
-                    $fechaInicio = Carbon::now()->subYears(5)->startOfYear(); 
+                    $fechaInicio = Carbon::now()->subYears(5)->startOfYear();
+                    break;
+                default:
+                    $fechaInicio = Carbon::now()->startOfYear();
                     break;
             }
         } elseif ($tipo === 'mes_especifico') {
@@ -184,84 +88,115 @@ class DashboardController extends Controller
             $fechaFin = Carbon::parse($valor)->addMonth()->endOfMonth();
         }
 
-        $mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        $labelsDinamicos = [];
-        $mesesIncluidos = [];
+        $metricas = $this->obtenerMetricasDashboard($fechaInicio, $fechaFin);
 
-        $tempInicio = $fechaInicio->copy()->startOfMonth();
-        while ($tempInicio->lte($fechaFin)) {
+        return response()->json($metricas);
+    }
+
+    private function obtenerMetricasDashboard(Carbon $inicio, Carbon $fin): array
+    {
+        $rango = $this->generarRangoDeMeses($inicio, $fin);
+        $mesesIncluidos = $rango['meses'];
+        $labels = $rango['labels'];
+
+        // --- PAGOS PENDIENTES ---
+        $pagosPendientes = Pago::selectRaw('MONTH(fechaVencimiento) as mes, YEAR(fechaVencimiento) as anio, COUNT(*) as cantidad')
+            ->where('estado', 'Pendiente')
+            ->whereBetween('fechaVencimiento', [$inicio, $fin])
+            ->groupBy('anio', 'mes')
+            ->get();
+
+        $dataPendientes = $this->extraerDatosPorMes($pagosPendientes, $mesesIncluidos, 'cantidad');
+
+        // --- PACIENTES REGISTRADOS ---
+        $pacientesRegistrados = Paciente::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, COUNT(*) as cantidad')
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->groupBy('anio', 'mes')
+            ->get();
+
+        $dataPacientes = $this->extraerDatosPorMes($pacientesRegistrados, $mesesIncluidos, 'cantidad');
+
+        // --- INGRESOS REALIZADOS (SÓLO PAGADAS) ---
+        $ingresos = Pago::selectRaw('MONTH(fechaRealizacion) as mes, YEAR(fechaRealizacion) as anio, SUM(monto) as total_ingresos')
+            ->where('estado', 'Pagado')
+            ->whereNotNull('fechaRealizacion')
+            ->whereBetween('fechaRealizacion', [$inicio, $fin])
+            ->groupBy('anio', 'mes')
+            ->get();
+
+        $dataIngresos = $this->extraerDatosPorMes($ingresos, $mesesIncluidos, 'total_ingresos', true);
+
+        // --- CONSUMO DE CAJA CHICA ---
+        $consumos = MovimientoCajaChica::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, SUM(monto) as total_consumo')
+            ->where('tipo', 'Egreso')
+            ->where('descripcion', 'not like', 'Anulación de recibo%')
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->groupBy('anio', 'mes')
+            ->get();
+
+        $dataConsumoCaja = $this->extraerDatosPorMes($consumos, $mesesIncluidos, 'total_consumo', true);
+
+        return [
+            'labels' => $labels,
+            'dataPendientes' => $dataPendientes,
+            'dataPacientes' => $dataPacientes,
+            'dataIngresos' => $dataIngresos,
+            'dataConsumoCaja' => $dataConsumoCaja,
+        ];
+    }
+
+    private function generarRangoDeMeses(Carbon $inicio, Carbon $fin): array
+    {
+        $mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+        $mesesIncluidos = [];
+        $labels = [];
+
+        $tempInicio = $inicio->copy()->startOfMonth();
+        while ($tempInicio->lte($fin)) {
             $mesNum = $tempInicio->month;
             $anioNum = $tempInicio->year;
             $key = $anioNum . '-' . $mesNum;
 
             if (!isset($mesesIncluidos[$key])) {
+                $label = $mesesAnio[$mesNum - 1] . ' ' . substr($anioNum, -2);
+
                 $mesesIncluidos[$key] = [
                     'num' => $mesNum,
                     'anio' => $anioNum,
-                    'label' => [$mesesAnio[$mesNum - 1], $anioNum]
+                    'label' => $label,
                 ];
-                $labelsDinamicos[] = $mesesIncluidos[$key]['label'];
+
+                $labels[] = $label;
             }
+
             $tempInicio->addMonth();
         }
 
-        $pagosPendientes = Consulta::selectRaw('MONTH(fecha) as mes, YEAR(fecha) as anio, COUNT(*) as cantidad')
-            ->where('estado', 'pendiente')
-            ->whereBetween('fecha', [$fechaInicio->toDateString(), $fechaFin->toDateString()])
-            ->groupBy('anio', 'mes')->get();
+        return [
+            'meses' => $mesesIncluidos,
+            'labels' => $labels,
+        ];
+    }
 
-        $dataPendientes = [];
+    private function extraerDatosPorMes($coleccion, array $mesesIncluidos, string $campo, bool $comoFloat = false): array
+    {
+        $datos = [];
+
         foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $pagosPendientes->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
+            $registro = $coleccion->first(function ($item) use ($mesInfo) {
+                return (int) $item->mes === (int) $mesInfo['num'] && (int) $item->anio === (int) $mesInfo['anio'];
             });
-            $dataPendientes[] = $registro ? $registro->cantidad : 0;
+
+            if (!$registro) {
+                $datos[] = $comoFloat ? 0.0 : 0;
+                continue;
+            }
+
+            $valor = $registro->{$campo};
+            $datos[] = $comoFloat ? (float) $valor : (int) $valor;
         }
 
-        $pacientesRegistrados = Paciente::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, COUNT(*) as cantidad')
-            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
-            ->groupBy('anio', 'mes')->get();
-
-        $dataPacientes = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $pacientesRegistrados->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataPacientes[] = $registro ? $registro->cantidad : 0;
-        }
-
-        $ingresos = Pago::selectRaw('MONTH(fechaRealizacion) as mes, YEAR(fechaRealizacion) as anio, SUM(monto) as total_ingresos')
-            ->where('estado', 'Pagado')
-            ->whereBetween('fechaRealizacion', [$fechaInicio->toDateString(), $fechaFin->toDateString()])
-            ->groupBy('anio', 'mes')->get();
-
-        $dataIngresos = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $ingresos->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataIngresos[] = $registro ? $registro->total_ingresos : 0;
-        }
-
-        $consumos = MovimientoCajaChica::selectRaw('MONTH(created_at) as mes, YEAR(created_at) as anio, SUM(monto) as total_consumo')
-            ->where('tipo', 'Egreso')
-            ->whereBetween('created_at', [$fechaInicio, $fechaFin])
-            ->groupBy('anio', 'mes')->get();
-
-        $dataConsumoCaja = [];
-        foreach ($mesesIncluidos as $mesInfo) {
-            $registro = $consumos->first(function ($item) use ($mesInfo) {
-                return $item->mes == $mesInfo['num'] && $item->anio == $mesInfo['anio'];
-            });
-            $dataConsumoCaja[] = $registro ? $registro->total_consumo : 0;
-        }
-
-        return response()->json([
-            'labels'           => $labelsDinamicos,
-            'dataPendientes'   => $dataPendientes,
-            'dataPacientes'    => $dataPacientes,
-            'dataIngresos'     => $dataIngresos,
-            'dataConsumoCaja'  => $dataConsumoCaja,
-        ]);
+        return $datos;
     }
 }
