@@ -163,6 +163,60 @@
 <script>
     let chartPendientes, chartPacientes, chartVencimientos, chartIngresos, chartCajaChica;
 
+    const baseChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 10 } }
+    };
+
+    function formatCurrency(value) {
+        return 'RD$ ' + Math.round(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
+    function buildCountOptions() {
+        return {
+            ...baseChartOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grace: '15%',
+                    ticks: { precision: 0, stepSize: 1 }
+                }
+            }
+        };
+    }
+
+    function buildCurrencyOptions(tooltipLabel) {
+        return {
+            ...baseChartOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grace: '15%',
+                    ticks: {
+                        precision: 0,
+                        callback: function(value) { return formatCurrency(value); }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) { return tooltipLabel + ': ' + formatCurrency(context.parsed.y); }
+                    }
+                }
+            }
+        };
+    }
+
+    function puntoVisible(context) {
+        return context.raw === 0 ? 0 : 4;
+    }
+
+    function puntoVisibleHover(context) {
+        return context.raw === 0 ? 0 : 6;
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const labelsMeses = {!! json_encode($labels) !!};
 
@@ -173,7 +227,7 @@
                 data: {
                     labels: labelsMeses,
                     datasets: [{
-                        label: 'Consultas pendientes',
+                        label: 'Pagos pendientes',
                         data: {!! json_encode($dataPendientes) !!},
                         backgroundColor: 'rgba(25, 135, 84, 0.05)',
                         borderColor: '#0ea5e9',
@@ -181,18 +235,7 @@
                         borderRadius: 4
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    layout: { padding: { top: 10 } },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grace: '15%',
-                            ticks: { precision: 0, stepSize: 1 }
-                        }
-                    }
-                }
+                options: buildCountOptions()
             });
         }
 
@@ -210,22 +253,11 @@
                         borderWidth: 2.5,
                         tension: 0.35,
                         fill: true,
-                        pointRadius: function(context) { return context.raw === 0 ? 0 : 4; },
-                        pointHoverRadius: function(context) { return context.raw === 0 ? 0 : 6; }
+                        pointRadius: puntoVisible,
+                        pointHoverRadius: puntoVisibleHover
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    layout: { padding: { top: 10 } },
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            grace: '15%',
-                            ticks: { precision: 0, stepSize: 1 } 
-                        } 
-                    } 
-                }
+                options: buildCountOptions()
             });
         }
 
@@ -243,36 +275,11 @@
                         borderWidth: 2.5,
                         tension: 0.35,
                         fill: true,
-                        pointRadius: function(context) { return context.raw === 0 ? 0 : 4; },
-                        pointHoverRadius: function(context) { return context.raw === 0 ? 0 : 6; }
+                        pointRadius: puntoVisible,
+                        pointHoverRadius: puntoVisibleHover
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    layout: { padding: { top: 10 } },
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            grace: '15%',
-                            ticks: { 
-                                precision: 0,
-                                callback: function(value) {
-                                    return 'RD$ ' + Math.round(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
-                                }
-                            } 
-                        } 
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Ingresos: RD$ ' + Math.round(context.parsed.y).toLocaleString(undefined, { maximumFractionDigits: 0 });
-                                }
-                            }
-                        }
-                    }
-                }
+                options: buildCurrencyOptions('Ingresos')
             });
         }
 
@@ -291,32 +298,7 @@
                         borderRadius: 4
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    layout: { padding: { top: 10 } },
-                    scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            grace: '15%',
-                            ticks: { 
-                                precision: 0,
-                                callback: function(value) {
-                                    return 'RD$ ' + Math.round(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
-                                }
-                            } 
-                        } 
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return 'Consumo: RD$ ' + Math.round(context.parsed.y).toLocaleString(undefined, { maximumFractionDigits: 0 });
-                                }
-                            }
-                        }
-                    }
-                }
+                options: buildCurrencyOptions('Consumo')
             });
         }
 
@@ -373,25 +355,25 @@
             .then(res => {
                 if (chartPendientes) {
                     chartPendientes.data.labels = res.labels;
-                    chartPendientes.data.datasets[0].data = res.dataPendientes;
+                    chartPendientes.data.datasets[0].data = res.dataPendientes.map(Number);
                     chartPendientes.update();
                 }
 
                 if (chartPacientes) {
                     chartPacientes.data.labels = res.labels;
-                    chartPacientes.data.datasets[0].data = res.dataPacientes;
+                    chartPacientes.data.datasets[0].data = res.dataPacientes.map(Number);
                     chartPacientes.update();
                 }
 
                 if (chartIngresos) {
                     chartIngresos.data.labels = res.labels;
-                    chartIngresos.data.datasets[0].data = res.dataIngresos;
+                    chartIngresos.data.datasets[0].data = res.dataIngresos.map(Number);
                     chartIngresos.update();
                 }
 
                 if (chartCajaChica) {
                     chartCajaChica.data.labels = res.labels;
-                    chartCajaChica.data.datasets[0].data = res.dataConsumoCaja;
+                    chartCajaChica.data.datasets[0].data = res.dataConsumoCaja.map(Number);
                     chartCajaChica.update();
                 }
             })

@@ -223,10 +223,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/consultas/paciente-tratamientos/{id}', [ConsultaController::class, 'tratamientosPaciente'])
         ->middleware('rol:Administrador,Doctor')
         ->name('consultas.tratamientosPaciente');
+        
+
+
 
     Route::resource('consultas', ConsultaController::class)
         ->only(['index', 'show', 'create', 'store'])
         ->middleware('rol:Administrador,Doctor');
+
+    
     Route::get(
         '/tratamientos/{id}/procedimientos',
         [TratamientoController::class, 'procedimientos']
