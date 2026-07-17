@@ -230,14 +230,30 @@ class ComprasController extends Controller
             $cantidad = (int) $request->cantidad[$i];
             $costoTotal = (float) $request->costoTotal[$i];
 
-            DetalleCompra::create([
+            $producto = Producto::findOrFail($idProducto);
+
+            $deuda = $producto->stockActual < 0 ? abs($producto->stockActual) : 0;
+            $deudaAplicada = min($deuda, $cantidad);
+            $cantidadDisponibleInicial = $cantidad - $deudaAplicada;
+
+            $detalle = DetalleCompra::create([
                 'idCompras' => $compra->idCompras,
                 'idProducto' => $idProducto,
                 'cantidad' => $cantidad,
-                'cantidadDisponible' => $cantidad,
+                'cantidadDisponible' => $cantidadDisponibleInicial, 
                 'costoTotal' => $costoTotal,
                 'fechaVencimiento' => $request->fechaVencimiento[$i] ?? null
             ]);
+
+            if ($deudaAplicada > 0) {
+                MovimientoInventario::create([
+                    'idProducto' => $idProducto,
+                    'idDetalleCompra' => $detalle->idDetalleCompra,
+                    'tipo' => 'SALIDA',
+                    'cantidad' => $deudaAplicada,
+                    'motivo' => 'Descuento por deuda anterior de stock',
+                ]);
+            }
 
             $this->actualizarStock($idProducto, $cantidad);
 

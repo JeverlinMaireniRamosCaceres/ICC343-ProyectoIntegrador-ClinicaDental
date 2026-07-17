@@ -117,8 +117,6 @@ class ConsultaController extends Controller
     ): void {
         $restante = $cantidadADescontar;
 
-        // FEFO: el que vence primero, sale primero.
-        // Se excluyen lotes ya vencidos (fechaVencimiento < hoy).
         $lotes = DetalleCompra::where('idProducto', $producto->idProducto)
             ->where('cantidadDisponible', '>', 0)
             ->where(function ($query) {
@@ -159,13 +157,13 @@ class ConsultaController extends Controller
                 'idDetalleCompra' => null,
                 'tipo' => 'SALIDA',
                 'cantidad' => $restante,
-                'motivo' => 'Procedimiento (sin lote — stock inconsistente)',
+                'motivo' => 'Procedimiento (sin lote - stock inconsistente)',
                 'idConsulta' => $idConsulta,
                 'idProcedimiento' => $idProcedimiento,
             ]);
         }
 
-        $producto->stockActual = max(0, $producto->stockActual - $cantidadADescontar);
+        $producto->stockActual -= $cantidadADescontar;
         $producto->save();
     }
 
