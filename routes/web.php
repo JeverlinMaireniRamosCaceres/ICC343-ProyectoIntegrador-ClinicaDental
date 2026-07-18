@@ -118,17 +118,37 @@ Route::middleware('auth')->group(function () {
         ->name('productos.destroy');
 
     // Odontólogos
-    Route::resource('odontologos', OdontologoController::class)
-        ->only(['index', 'show'])
-        ->middleware('rol:Administrador,Secretaria');
+    Route::get('/odontologos', [OdontologoController::class, 'index'])
+        ->middleware('rol:Administrador,Secretaria')
+        ->name('odontologos.index');
 
-    Route::resource('odontologos', OdontologoController::class)
-        ->only(['create', 'store', 'edit', 'update', 'destroy'])
-        ->middleware('rol:Administrador');
+    Route::get('/odontologos/create', [OdontologoController::class, 'create'])
+        ->middleware('rol:Administrador')
+        ->name('odontologos.create');
+
+    Route::post('/odontologos', [OdontologoController::class, 'store'])
+        ->middleware('rol:Administrador')
+        ->name('odontologos.store');
+
+    Route::get('/odontologos/{odontologo}/edit', [OdontologoController::class, 'edit'])
+        ->middleware('rol:Administrador')
+        ->name('odontologos.edit');
 
     Route::put('/odontologos/{odontologo}/activar', [OdontologoController::class, 'activar'])
         ->middleware('rol:Administrador')
         ->name('odontologos.activar');
+
+    Route::put('/odontologos/{odontologo}', [OdontologoController::class, 'update'])
+        ->middleware('rol:Administrador')
+        ->name('odontologos.update');
+
+    Route::delete('/odontologos/{odontologo}', [OdontologoController::class, 'destroy'])
+        ->middleware('rol:Administrador')
+        ->name('odontologos.destroy');
+
+    Route::get('/odontologos/{odontologo}', [OdontologoController::class, 'show'])
+        ->middleware('rol:Administrador,Secretaria')
+        ->name('odontologos.show');
 
     // Citas
     Route::get('citas/por-fecha', [CitaController::class, 'citasPorFecha'])
@@ -223,7 +243,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/consultas/paciente-tratamientos/{id}', [ConsultaController::class, 'tratamientosPaciente'])
         ->middleware('rol:Administrador,Doctor')
         ->name('consultas.tratamientosPaciente');
-        
+
 
 
 
@@ -231,7 +251,7 @@ Route::middleware('auth')->group(function () {
         ->only(['index', 'show', 'create', 'store'])
         ->middleware('rol:Administrador,Doctor');
 
-    
+
     Route::get(
         '/tratamientos/{id}/procedimientos',
         [TratamientoController::class, 'procedimientos']
