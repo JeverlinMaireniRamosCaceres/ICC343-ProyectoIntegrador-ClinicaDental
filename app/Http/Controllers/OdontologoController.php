@@ -72,7 +72,7 @@ class OdontologoController extends Controller
             ]);
 
             $odontologo->especialidades()->sync(
-                $data['especialidades']
+                $data['especialidades'] ?? []
             );
         });
 
@@ -126,7 +126,7 @@ class OdontologoController extends Controller
             ]);
 
             $odontologo->especialidades()->sync(
-                $data['especialidades']
+                $data['especialidades'] ?? []
             );
         });
 
@@ -167,7 +167,7 @@ class OdontologoController extends Controller
             ->with('success', 'Odontólogo activado correctamente.');
     }
 
-    private function validarOdontologo(Request $request, ?int $idPersona = null): array
+    private function validarOdontologo(Request $request, ?int $idPersona = null, ?int $idOdontologo = null): array
     {
         return $request->validate(
             [
@@ -201,9 +201,15 @@ class OdontologoController extends Controller
                     Rule::unique('personas', 'correo')->ignore($idPersona, 'idPersona')
                 ],
 
-                'exequatur' => 'required|string|max:50',
+                'exequatur' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    Rule::unique('odontologos', 'exequatur')
+                        ->ignore($idOdontologo ? $idOdontologo : null, 'idOdontologo')
+                ],
 
-                'especialidades' => 'required|array|min:1',
+                'especialidades' => 'nullable|array',
                 'especialidades.*' => 'exists:especialidades,idEspecialidad'
             ],
             [
@@ -232,7 +238,6 @@ class OdontologoController extends Controller
                 'exequatur.required' => 'El exequátur es obligatorio.',
                 'exequatur.max' => 'El exequátur no puede exceder los 50 caracteres.',
 
-                'especialidades.required' => 'Debes seleccionar al menos una especialidad.',
                 'especialidades.array' => 'Las especialidades seleccionadas no son válidas.',
                 'especialidades.*.exists' => 'Una de las especialidades seleccionadas no existe.'
             ]
