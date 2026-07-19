@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const filaVaciaInsumos = document.getElementById("filaVaciaInsumos");
 
     let filaProductoActual = null;
+    let productoSeleccionadoActual = null;
 
     function agregarFila(id = "", nombre = "", unidad = "-", cantidad = 1) {
         if (filaVaciaInsumos) {
@@ -70,22 +71,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // ELIMINAR FILA
     detalleBody.addEventListener("click", function (e) {
         const btnEliminar = e.target.closest(".btnEliminarFila");
 
-        if (btnEliminar) {
-            btnEliminar.closest("tr").remove();
+        if (!btnEliminar) return;
 
-            const filasActuales = detalleBody.querySelectorAll(
-                "tr:not(#filaVaciaInsumos)",
-            );
+        btnEliminar.closest("tr").remove();
 
-            if (filasActuales.length === 0 && filaVaciaInsumos) {
-                filaVaciaInsumos.style.display = "";
-            }
+        const filasActuales = detalleBody.querySelectorAll(
+            "tr:not(#filaVaciaInsumos)",
+        );
+
+        if (filasActuales.length === 0 && filaVaciaInsumos) {
+            filaVaciaInsumos.style.display = "";
         }
+
+        actualizarEstadoProductos();
     });
 
+    // ABRIR MODAL
     document.addEventListener("click", function (e) {
         const inputProducto = e.target.closest(".producto-input");
 
@@ -93,11 +98,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         filaProductoActual = inputProducto.closest("tr");
 
-        const idActual = filaProductoActual.querySelector(".id-producto").value;
+        actualizarEstadoProductos();
 
-        actualizarSeleccionVisual(idActual);
+        productoSeleccionadoActual =
+            filaProductoActual.querySelector(".id-producto").value;
+
+        actualizarSeleccionVisual(productoSeleccionadoActual);
     });
 
+    // SELECCIONAR PRODUCTO
     document.addEventListener("click", function (e) {
         const btnSeleccionar = e.target.closest(".btnSeleccionarProducto");
 
@@ -119,16 +128,16 @@ document.addEventListener("DOMContentLoaded", function () {
             btnSeleccionar.dataset.unidad;
 
         actualizarSeleccionVisual(btnSeleccionar.dataset.id);
+        actualizarEstadoProductos();
 
-        const modalEl = document.getElementById("modalProductos");
-
-        const modal =
-            bootstrap.Modal.getInstance(modalEl) ||
-            new bootstrap.Modal(modalEl);
+        const modal = bootstrap.Modal.getInstance(
+            document.getElementById("modalProductos"),
+        );
 
         modal.hide();
     });
 
+    // BUSCAR PRODUCTO
     const buscarProductoModal = document.getElementById("buscarProductoModal");
 
     if (buscarProductoModal) {
@@ -148,9 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 fila.style.display = visible ? "" : "none";
 
-                if (visible) {
-                    encontrados++;
-                }
+                if (visible) encontrados++;
             });
 
             const sinResultados = document.getElementById(
@@ -163,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Restaurar los productos después de una validación fallida
+    // RESTAURAR DATOS DESPUÉS DE VALIDACIÓN
     if (typeof productosOld !== "undefined" && productosOld.length > 0) {
         productosOld.forEach((idProducto, index) => {
             agregarFila(
@@ -175,13 +182,46 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // ACTUALIZAR PRODUCTOS DISPONIBLES
+    function actualizarEstadoProductos() {
+        const productosSeleccionados = [];
+
+        document.querySelectorAll(".id-producto").forEach((input) => {
+            if (input.value) {
+                productosSeleccionados.push(input.value);
+            }
+        });
+
+        document.querySelectorAll(".btnSeleccionarProducto").forEach((btn) => {
+            const idActual =
+                filaProductoActual?.querySelector(".id-producto")?.value;
+
+            if (
+                productosSeleccionados.includes(btn.dataset.id) &&
+                btn.dataset.id !== idActual
+            ) {
+                btn.disabled = true;
+
+                btn.classList.remove("btn-primary", "btn-success");
+                btn.classList.add("btn-secondary");
+
+                btn.innerHTML = '<i class="bi bi-ban"></i>';
+            } else {
+                btn.disabled = false;
+            }
+        });
+    }
+
+    // BOTÓN VERDE DEL PRODUCTO ACTUAL
     function actualizarSeleccionVisual(idSeleccionado) {
         document.querySelectorAll(".btnSeleccionarProducto").forEach((btn) => {
+            if (btn.disabled) return;
+
             if (btn.dataset.id == idSeleccionado) {
                 btn.classList.remove("btn-primary");
                 btn.classList.add("btn-success");
 
-                btn.innerHTML = '<i class="bi bi-check-lg"></i>';
+                btn.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
             } else {
                 btn.classList.remove("btn-success");
                 btn.classList.add("btn-primary");
