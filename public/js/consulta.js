@@ -221,7 +221,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const texto = this.value.toLowerCase();
             document.querySelectorAll(".item-procedimiento").forEach((item) => {
                 const nombre = item.getAttribute("data-nombre").toLowerCase();
-                item.style.display = nombre.includes(texto) ? "" : "none";
+                if (nombre.includes(texto)) {
+                    item.style.setProperty("display", "flex", "important");
+                } else {
+                    item.style.setProperty("display", "none", "important");
+                }
             });
         });
     }
@@ -742,10 +746,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     </td>
 
                     <td>
-                        <span class="badge ${
-                            proc.estado === "Realizado"
-                                ? "bg-success"
-                                : "bg-warning"
+                        <span class="badge ${proc.estado === "Realizado"
+                            ? "bg-success"
+                            : "bg-warning"
                         }">
                             ${proc.estado}
                         </span>
