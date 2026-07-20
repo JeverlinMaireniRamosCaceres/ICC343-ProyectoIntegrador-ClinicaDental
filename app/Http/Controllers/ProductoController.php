@@ -49,21 +49,16 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
+        $data = $request->validate(
             [
                 'nombre' => 'required|string|max:100|unique:productos,nombre',
                 'descripcion' => 'nullable|string|max:255',
-                'stockActual' => 'required|integer|min:0',
                 'stockMinimo' => 'required|integer|min:0',
                 'unidadMedida' => 'required|string|max:50'
             ],
             [
                 'nombre.required' => 'El nombre es obligatorio.',
                 'nombre.unique' => 'Este producto ya existe.',
-
-                'stockActual.required' => 'El stock inicial es obligatorio.',
-                'stockActual.integer' => 'El stock inicial debe ser un número entero.',
-                'stockActual.min' => 'El stock inicial no puede ser negativo.',
 
                 'stockMinimo.required' => 'El stock mínimo es obligatorio.',
                 'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
@@ -73,7 +68,9 @@ class ProductoController extends Controller
             ]
         );
 
-        Producto::create($request->all());
+        $data['stockActual'] = 0;
+
+        Producto::create($data);
 
         return redirect()
             ->route('productos.index')
@@ -103,13 +100,12 @@ class ProductoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate(
+        $data = $request->validate(
             [
                 'nombre' => 'required|string|max:100|unique:productos,nombre,' . $id . ',idProducto',
                 'descripcion' => 'nullable|string|max:255',
                 'stockMinimo' => 'required|integer|min:0',
                 'unidadMedida' => 'required|string|max:50'
-
             ],
             [
                 'nombre.required' => 'El nombre es obligatorio.',
@@ -118,11 +114,13 @@ class ProductoController extends Controller
                 'stockMinimo.required' => 'El stock mínimo es obligatorio.',
                 'stockMinimo.integer' => 'El stock mínimo debe ser un número entero.',
                 'stockMinimo.min' => 'El stock mínimo no puede ser negativo.',
+
+                'unidadMedida.required' => 'Debes seleccionar una unidad de medida.',
             ]
         );
 
         $producto = Producto::findOrFail($id);
-        $producto->update($request->all());
+        $producto->update($data);
 
         return redirect()
             ->route('productos.index')
