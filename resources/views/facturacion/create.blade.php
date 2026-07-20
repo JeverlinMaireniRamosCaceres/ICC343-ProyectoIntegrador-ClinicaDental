@@ -258,54 +258,56 @@
 
                     </div>
 
-                    {{-- CRONOGRAMA DE PAGOS --}}
-                    <div class="card border-0 shadow-sm rounded-4 mt-4" id="cardCronograma">
+                    @rol('Administrador')
+                        {{-- CRONOGRAMA DE PAGOS --}}
+                        <div class="card border-0 shadow-sm rounded-4 mt-4" id="cardCronograma">
 
-                        <div class="card-body p-4">
+                            <div class="card-body p-4">
 
-                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
 
-                                <h5 class="fw-semibold mb-0">
-                                    Cronograma de pagos
-                                </h5>
+                                    <h5 class="fw-semibold mb-0">
+                                        Cronograma de pagos
+                                    </h5>
 
-                            </div>
+                                </div>
 
-                            <div class="table-responsive">
+                                <div class="table-responsive">
 
-                                <table class="table table-hover-custom align-middle mb-0">
+                                    <table class="table table-hover-custom align-middle mb-0">
 
-                                    <thead class="table-light">
+                                        <thead class="table-light">
 
-                                        <tr>
+                                            <tr>
 
-                                            <th style="width:10%">
-                                                Cuota
-                                            </th>
+                                                <th style="width:10%">
+                                                    Cuota
+                                                </th>
 
-                                            <th style="width:35%">
-                                                Fecha de vencimiento
-                                            </th>
+                                                <th style="width:35%">
+                                                    Fecha de vencimiento
+                                                </th>
 
-                                            <th class="text-end">
-                                                Monto
-                                            </th>
+                                                <th class="text-end">
+                                                    Monto
+                                                </th>
 
-                                        </tr>
+                                            </tr>
 
-                                    </thead>
+                                        </thead>
 
-                                    <tbody id="tablaCuotas">
+                                        <tbody id="tablaCuotas">
 
-                                    </tbody>
+                                        </tbody>
 
-                                </table>
+                                    </table>
+
+                                </div>
 
                             </div>
 
                         </div>
-
-                    </div>
+                    @endrol
 
                 </div>
 
@@ -316,68 +318,70 @@
                 {{-- DERECHA --}}
                 <div class="col-lg-4">
 
-                    {{-- RESUMEN --}}
-                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    @rol('Administrador')
+                        {{-- Descuentos --}}
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                        <div class="card-body p-4">
+                            <div class="card-body p-4">
 
-                            <h5 class="fw-semibold mb-4">
-                                Descuento
-                            </h5>
+                                <h5 class="fw-semibold mb-4">
+                                    Descuento
+                                </h5>
 
-                            <div class="mb-3">
+                                <div class="mb-3">
 
-                                <label class="form-label text-muted small">
-                                    Tipo de descuento
-                                </label>
+                                    <label class="form-label text-muted small">
+                                        Tipo de descuento
+                                    </label>
 
-                                <select class="form-select rounded-3" id="tipoDescuento" name="tipoDescuento">
+                                    <select class="form-select rounded-3" id="tipoDescuento" name="tipoDescuento">
 
-                                    <option value="">Sin descuento</option>
-                                    <option value="Monto">Monto fijo</option>
-                                    <option value="Porcentaje">Porcentaje</option>
+                                        <option value="">Sin descuento</option>
+                                        <option value="Monto">Monto fijo</option>
+                                        <option value="Porcentaje">Porcentaje</option>
 
-                                </select>
+                                    </select>
 
-                            </div>
+                                </div>
 
-                            <div>
+                                <div>
 
-                                <label class="form-label text-muted small">
-                                    Valor del descuento
-                                </label>
+                                    <label class="form-label text-muted small">
+                                        Valor del descuento
+                                    </label>
 
-                                <input type="number" class="form-control rounded-3" id="valorDescuento"
-                                    name="valorDescuento" value="0" min="0" disabled>
+                                    <input type="number" class="form-control rounded-3" id="valorDescuento"
+                                        name="valorDescuento" value="0" min="0" disabled>
 
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="card border-0 shadow-sm rounded-4 mb-4">
-
-                        <div class="card-body p-4">
-
-                            <h5 class="fw-semibold mb-4">
-                                Cuotas
-                            </h5>
-
-                            <div class="mb-4">
-
-                                <label class="form-label text-muted small">
-                                    Cantidad de cuotas
-                                </label>
-
-                                <input type="number" class="form-control rounded-3" id="cantidadCuotas"
-                                    name="cantidadCuotas" value="1" min="1">
+                                </div>
 
                             </div>
 
                         </div>
 
-                    </div>
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+
+                            <div class="card-body p-4">
+
+                                <h5 class="fw-semibold mb-4">
+                                    Cuotas
+                                </h5>
+
+                                <div class="mb-4">
+
+                                    <label class="form-label text-muted small">
+                                        Cantidad de cuotas
+                                    </label>
+
+                                    <input type="number" class="form-control rounded-3" id="cantidadCuotas"
+                                        name="cantidadCuotas" value="1" min="1">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @endrol
 
                     <div class="card border-0 shadow-sm rounded-4">
 
@@ -431,19 +435,21 @@
 
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mb-4">
+                            @rol('Administrador')
+                                <div class="d-flex justify-content-between align-items-center mb-4">
 
-                                <span class="text-muted">
-                                    Monto por cuota
-                                </span>
+                                    <span class="text-muted">
+                                        Monto por cuota
+                                    </span>
 
-                                <span id="montoCuota" class="fw-semibold">
+                                    <span id="montoCuota" class="fw-semibold">
 
-                                    RD$ {{ number_format($subtotal, 2) }}
+                                        RD$ {{ number_format($subtotal, 2) }}
 
-                                </span>
+                                    </span>
 
-                            </div>
+                                </div>
+                            @endrol
 
                             <button type="submit" class="btn btn-medical-primary w-100 rounded-pill py-3"
                                 {{ !$consulta ? 'disabled' : '' }}>
@@ -497,79 +503,80 @@
             });
         </script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
+        @rol('Administrador')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
 
-                const subtotal = {{ $subtotal }};
+                    const subtotal = {{ $subtotal }};
 
-                const tipo = document.getElementById('tipoDescuento');
-                const valor = document.getElementById('valorDescuento');
-                const cuotas = document.getElementById('cantidadCuotas');
+                    const tipo = document.getElementById('tipoDescuento');
+                    const valor = document.getElementById('valorDescuento');
+                    const cuotas = document.getElementById('cantidadCuotas');
 
-                const descuentoLbl = document.getElementById('descuentoFactura');
-                const totalLbl = document.getElementById('totalFactura');
-                const cuotaLbl = document.getElementById('montoCuota');
+                    const descuentoLbl = document.getElementById('descuentoFactura');
+                    const totalLbl = document.getElementById('totalFactura');
+                    const cuotaLbl = document.getElementById('montoCuota');
 
-                const tablaCuotas = document.getElementById('tablaCuotas');
-                const cardCronograma = document.getElementById('cardCronograma');
-                const partes = '{{ $consulta?->fecha }}'.split('-');
-                const fechaFactura = new Date(
-                    parseInt(partes[0]),
-                    parseInt(partes[1]) - 1,
-                    parseInt(partes[2])
-                );
+                    const tablaCuotas = document.getElementById('tablaCuotas');
+                    const cardCronograma = document.getElementById('cardCronograma');
+                    const partes = '{{ $consulta?->fecha }}'.split('-');
+                    const fechaFactura = new Date(
+                        parseInt(partes[0]),
+                        parseInt(partes[1]) - 1,
+                        parseInt(partes[2])
+                    );
 
-                function recalcular() {
+                    function recalcular() {
 
-                    if (tipo.value === '') {
-                        valor.disabled = true;
-                        valor.value = 0;
-                    } else {
-                        valor.disabled = false;
-                    }
+                        if (tipo.value === '') {
+                            valor.disabled = true;
+                            valor.value = 0;
+                        } else {
+                            valor.disabled = false;
+                        }
 
-                    let descuento = 0;
+                        let descuento = 0;
 
-                    if (tipo.value === 'Monto') {
+                        if (tipo.value === 'Monto') {
 
-                        descuento = parseFloat(valor.value) || 0;
+                            descuento = parseFloat(valor.value) || 0;
 
-                    } else if (tipo.value === 'Porcentaje') {
+                        } else if (tipo.value === 'Porcentaje') {
 
-                        descuento = subtotal * ((parseFloat(valor.value) || 0) / 100);
+                            descuento = subtotal * ((parseFloat(valor.value) || 0) / 100);
 
-                    }
+                        }
 
-                    descuento = Math.min(descuento, subtotal);
+                        descuento = Math.min(descuento, subtotal);
 
-                    const total = subtotal - descuento;
+                        const total = subtotal - descuento;
 
-                    const nCuotas = Math.max(parseInt(cuotas.value) || 1, 1);
-                    if (nCuotas === 1) {
+                        const nCuotas = Math.max(parseInt(cuotas.value) || 1, 1);
+                        if (nCuotas === 1) {
 
-                        cardCronograma.style.display = 'none';
+                            cardCronograma.style.display = 'none';
 
-                    } else {
+                        } else {
 
-                        cardCronograma.style.display = '';
+                            cardCronograma.style.display = '';
 
-                    }
+                        }
 
-                    const montoCuota = total / nCuotas;
+                        const montoCuota = total / nCuotas;
 
-                    tablaCuotas.innerHTML = '';
+                        tablaCuotas.innerHTML = '';
 
-                    for (let i = 0; i < nCuotas; i++) {
+                        for (let i = 0; i < nCuotas; i++) {
 
-                        const fecha = new Date(fechaFactura);
+                            const fecha = new Date(fechaFactura);
 
-                        fecha.setMonth(fecha.getMonth() + i);
+                            fecha.setMonth(fecha.getMonth() + i);
 
-                        const yyyy = fecha.getFullYear();
-                        const mm = String(fecha.getMonth() + 1).padStart(2, '0');
-                        const dd = String(fecha.getDate()).padStart(2, '0');
+                            const yyyy = fecha.getFullYear();
+                            const mm = String(fecha.getMonth() + 1).padStart(2, '0');
+                            const dd = String(fecha.getDate()).padStart(2, '0');
 
-                        tablaCuotas.innerHTML += `
+                            tablaCuotas.innerHTML += `
                             <tr>
 
                                 <td>
@@ -594,67 +601,68 @@
 
                             </tr>
                         `;
-                    }
+                        }
 
-                    document.querySelectorAll('.fecha-cuota').forEach(input => {
+                        document.querySelectorAll('.fecha-cuota').forEach(input => {
 
-                        input.addEventListener('change', function() {
+                            input.addEventListener('change', function() {
 
-                            const indice = parseInt(this.dataset.indice);
+                                const indice = parseInt(this.dataset.indice);
 
-                            const partes = this.value.split('-');
+                                const partes = this.value.split('-');
 
-                            const fechaBase = new Date(
-                                parseInt(partes[0]),
-                                parseInt(partes[1]) - 1,
-                                parseInt(partes[2])
-                            );
+                                const fechaBase = new Date(
+                                    parseInt(partes[0]),
+                                    parseInt(partes[1]) - 1,
+                                    parseInt(partes[2])
+                                );
 
-                            document.querySelectorAll('.fecha-cuota').forEach((fechaInput, i) => {
+                                document.querySelectorAll('.fecha-cuota').forEach((fechaInput, i) => {
 
-                                const nuevaFecha = new Date(fechaBase);
+                                    const nuevaFecha = new Date(fechaBase);
 
-                                nuevaFecha.setMonth(fechaBase.getMonth() + (i - indice));
+                                    nuevaFecha.setMonth(fechaBase.getMonth() + (i - indice));
 
-                                const yyyy = nuevaFecha.getFullYear();
-                                const mm = String(nuevaFecha.getMonth() + 1).padStart(2, '0');
-                                const dd = String(nuevaFecha.getDate()).padStart(2, '0');
+                                    const yyyy = nuevaFecha.getFullYear();
+                                    const mm = String(nuevaFecha.getMonth() + 1).padStart(2, '0');
+                                    const dd = String(nuevaFecha.getDate()).padStart(2, '0');
 
-                                fechaInput.value = `${yyyy}-${mm}-${dd}`;
+                                    fechaInput.value = `${yyyy}-${mm}-${dd}`;
+
+                                });
 
                             });
 
                         });
 
-                    });
+                        descuentoLbl.textContent =
+                            'RD$ ' + descuento.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
 
-                    descuentoLbl.textContent =
-                        'RD$ ' + descuento.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
+                        totalLbl.textContent =
+                            'RD$ ' + total.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
 
-                    totalLbl.textContent =
-                        'RD$ ' + total.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
+                        cuotaLbl.textContent =
+                            'RD$ ' + montoCuota.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
 
-                    cuotaLbl.textContent =
-                        'RD$ ' + montoCuota.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
+                    }
 
-                }
+                    tipo.addEventListener('change', recalcular);
+                    valor.addEventListener('input', recalcular);
+                    cuotas.addEventListener('input', recalcular);
 
-                tipo.addEventListener('change', recalcular);
-                valor.addEventListener('input', recalcular);
-                cuotas.addEventListener('input', recalcular);
+                    recalcular();
 
-                recalcular();
-
-            });
-        </script>
+                });
+            </script>
+        @endrol
 
     @endsection

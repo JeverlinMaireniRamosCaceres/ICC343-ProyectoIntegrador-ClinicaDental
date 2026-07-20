@@ -112,26 +112,46 @@ class FacturacionController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $esAdministrador = Auth::user()->rol->nombre === 'Administrador';
+
+        $rules = [
             'idConsulta' => 'required|exists:consultas,idConsulta',
-            'cantidadCuotas' => 'required|integer|min:1',
-            'tipoDescuento' => 'nullable|in:Monto,Porcentaje',
-            'valorDescuento' => 'nullable|numeric|min:0',
-            'fechasVencimiento' => 'required|array|min:1',
-            'fechasVencimiento.*' => 'required|date',
-        ]);
+        ];
+
+        if ($esAdministrador) {
+            $rules += [
+                'cantidadCuotas' => 'required|integer|min:1',
+                'tipoDescuento' => 'nullable|in:Monto,Porcentaje',
+                'valorDescuento' => 'nullable|numeric|min:0',
+                'fechasVencimiento' => 'required|array|min:1',
+                'fechasVencimiento.*' => 'required|date',
+            ];
+        }
+
+        $request->validate($rules);
 
         $consulta = $this->obtenerConsulta($request->idConsulta);
 
+        $tipoDescuento = $esAdministrador ? $request->tipoDescuento : null;
+        $valorDescuento = $esAdministrador ? $request->valorDescuento : 0;
+        $cantidadCuotas = $esAdministrador ? $request->cantidadCuotas : 1;
+        $fechasVencimiento = $esAdministrador
+            ? $request->fechasVencimiento
+            : [now()->toDateString()];
+
         $totales = $this->calcularTotales(
             $consulta,
-            $request->tipoDescuento,
-            $request->valorDescuento
+            $tipoDescuento,
+            $valorDescuento
         );
 
-        DB::transaction(function () use ($request, $consulta, $totales, &$factura) {
+        DB::transaction(function () use ($consulta, $totales, $cantidadCuotas, $fechasVencimiento, &$factura) {
 
-            $factura = $this->crearFactura($consulta, $request, $totales);
+            $factura = $this->crearFactura(
+                $consulta,
+                $cantidadCuotas,
+                $totales
+            );
 
             $consulta->update([
                 'estado' => 'Facturada',
@@ -139,7 +159,7 @@ class FacturacionController extends Controller
 
             $this->crearPagos(
                 $factura,
-                $request->fechasVencimiento,
+                $fechasVencimiento,
                 $totales['total']
             );
         });
@@ -265,12 +285,15 @@ class FacturacionController extends Controller
         ];
     }
 
-    private function crearFactura(Consulta $consulta, Request $request, array $totales): Factura
-    {
+    private function crearFactura(
+        Consulta $consulta,
+        int $cantidadCuotas,
+        array $totales
+    ): Factura {
         return Factura::create([
             'idConsulta' => $consulta->idConsulta,
             'total' => $totales['total'],
-            'cantidadCuotas' => $request->cantidadCuotas,
+            'cantidadCuotas' => $cantidadCuotas,
             'tipoDescuento' => $totales['tipoDescuento'],
             'montoDescuento' => $totales['montoDescuento'],
             'porcentajeDescuento' => $totales['porcentajeDescuento'],
