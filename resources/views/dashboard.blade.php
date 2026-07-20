@@ -34,10 +34,10 @@
                            max="{{ date('Y-m') }}"
                            style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
 
-                    <a href="{{ url()->current() }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" 
+                    <button type="button" id="btn-limpiar-filtros" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" 
                        style="height: 38px; width: 45px;" title="Limpiar Filtros">
                         <i class="bi bi-arrow-clockwise fs-5"></i>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -229,7 +229,7 @@
                     datasets: [{
                         label: 'Pagos pendientes',
                         data: {!! json_encode($dataPendientes) !!},
-                        backgroundColor: 'rgba(25, 135, 84, 0.05)',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
                         borderColor: '#0ea5e9',
                         borderWidth: 2.5,
                         borderRadius: 4
@@ -248,8 +248,8 @@
                     datasets: [{
                         label: 'Pacientes nuevos',
                         data: {!! json_encode($dataPacientes) !!},
-                        borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(25, 135, 84, 0.05)',
+                        borderColor: '#f97316',
+                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
                         borderWidth: 2.5,
                         tension: 0.35,
                         fill: true,
@@ -270,8 +270,8 @@
                     datasets: [{
                         label: 'Ingresos totales',
                         data: {!! isset($dataIngresos) ? json_encode($dataIngresos) : '[]' !!},
-                        borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         borderWidth: 2.5,
                         tension: 0.35,
                         fill: true,
@@ -292,8 +292,8 @@
                     datasets: [{
                         label: 'Consumo de caja chica',
                         data: {!! isset($dataConsumoCaja) ? json_encode($dataConsumoCaja) : '[]' !!},
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderColor: '#8b5cf6',
                         borderWidth: 2.5,
                         borderRadius: 4
                     }]
@@ -338,6 +338,18 @@
                 if (this.value) {
                     botonesRapidos.forEach(b => b.classList.remove('active'));
                     actualizarDashboard('mes_especifico', this.value);
+                }
+            });
+        }
+
+        const botonLimpiarFiltros = document.getElementById('btn-limpiar-filtros');
+        if (botonLimpiarFiltros) {
+            botonLimpiarFiltros.addEventListener('click', function() {
+                inputMesEspecifco.value = '';
+
+                const botonEsteAno = document.querySelector('.btn-filtro-rapido[data-periodo="este-ano"]');
+                if (botonEsteAno) {
+                    botonEsteAno.click();
                 }
             });
         }
