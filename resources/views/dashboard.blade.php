@@ -248,8 +248,8 @@
                     datasets: [{
                         label: 'Pacientes nuevos',
                         data: {!! json_encode($dataPacientes) !!},
-                        borderColor: '#f97316',
-                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                        borderColor: '#003366',
+                        backgroundColor: 'rgba(204, 217, 232, 0.5)',
                         borderWidth: 2.5,
                         tension: 0.35,
                         fill: true,
