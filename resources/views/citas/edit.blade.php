@@ -5,7 +5,7 @@
 @section('content')
     <div class="container-fluid py-4 px-5">
 
-        @if ($errors->any() && !$errors->has('hora'))
+        @if ($errors->any())
             <div class="alert alert-danger rounded-3 py-2 px-3 mt-2" style="font-size:13px;">
                 <ul class="mb-0">
                     @foreach ($errors->all() as $error)
