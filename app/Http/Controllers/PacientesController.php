@@ -254,7 +254,7 @@ class PacientesController extends Controller
                 'nombre' => 'required|string|max:100',
                 'apellido' => 'required|string|max:100',
 
-                'fechaNacimiento' => 'required|date',
+                'fechaNacimiento' => 'required|date|before_or_equal:today',
 
                 'sexo' => [
                     'required',
@@ -282,6 +282,7 @@ class PacientesController extends Controller
 
                 'fechaNacimiento.required' => 'La fecha de nacimiento es obligatoria.',
                 'fechaNacimiento.date' => 'La fecha de nacimiento no es válida.',
+                'fechaNacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser una fecha futura.',
 
                 'sexo.required' => 'Debe seleccionar un sexo.',
 
