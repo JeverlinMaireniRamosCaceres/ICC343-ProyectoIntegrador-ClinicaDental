@@ -47,7 +47,7 @@
                     <td class="px-4">
                         <div class="d-flex justify-content-center gap-2">
 
-                            <a href="{{ route('pagos.pdf', $grupo->codigoRecibo) }}"
+                            <a href="{{ route('pagos.pdf', $grupo->pago) }}"
                                 class="btn btn-sm btn-secondary rounded-pill px-3" target="_blank"
                                 title="Imprimir recibo">
                                 <i class="bi bi-file-earmark-pdf-fill"></i>
