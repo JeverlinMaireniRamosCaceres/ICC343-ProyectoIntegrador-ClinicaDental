@@ -36,17 +36,24 @@ class CitaController extends Controller
         $request->validate([
             'idOdontologo' => 'required|exists:odontologos,idOdontologo',
             'fecha' => 'required|date',
-            'hora' => 'required',
+            'hora' => 'required|date_format:H:i|after_or_equal:08:00|before_or_equal:18:00',
             'nombrePersona' => 'required|string|max:100',
             'medioRecordatorio' => 'required|in:correo,whatsapp,ambos',
 
             'telefono' => 'required_if:medioRecordatorio,whatsapp,ambos|nullable|string|max:20',
             'correo' => 'required_if:medioRecordatorio,correo,ambos|nullable|email|max:100',
+        ], [
+            'hora.after_or_equal' => 'La hora debe estar dentro del horario de atención (8:00 AM - 6:00 PM).',
+            'hora.before_or_equal' => 'La hora debe estar dentro del horario de atención (8:00 AM - 6:00 PM).',
         ]);
+
+        $horaSolicitada = \Carbon\Carbon::parse($request->hora);
+        $horaInicio = $horaSolicitada->copy()->subMinutes(29)->format('H:i:s');
+        $horaFin = $horaSolicitada->copy()->addMinutes(29)->format('H:i:s');
 
         $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
             ->where('fecha', $request->fecha)
-            ->where('hora', $request->hora)
+            ->whereBetween('hora', [$horaInicio, $horaFin])
             ->whereNotIn('estado', ['Cancelada'])
             ->first();
 
@@ -54,7 +61,7 @@ class CitaController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'hora' => 'El odontólogo ya tiene una cita programada para esa fecha y hora.'
+                    'hora' => 'El odontólogo ya tiene una cita programada dentro de los 30 minutos de esa hora.'
                 ]);
         }
 
@@ -154,17 +161,24 @@ class CitaController extends Controller
         $request->validate([
             'idOdontologo' => 'required|exists:odontologos,idOdontologo',
             'fecha' => 'required|date',
-            'hora' => 'required',
+            'hora' => 'required|date_format:H:i|after_or_equal:08:00|before_or_equal:18:00',
             'nombrePersona' => 'required|string|max:100',
             'medioRecordatorio' => 'required|in:correo,whatsapp,ambos',
 
             'telefono' => 'required_if:medioRecordatorio,whatsapp,ambos|nullable|string|max:20',
             'correo' => 'required_if:medioRecordatorio,correo,ambos|nullable|email|max:100',
+        ], [
+            'hora.after_or_equal' => 'La hora debe estar dentro del horario de atención (8:00 AM - 6:00 PM).',
+            'hora.before_or_equal' => 'La hora debe estar dentro del horario de atención (8:00 AM - 6:00 PM).',
         ]);
+
+        $horaSolicitada = \Carbon\Carbon::parse($request->hora);
+        $horaInicio = $horaSolicitada->copy()->subMinutes(29)->format('H:i:s');
+        $horaFin = $horaSolicitada->copy()->addMinutes(29)->format('H:i:s');
 
         $citaExistente = Cita::where('idOdontologo', $request->idOdontologo)
             ->where('fecha', $request->fecha)
-            ->where('hora', $request->hora)
+            ->whereBetween('hora', [$horaInicio, $horaFin])
             ->where('idCita', '!=', $id)
             ->whereNotIn('estado', ['Cancelada'])
             ->first();
@@ -173,7 +187,7 @@ class CitaController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'hora' => 'El odontólogo ya tiene una cita programada para esa fecha y hora.'
+                    'hora' => 'El odontólogo ya tiene una cita programada dentro de los 30 minutos de esa hora.'
                 ]);
         }
 
